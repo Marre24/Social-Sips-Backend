@@ -36,7 +36,7 @@ public class QuestService {
     }
 
     public void editQuest(Quest toAdd){
-        Quest q = getQuest(toAdd.getId());
-        repo.save(q);
+        //Quest q = getQuest(toAdd.getId());
+        //repo.save(q);
     }
 }

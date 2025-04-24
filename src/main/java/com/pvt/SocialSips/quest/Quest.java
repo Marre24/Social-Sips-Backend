@@ -1,17 +1,29 @@
 package com.pvt.SocialSips.quest;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.id.IncrementGenerator;
 
-@Data
 @Entity
 @Table
 public class Quest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-
+    private Long id;
     private String prompt;
-    private final String type;
+    private String type;
+
+    public Quest(String prompt, String type){
+        this.prompt = prompt;
+        this.type = type;
+    }
+
+    public Quest(){
+
+    }
+
+    public String getPrompt(){
+        return prompt;
+    }
+
 }
