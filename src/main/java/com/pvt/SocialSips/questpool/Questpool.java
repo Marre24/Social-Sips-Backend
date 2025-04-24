@@ -11,7 +11,7 @@ public class Questpool {
 
     @Id
     @GeneratedValue
-    private Integer id;
+    private Long id;
     private String category;
 
 

@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.*;
 public class QuestpoolController {
 
     @GetMapping("/{userId}")
-    public String getByUserId(@PathVariable String userId) {
+    public Long getByUserId(@PathVariable Long userId) {
         return userId;
     }
 
     @PostMapping("/{userId}")
-    public HttpStatus addQuestpool(@PathVariable String userId) {
+    public HttpStatus addQuestpool(@PathVariable Long userId) {
         return HttpStatus.ACCEPTED;
     }
 
