@@ -22,6 +22,10 @@ public class Quest {
 
     }
 
+    public Long getId(){
+        return id;
+    }
+
     public String getPrompt(){
         return prompt;
     }

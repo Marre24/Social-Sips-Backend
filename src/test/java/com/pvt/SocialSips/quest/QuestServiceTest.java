@@ -1,42 +1,32 @@
 package com.pvt.SocialSips.quest;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import com.pvt.SocialSips.SocialSipsApplication;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
-
-@SpringBootTest
-@TestConfiguration
+@SpringBootTest(classes = SocialSipsApplication.class)
 public class QuestServiceTest {
 
-    @Autowired
+    private final Quest QUEST = new Quest("hejs", "sawe");
+
+    @Mock
     private QuestRepository repository;
 
-    private class QuestServiceImpl extends QuestService{
-        public QuestServiceImpl() {
-            super(repository);
-        }
-    }
-
-
-    @Autowired
+    @InjectMocks
     private QuestService service;
 
     @Test
     public void testGetQuest(){
         Quest quest = new Quest( "Olivpaj", "Olivpaj");
-        repository.save(quest);
-        assertEquals(service.getQuest(1L).getPrompt(), "Olivpaj");
+        when(repository.findById(1L)).thenReturn(Optional.of(QUEST));
+        assertEquals(service.getQuest(1L).getPrompt(), "hejs");
 
     }
 
