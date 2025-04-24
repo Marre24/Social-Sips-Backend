@@ -1,5 +1,7 @@
 package com.pvt.SocialSips.questpool;
 
+
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,5 +13,9 @@ public class QuestpoolController {
         return userId;
     }
 
+    @PostMapping("/{userId}")
+    public HttpStatus addQuestpool(@PathVariable String userId) {
+        return HttpStatus.ACCEPTED;
+    }
 
 }
