@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.id.IncrementGenerator;
 
+@Data
 @Entity
 @Table
 public class Quest {
@@ -17,17 +18,4 @@ public class Quest {
         this.prompt = prompt;
         this.type = type;
     }
-
-    public Quest(){
-
-    }
-
-    public Long getId(){
-        return id;
-    }
-
-    public String getPrompt(){
-        return prompt;
-    }
-
 }
