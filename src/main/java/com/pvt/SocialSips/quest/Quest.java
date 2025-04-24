@@ -10,8 +10,8 @@ import org.hibernate.id.IncrementGenerator;
 public class Quest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long questId;
+    private long id;
 
     private String prompt;
-    private String type;
+    private final String type;
 }

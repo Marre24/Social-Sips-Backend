@@ -28,7 +28,15 @@ public class QuestService {
 
     public void createQuest(Quest q){
         //checka??
+        repo.save(q);
+    }
+    public void createAllQuests(Iterable<Quest> q){
+        //checka??
+        repo.saveAll(q);
+    }
 
+    public void editQuest(Quest toAdd){
+        Quest q = getQuest(toAdd.getId());
         repo.save(q);
     }
 }
