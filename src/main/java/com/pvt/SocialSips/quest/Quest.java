@@ -22,6 +22,10 @@ public class Quest {
         this.prompt = prompt;
     }
 
+    public Quest(String prompt){
+        this.prompt = prompt;
+    }
+
     public Long getId() {
         return id;
     }
