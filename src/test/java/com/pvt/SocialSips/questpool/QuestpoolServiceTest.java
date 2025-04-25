@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,4 +41,9 @@ public class QuestpoolServiceTest {
         assertTrue(questpoolService.getByUserId(USER_ID_WITH_NO_POOL).isEmpty());
     }
 
+    @Test
+    public void getByUserId_UserHasOneQuestpool_ListSizeOne(){
+        when(questpoolRepository.findById(USER_ID_WITH_ONE_POOL)).thenReturn(Optional.of(new Questpool()));
+        assertEquals(1, questpoolService.getByUserId(USER_ID_WITH_ONE_POOL).size());
+    }
 }
