@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.questpool;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +11,10 @@ import java.util.Optional;
 @Service
 public class QuestpoolService {
 
+    @Autowired
     private QuestpoolRepository questpoolRepository;
 
-    @Autowired
+
     public QuestpoolService(QuestpoolRepository questpoolRepository) {
         this.questpoolRepository = questpoolRepository;
     }
@@ -27,9 +29,23 @@ public class QuestpoolService {
 
 
     public void createQuestpool(Questpool qp) {
-        if (questpoolRepository.findById(qp.getId()).isPresent())
-            throw new IllegalArgumentException("Questpool already exists");
+        questpoolRepository.save(qp);
+    }
 
-        Questpool result = questpoolRepository.save(qp);
+    @Transactional
+    public void updateQuestpool(Questpool questpool, Long id) {
+        Optional<Questpool> optionalQuestpool = questpoolRepository.findById(id);
+
+        if(optionalQuestpool.isPresent()) {
+            questpoolRepository.delete(optionalQuestpool.get());
+
+            questpool.setId(id);
+            questpoolRepository.save(questpool);
+
+        } else {
+            throw new IllegalStateException("Questpool with id: " + id + " does not exist!");
+        }
+
+
     }
 }
