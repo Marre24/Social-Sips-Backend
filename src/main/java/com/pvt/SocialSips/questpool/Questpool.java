@@ -4,6 +4,7 @@ import com.pvt.SocialSips.quest.Quest;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Questpool {
@@ -12,10 +13,9 @@ public class Questpool {
     @GeneratedValue
     private Long id;
     private String category;
-
     @OneToMany
     @JoinColumn(name = "qpId")
-    HashSet<Quest> quests;
+    Set<Quest> quests;
 
     public Questpool(){
 
@@ -27,7 +27,33 @@ public class Questpool {
         this.quests = quests;
     }
 
+    public Questpool(String category, Set<Quest> quests) {
+        this.category = category;
+        this.quests = quests;
+    }
+
+
     public Long getId() {
-        return  id;
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public Set<Quest> getQuests() {
+        return quests;
+    }
+
+    public void setQuests(HashSet<Quest> quests) {
+        this.quests = quests;
     }
 }
