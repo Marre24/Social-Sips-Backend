@@ -1,12 +1,9 @@
 package com.pvt.SocialSips.quest;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.id.IncrementGenerator;
 
 @Entity
 @Table
-
 public class Quest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
