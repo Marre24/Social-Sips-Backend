@@ -17,12 +17,12 @@ public class QuestpoolService {
         this.questpoolRepository = questpoolRepository;
     }
 
-    public List<Questpool> getByUserId(Long userId) {
+    public Questpool getByQuestpoolId(Long userId) {
         Optional<Questpool> questpoolOptional = questpoolRepository.findById(userId);
         if (questpoolOptional.isEmpty())
-            return new ArrayList<>();
+            throw new IllegalStateException("No such questpool exists!");
 
-        return List.of(questpoolOptional.get());
+        return questpoolOptional.get();
     }
 
 
