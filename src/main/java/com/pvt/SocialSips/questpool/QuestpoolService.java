@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -13,7 +14,6 @@ public class QuestpoolService {
 
     @Autowired
     private QuestpoolRepository questpoolRepository;
-
 
     public QuestpoolService(QuestpoolRepository questpoolRepository) {
         this.questpoolRepository = questpoolRepository;
@@ -47,5 +47,10 @@ public class QuestpoolService {
         }
 
 
+    }
+
+    public void deleteQuestpool(Questpool qp) {
+        getByQuestpoolId(qp.getId());
+        questpoolRepository.delete(qp);
     }
 }
