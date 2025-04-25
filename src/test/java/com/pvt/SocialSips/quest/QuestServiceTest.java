@@ -14,7 +14,10 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = SocialSipsApplication.class)
 public class QuestServiceTest {
 
-    private final Quest QUEST = new Quest(1L, "sawe");
+    private static final String PROMPT = "prompt";
+    private static final Long ID = 1L;
+
+    private final Quest QUEST = new Quest(ID, PROMPT);
 
     @Mock
     private QuestRepository repository;
@@ -24,10 +27,9 @@ public class QuestServiceTest {
 
     @Test
     public void testGetQuest(){
-        Quest quest = new Quest( 1L,"Olivpaj");
-        when(repository.findById(1L)).thenReturn(Optional.of(QUEST));
-        assertEquals(service.getQuest(1L).getPrompt(), "hejs");
+        when(repository.findById(ID)).thenReturn(Optional.of(QUEST));
 
+        assertEquals(service.getQuest(ID).getPrompt(), PROMPT);
     }
 
 
