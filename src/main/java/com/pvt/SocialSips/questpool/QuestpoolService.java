@@ -26,4 +26,10 @@ public class QuestpoolService {
     }
 
 
+    public void createQuestpool(Questpool qp) {
+        if (questpoolRepository.findById(qp.getId()).isPresent())
+            throw new IllegalArgumentException("Questpool already exists");
+
+        Questpool result = questpoolRepository.save(qp);
+    }
 }
