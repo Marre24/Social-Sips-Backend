@@ -11,11 +11,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/questpool")
 public class QuestpoolController {
 
-    @Autowired
     private final QuestService questService;
 
-    public QuestpoolController(QuestService questService) {
+    private final QuestpoolService questpoolService;
+
+
+    @Autowired
+    public QuestpoolController(QuestService questService, QuestpoolService questpoolService) {
         this.questService = questService;
+        this.questpoolService = questpoolService;
     }
 
     @GetMapping("/{userId}")
@@ -23,15 +27,14 @@ public class QuestpoolController {
         return userId;
     }
 
-    @PostMapping("/{userId}")
-    public HttpStatus addQuestpool(@PathVariable Long userId) {
-        return HttpStatus.ACCEPTED;
+    @PostMapping("/")
+    public Questpool addQuestpool(@RequestBody Questpool questpool) {
+       // System.out.println(questpool.getCategory());
+        questpoolService.createQuestpool(questpool);
+
+        return questpool;
     }
 
-    @PostMapping("/")
-    public void createQuest(@RequestBody Quest quest, @RequestParam String type){
-        questService.createQuest(quest);
-    }
 
     @PatchMapping("/edit/{id}")
     public void editQuest(@RequestBody Quest quest, @PathVariable Long id){
@@ -39,4 +42,12 @@ public class QuestpoolController {
         System.out.println(quest);
         questService.editQuest(quest, id);
     }
+
+    @PutMapping("/{id}")
+    public void updateQuestpool(@RequestBody Questpool questpool, @PathVariable Long id) {
+        questpoolService.updateQuestpool(questpool, id);
+    }
+
+
+
 }
