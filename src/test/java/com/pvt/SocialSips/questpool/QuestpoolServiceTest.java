@@ -1,6 +1,7 @@
 package com.pvt.SocialSips.questpool;
 
 import com.pvt.SocialSips.quest.Quest;
+import com.pvt.SocialSips.quest.QuestRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,6 +29,9 @@ public class QuestpoolServiceTest {
 
     @Mock
     private QuestpoolRepository questpoolRepository;
+
+    @Mock
+    private QuestRepository questRepository;
 
     @InjectMocks
     private QuestpoolService questpoolService;
