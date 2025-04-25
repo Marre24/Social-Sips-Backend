@@ -3,8 +3,8 @@ package com.pvt.SocialSips.quest;
 import jakarta.persistence.*;
 
 @Entity
-@Table
 public class Quest {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
