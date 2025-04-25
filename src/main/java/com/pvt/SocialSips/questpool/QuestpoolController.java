@@ -18,8 +18,8 @@ public class QuestpoolController {
     }
 
     @GetMapping("/{userId}")
-    public Long getByUserId(@PathVariable Long userId) {
-        return userId;
+    public Questpool getByUserId(@PathVariable Long userId) {
+        return questpoolService.getByQuestpoolId(userId);
     }
 
     @PostMapping("/")
