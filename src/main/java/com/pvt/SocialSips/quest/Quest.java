@@ -1,13 +1,10 @@
 package com.pvt.SocialSips.quest;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.id.IncrementGenerator;
 
 @Entity
-@Table
-
 public class Quest {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,12 +14,12 @@ public class Quest {
 
     }
 
-    public Quest(Long id, String prompt){
-        this.id = id;
+    public Quest(String prompt){
         this.prompt = prompt;
     }
 
-    public Quest(String prompt){
+    public Quest(Long id, String prompt){
+        this.id = id;
         this.prompt = prompt;
     }
 
