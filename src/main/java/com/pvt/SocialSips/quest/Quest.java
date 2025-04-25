@@ -27,17 +27,15 @@ public class Quest {
         return id;
     }
 
-    public Quest setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
-        return this;
     }
 
     public String getPrompt() {
         return prompt;
     }
 
-    public Quest setPrompt(String prompt) {
+    public void setPrompt(String prompt) {
         this.prompt = prompt;
-        return this;
     }
 }

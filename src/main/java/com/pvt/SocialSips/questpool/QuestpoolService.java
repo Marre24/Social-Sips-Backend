@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.questpool;
 
+import com.pvt.SocialSips.quest.QuestRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,15 @@ import java.util.Optional;
 public class QuestpoolService {
 
     @Autowired
+    private QuestRepository questRepository;
+
+    @Autowired
     private QuestpoolRepository questpoolRepository;
 
 
-    public QuestpoolService(QuestpoolRepository questpoolRepository) {
+    public QuestpoolService(QuestRepository questRepository, QuestpoolRepository questpoolRepository) {
         this.questpoolRepository = questpoolRepository;
+        this.questRepository = questRepository;
     }
 
     public Questpool getByQuestpoolId(Long userId) {
@@ -29,6 +34,8 @@ public class QuestpoolService {
 
 
     public void createQuestpool(Questpool qp) {
+        questRepository.saveAll(qp.getQuests());
+        
         questpoolRepository.save(qp);
     }
 
