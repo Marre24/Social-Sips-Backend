@@ -1,9 +1,10 @@
 package com.pvt.SocialSips.questpool;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.pvt.SocialSips.quest.Quest;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.HashSet;
 
 @Data
 @Entity
@@ -14,6 +15,7 @@ public class Questpool {
     private Long id;
     private String category;
 
-
-
+    @OneToMany
+    @JoinColumn(name = "qpId")
+    HashSet<Quest> quests;
 }
