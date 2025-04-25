@@ -63,4 +63,11 @@ public class QuestpoolServiceTest {
         when(questpoolRepository.findById(qp.getId())).thenReturn(Optional.of(qp));
         assertDoesNotThrow(() -> questpoolService.deleteQuestpool(qp));
     }
+
+    @Test
+    public void deleteQuestpool_NonExistingQuestpool_IllegalStatExceptionThrown(){
+        Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, quests);
+        when(questpoolRepository.findById(qp.getId())).thenReturn(Optional.empty());
+        assertThrows(IllegalStateException.class,() -> questpoolService.deleteQuestpool(qp));
+    }
 }
