@@ -42,8 +42,8 @@ public class QuestpoolServiceTest {
 
     @Test
     public void createQuestpool_ValidArgs_QuestpoolAdded(){
-        Quest q1 = new Quest("Prompt One", "trivia");
-        Quest q2 = new Quest("Prompt Two", "trivia");
+        Quest q1 = new Quest("Prompt One");
+        Quest q2 = new Quest("Prompt Two");
 
         HashSet<Quest> quests = new HashSet<>(List.of(q1, q2));
 

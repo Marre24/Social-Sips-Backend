@@ -14,6 +14,10 @@ public class Quest {
 
     }
 
+    public Quest(String prompt){
+        this.prompt = prompt;
+    }
+
     public Quest(Long id, String prompt){
         this.id = id;
         this.prompt = prompt;
