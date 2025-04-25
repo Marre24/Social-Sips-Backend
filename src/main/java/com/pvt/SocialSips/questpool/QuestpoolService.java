@@ -35,7 +35,7 @@ public class QuestpoolService {
 
     public void createQuestpool(Questpool qp) {
         questRepository.saveAll(qp.getQuests());
-        
+
         questpoolRepository.save(qp);
     }
 
@@ -54,5 +54,10 @@ public class QuestpoolService {
         }
 
 
+    }
+
+    public void deleteQuestpool(Questpool qp) {
+        getByQuestpoolId(qp.getId());
+        questpoolRepository.delete(qp);
     }
 }
