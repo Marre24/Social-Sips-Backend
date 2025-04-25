@@ -1,9 +1,11 @@
 package com.pvt.SocialSips.quest;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Optional;
@@ -13,6 +15,8 @@ public class QuestService {
 
     @Autowired
     private final QuestRepository repo;
+    @Autowired
+    private QuestRepository questRepository;
 
     public QuestService(QuestRepository repo) {
         this.repo = repo;
@@ -35,8 +39,10 @@ public class QuestService {
         repo.saveAll(q);
     }
 
-    public void editQuest(Quest toAdd){
-        //Quest q = getQuest(toAdd.getId());
-        //repo.save(q);
+    @Transactional
+    public void editQuest(Quest quest, Long id){
+        Quest q = getQuest(id);
+        q.setPrompt(quest.getPrompt());
+
     }
 }

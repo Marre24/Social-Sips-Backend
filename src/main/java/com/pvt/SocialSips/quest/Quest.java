@@ -4,18 +4,39 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.id.IncrementGenerator;
 
-@Data
 @Entity
 @Table
+
 public class Quest {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String prompt;
-    private String type;
 
-    public Quest(String prompt, String type){
+    public Quest(){
+
+    }
+
+    public Quest(Long id, String prompt){
+        this.id = id;
         this.prompt = prompt;
-        this.type = type;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Quest setId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public String getPrompt() {
+        return prompt;
+    }
+
+    public Quest setPrompt(String prompt) {
+        this.prompt = prompt;
+        return this;
     }
 }
