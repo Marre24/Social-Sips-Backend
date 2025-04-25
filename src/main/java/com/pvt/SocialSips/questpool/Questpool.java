@@ -13,7 +13,7 @@ public class Questpool {
     @GeneratedValue
     private Long id;
     private String category;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "qpId")
     Set<Quest> quests;
 
