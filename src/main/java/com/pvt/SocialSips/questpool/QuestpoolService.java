@@ -10,7 +10,7 @@ import java.util.Optional;
 @Service
 public class QuestpoolService {
 
-    private QuestpoolRepository questpoolRepository;
+    private final QuestpoolRepository questpoolRepository;
 
     @Autowired
     public QuestpoolService(QuestpoolRepository questpoolRepository) {
@@ -28,7 +28,7 @@ public class QuestpoolService {
 
     public void createQuestpool(Questpool qp) {
         if (questpoolRepository.findById(qp.getId()).isPresent())
-            throw new IllegalArgumentException("Questpool already exists");
+            throw new IllegalArgumentException("Questpool already exists!");
 
         Questpool result = questpoolRepository.save(qp);
     }
