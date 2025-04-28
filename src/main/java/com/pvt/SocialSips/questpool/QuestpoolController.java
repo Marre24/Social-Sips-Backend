@@ -2,6 +2,7 @@ package com.pvt.SocialSips.questpool;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,10 +23,10 @@ public class QuestpoolController {
     }
 
     @PostMapping("/")
-    public Questpool addQuestpool(@RequestBody Questpool questpool) {
+    public ResponseEntity<Questpool> addQuestpool(@RequestBody Questpool questpool) {
         questpoolService.createQuestpool(questpool);
 
-        return questpool;
+        return ResponseEntity.ok(questpool);
     }
 
     @PutMapping("/{id}")
