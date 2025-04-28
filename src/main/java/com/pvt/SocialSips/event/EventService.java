@@ -1,8 +1,11 @@
 package com.pvt.SocialSips.event;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class EventService {
@@ -16,13 +19,17 @@ public class EventService {
 
     public void createEvent(Event event) {
         if (eventRepository.findById(event.getHostId()).isPresent())
-            throw new DuplicateKeyException("Event with given hostId already exists");
+            throw new DuplicateKeyException("Event with id: " + event.getHostId() + " already exists");
 
         eventRepository.save(event);
     }
 
     public Event getEvent(Long id) {
+        Optional<Event> optionalEvent = eventRepository.findById(id);
 
-        return eventRepository.findById(id).get();
+        if(optionalEvent.isEmpty())
+            throw new EntityNotFoundException("Event with id: " + id + " does not exist");
+
+        return optionalEvent.get();
     }
 }

@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.event;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,26 +26,31 @@ public class EventServiceTest {
 
     @Test
     public void getEvent_EventExists_EventReturned (){
-
         when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
 
         assertEquals(EVENT, eventService.getEvent(EVENT.getHostId()));
     }
 
+    @Test
+    public void getEvent_EventDoesNotExist_EntityNotFoundExceptionThrown (){
+        when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> eventService.getEvent(EVENT.getHostId()));
+    }
+
+
 
     @Test
     public void createEvent_EmptyDatabase_EventCreated(){
         when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.empty());
-
         when(eventRepository.save(EVENT)).thenReturn(EVENT);
 
         assertDoesNotThrow(() -> eventService.createEvent(EVENT));
     }
 
-    @Test
+    @Test   
     public void createEvent_EventWithHostIdExists_DuplicateKeyExceptionThrown(){
         when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
-
         when(eventRepository.save(EVENT)).thenReturn(EVENT);
 
         assertThrows(DuplicateKeyException.class, () -> eventService.createEvent(EVENT));
