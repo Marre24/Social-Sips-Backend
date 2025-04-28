@@ -45,11 +45,23 @@ public class EventController {
     public ResponseEntity<String> startEvent(@PathVariable Long hostId){
         try{
             eventService.startEvent(hostId);
-            return new ResponseEntity<>("Event created", HttpStatus.OK);
+            return new ResponseEntity<>("Event Started", HttpStatus.OK);
 
         } catch (Exception exception){
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @DeleteMapping("/{hostId}")
+    public ResponseEntity<String> deleteEvent(@PathVariable Long hostId){
+        try{
+            eventService.deleteEvent(hostId);
+            return new ResponseEntity<>("Event deleted", HttpStatus.OK);
+
+        } catch (EntityNotFoundException exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 
 }
