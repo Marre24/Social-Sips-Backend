@@ -1,16 +1,13 @@
 package com.pvt.SocialSips.event;
 
-import com.pvt.SocialSips.questpool.Questpool;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,25 +22,25 @@ public class EventServiceTest {
     @InjectMocks
     private EventService eventService;
 
-    private static Event event = new Event(1L, "name", 2, new HashSet<>());
+    private final static Event EVENT = new Event(1L, "name", 2, new HashSet<>());
 
 
     @Test
     public void createEvent_EmptyDatabase_EventCreated(){
-        when(eventRepository.findById(event.getHostId())).thenReturn(Optional.empty());
+        when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.empty());
 
-        when(eventRepository.save(event)).thenReturn(event);
+        when(eventRepository.save(EVENT)).thenReturn(EVENT);
 
-        assertDoesNotThrow(() -> eventService.createEvent(event));
+        assertDoesNotThrow(() -> eventService.createEvent(EVENT));
     }
 
     @Test
     public void createEvent_EventWithHostIdExists_DuplicateKeyExceptionThrown(){
-        when(eventRepository.findById(event.getHostId())).thenReturn(Optional.of(event));
+        when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
 
-        when(eventRepository.save(event)).thenReturn(event);
+        when(eventRepository.save(EVENT)).thenReturn(EVENT);
 
-        assertThrows(DuplicateKeyException.class, () -> eventService.createEvent(event));
+        assertThrows(DuplicateKeyException.class, () -> eventService.createEvent(EVENT));
     }
 
 }
