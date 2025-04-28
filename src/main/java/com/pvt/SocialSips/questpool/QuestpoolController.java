@@ -1,7 +1,6 @@
 package com.pvt.SocialSips.questpool;
 
 
-import com.pvt.SocialSips.quest.Quest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,9 +16,9 @@ public class QuestpoolController {
         this.questpoolService = questpoolService;
     }
 
-    @GetMapping("/{userId}")
-    public Questpool getByUserId(@PathVariable Long userId) {
-        return questpoolService.getByQuestpoolId(userId);
+    @GetMapping("/{qpId}")
+    public Questpool getByUserId(@PathVariable Long qpId) {
+        return questpoolService.getByQuestpoolId(qpId);
     }
 
     @PostMapping("/")
