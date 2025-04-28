@@ -37,10 +37,10 @@ public class EventService {
     public void startEvent(Long hostId) {
         Event event = getEvent(hostId);
 
-        if(event.hasStarted())
+        if(event.getStarted())
             throw new IllegalStateException("Event has already started");
 
-        event.start();
+        event.setStarted();
 
     }
 

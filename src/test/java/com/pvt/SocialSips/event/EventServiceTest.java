@@ -62,13 +62,13 @@ public class EventServiceTest {
         when(eventRepository.findById(nonStartedEvent.getHostId())).thenReturn(Optional.of(nonStartedEvent));
         eventService.startEvent(nonStartedEvent.getHostId());
 
-        assertTrue(nonStartedEvent.hasStarted());
+        assertTrue(nonStartedEvent.getStarted());
     }
 
     @Test
     public void startEvent_EventAlreadyStarted_IllegalStateExceptionThrown() {
         Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
-        startedEvent.start();
+        startedEvent.setStarted();
 
         when(eventRepository.findById(startedEvent.getHostId())).thenReturn(Optional.of(startedEvent));
 
