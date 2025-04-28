@@ -41,4 +41,15 @@ public class EventController {
         }
     }
 
+    @PatchMapping("/start/{hostId}")
+    public ResponseEntity<String> startEvent(@PathVariable Long hostId){
+        try{
+            eventService.startEvent(hostId);
+            return new ResponseEntity<>("Event created", HttpStatus.OK);
+
+        } catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
