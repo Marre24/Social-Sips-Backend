@@ -7,9 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -65,13 +63,15 @@ public class QuestpoolServiceTest {
     public void deleteQuestpool_ExistingQuestpool_QuestpoolRemoved(){
         Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, quests);
         when(questpoolRepository.findById(qp.getId())).thenReturn(Optional.of(qp));
-        assertDoesNotThrow(() -> questpoolService.deleteQuestpool(qp));
+        assertDoesNotThrow(() -> questpoolService.deleteQuestpoolById(qp.getId()));
     }
 
     @Test
     public void deleteQuestpool_NonExistingQuestpool_IllegalStatExceptionThrown(){
         Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, quests);
         when(questpoolRepository.findById(qp.getId())).thenReturn(Optional.empty());
-        assertThrows(IllegalStateException.class,() -> questpoolService.deleteQuestpool(qp));
+        assertThrows(IllegalStateException.class,() -> questpoolService.deleteQuestpoolById(qp.getId()));
     }
+
+
 }
