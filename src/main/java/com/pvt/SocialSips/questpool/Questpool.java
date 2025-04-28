@@ -3,7 +3,7 @@ package com.pvt.SocialSips.questpool;
 import com.pvt.SocialSips.quest.Quest;
 import jakarta.persistence.*;
 
-import java.util.HashSet;
+import java.util.Set;
 import java.util.Set;
 
 @Entity
@@ -21,7 +21,7 @@ public class Questpool {
 
     }
 
-    public Questpool(Long id, String category, HashSet<Quest> quests) {
+    public Questpool(Long id, String category, Set<Quest> quests) {
         this.id = id;
         this.category = category;
         this.quests = quests;
@@ -53,7 +53,7 @@ public class Questpool {
         return quests;
     }
 
-    public void setQuests(HashSet<Quest> quests) {
+    public void setQuests(Set<Quest> quests) {
         this.quests = quests;
     }
 }
