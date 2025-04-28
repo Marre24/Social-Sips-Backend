@@ -15,7 +15,6 @@ public class QuestpoolController {
 
     private final QuestpoolService questpoolService;
 
-
     @Autowired
     public QuestpoolController( QuestpoolService questpoolService) {
         this.questpoolService = questpoolService;

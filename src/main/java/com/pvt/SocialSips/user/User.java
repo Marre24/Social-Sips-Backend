@@ -15,9 +15,7 @@ public class User {
     @Email
     private String email;
 
-    public User(){
-
-    }
+    public User(){}
 
     public User(Long id, String email){
         this.id = id;
@@ -25,8 +23,7 @@ public class User {
     }
 
     public void setEmail(@Email String email){
-        this.email = email;
-    }
+        this.email = email;}
 
     public @Email String getEmail() {
         return email;
