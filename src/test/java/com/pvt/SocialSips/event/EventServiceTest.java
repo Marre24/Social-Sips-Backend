@@ -9,8 +9,7 @@ import org.springframework.dao.DuplicateKeyException;
 import java.util.HashSet;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -23,6 +22,14 @@ public class EventServiceTest {
     private EventService eventService;
 
     private final static Event EVENT = new Event(1L, "name", 2, new HashSet<>());
+
+    @Test
+    public void getEvent_EventExists_EventReturned (){
+
+        when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
+
+        assertEquals(EVENT, eventService.getEvent(EVENT.getHostId()));
+    }
 
 
     @Test

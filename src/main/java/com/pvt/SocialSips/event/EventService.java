@@ -21,4 +21,8 @@ public class EventService {
         eventRepository.save(event);
     }
 
+    public Event getEvent(Long id) {
+
+        return eventRepository.findById(id).get();
+    }
 }
