@@ -2,6 +2,7 @@ package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.questpool.Questpool;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 
@@ -9,6 +10,7 @@ import java.util.Set;
 
 @Entity
 public class Event {
+    @Id
     private final Long hostId;
     private final String name;
     private final Integer groupSize;
