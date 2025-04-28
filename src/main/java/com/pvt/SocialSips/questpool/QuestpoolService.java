@@ -1,29 +1,57 @@
 package com.pvt.SocialSips.questpool;
 
+import com.pvt.SocialSips.quest.Quest;
+import com.pvt.SocialSips.quest.QuestRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestpoolService {
 
-    private QuestpoolRepository questpoolRepository;
+    @Autowired
+    private QuestRepository questRepository;
 
     @Autowired
-    public QuestpoolService(QuestpoolRepository questpoolRepository) {
+    private QuestpoolRepository questpoolRepository;
+
+
+    public QuestpoolService(QuestRepository questRepository, QuestpoolRepository questpoolRepository) {
         this.questpoolRepository = questpoolRepository;
+        this.questRepository = questRepository;
     }
 
-    public List<Questpool> getByUserId(Long userId) {
-        Optional<Questpool> questpoolOptional = questpoolRepository.findById(userId);
-        if (questpoolOptional.isEmpty())
-            return new ArrayList<>();
-
-        return List.of(questpoolOptional.get());
+    public Questpool getByQuestpoolId(Long qpId) {
+        Optional<Questpool> questpoolOptional = questpoolRepository.findById(qpId);
+        return questpoolOptional.orElseThrow(() -> new IllegalStateException("No such questpool exists!"));
     }
 
+    public void deleteQuestpoolById(Long qpId){
+        Questpool qp = getByQuestpoolId(qpId);
+        questpoolRepository.deleteById(qpId);
+    }
+
+
+    public void createQuestpool(Questpool qp) {
+        questRepository.saveAll(qp.getQuests());
+        questpoolRepository.save(qp);
+    }
+
+    @Transactional
+    public void updateQuestpool(Set<Quest> quests, Long qpId) {
+        Questpool qp = getByQuestpoolId(qpId);
+        questRepository.deleteAll(qp.getQuests());
+        qp.getQuests().clear();
+
+        qp.quests.addAll(quests);
+        questRepository.saveAll(qp.getQuests());
+        questpoolRepository.save(qp);
+    }
 
 }

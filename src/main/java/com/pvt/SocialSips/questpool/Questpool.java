@@ -1,11 +1,11 @@
 package com.pvt.SocialSips.questpool;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.Data;
+import com.pvt.SocialSips.quest.Quest;
+import jakarta.persistence.*;
 
-@Data
+import java.util.Set;
+import java.util.Set;
+
 @Entity
 public class Questpool {
 
@@ -13,7 +13,47 @@ public class Questpool {
     @GeneratedValue
     private Long id;
     private String category;
+    @OneToMany
+    @JoinColumn(name = "qpId")
+    Set<Quest> quests;
+
+    public Questpool(){
+
+    }
+
+    public Questpool(Long id, String category, Set<Quest> quests) {
+        this.id = id;
+        this.category = category;
+        this.quests = quests;
+    }
+
+    public Questpool(String category, Set<Quest> quests) {
+        this.category = category;
+        this.quests = quests;
+    }
 
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public Set<Quest> getQuests() {
+        return quests;
+    }
+
+    public void setQuests(Set<Quest> quests) {
+        this.quests = quests;
+    }
 }
