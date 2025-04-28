@@ -43,4 +43,10 @@ public class EventService {
         event.start();
 
     }
+
+    public void deleteEvent(Long hostId) {
+        getEvent(hostId);
+
+        eventRepository.deleteById(hostId);
+    }
 }

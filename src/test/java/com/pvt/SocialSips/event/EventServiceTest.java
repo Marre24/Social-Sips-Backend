@@ -75,5 +75,12 @@ public class EventServiceTest {
         assertThrows(IllegalStateException.class, () -> eventService.startEvent(startedEvent.getHostId()));
     }
 
+    @Test
+    public void deleteEvent_EventExists_EventDeleted(){
+        when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
+
+        assertDoesNotThrow(() -> eventService.deleteEvent(EVENT.getHostId()));
+    }
+
 
 }
