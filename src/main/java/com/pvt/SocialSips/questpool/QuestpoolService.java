@@ -26,10 +26,12 @@ public class QuestpoolService {
 
     public Questpool getByQuestpoolId(Long userId) {
         Optional<Questpool> questpoolOptional = questpoolRepository.findById(userId);
-        if (questpoolOptional.isEmpty())
-            throw new IllegalStateException("No such questpool exists!");
+        return questpoolOptional.orElseThrow(() -> new IllegalStateException("No such questpool exists!"));
+    }
 
-        return questpoolOptional.get();
+    public void deleteQuestpoolById(Long qpId){
+        Questpool qp = getByQuestpoolId(qpId);
+        questpoolRepository.deleteById(qpId);
     }
 
 
