@@ -17,13 +17,6 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
-    public void createEvent(Event event) {
-        if (eventRepository.findById(event.getHostId()).isPresent())
-            throw new DuplicateKeyException("Event with id: " + event.getHostId() + " already exists");
-
-        eventRepository.save(event);
-    }
-
     public Event getEvent(Long id) {
         Optional<Event> optionalEvent = eventRepository.findById(id);
 
@@ -31,5 +24,23 @@ public class EventService {
             throw new EntityNotFoundException("Event with id: " + id + " does not exist");
 
         return optionalEvent.get();
+    }
+
+    public void createEvent(Event event) {
+        if (eventRepository.findById(event.getHostId()).isPresent())
+            throw new DuplicateKeyException("Event with id: " + event.getHostId() + " already exists");
+
+        eventRepository.save(event);
+    }
+
+
+    public void startEvent(Long hostId) {
+        Event event = getEvent(hostId);
+
+        if(event.hasStarted())
+            throw new IllegalStateException("Event has already started");
+
+        event.start();
+
     }
 }

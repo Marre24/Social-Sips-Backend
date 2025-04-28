@@ -25,35 +25,55 @@ public class EventServiceTest {
     private final static Event EVENT = new Event(1L, "name", 2, new HashSet<>());
 
     @Test
-    public void getEvent_EventExists_EventReturned (){
+    public void getEvent_EventExists_EventReturned() {
         when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
 
         assertEquals(EVENT, eventService.getEvent(EVENT.getHostId()));
     }
 
     @Test
-    public void getEvent_EventDoesNotExist_EntityNotFoundExceptionThrown (){
+    public void getEvent_EventDoesNotExist_EntityNotFoundExceptionThrown() {
         when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> eventService.getEvent(EVENT.getHostId()));
     }
 
 
-
     @Test
-    public void createEvent_EmptyDatabase_EventCreated(){
+    public void createEvent_EmptyDatabase_EventCreated() {
         when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.empty());
         when(eventRepository.save(EVENT)).thenReturn(EVENT);
 
         assertDoesNotThrow(() -> eventService.createEvent(EVENT));
     }
 
-    @Test   
-    public void createEvent_EventWithHostIdExists_DuplicateKeyExceptionThrown(){
+    @Test
+    public void createEvent_EventWithHostIdExists_DuplicateKeyExceptionThrown() {
         when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
         when(eventRepository.save(EVENT)).thenReturn(EVENT);
 
         assertThrows(DuplicateKeyException.class, () -> eventService.createEvent(EVENT));
     }
+
+    @Test
+    public void startEvent_EventNotStarted_EventStarted() {
+        Event nonStartedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
+
+        when(eventRepository.findById(nonStartedEvent.getHostId())).thenReturn(Optional.of(nonStartedEvent));
+        eventService.startEvent(nonStartedEvent.getHostId());
+
+        assertTrue(nonStartedEvent.hasStarted());
+    }
+
+    @Test
+    public void startEvent_EventAlreadyStarted_IllegalStateExceptionThrown() {
+        Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
+        startedEvent.start();
+
+        when(eventRepository.findById(startedEvent.getHostId())).thenReturn(Optional.of(startedEvent));
+
+        assertThrows(IllegalStateException.class, () -> eventService.startEvent(startedEvent.getHostId()));
+    }
+
 
 }
