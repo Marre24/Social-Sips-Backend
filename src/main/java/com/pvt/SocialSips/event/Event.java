@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Entity
 public class Event {
+
     @Id
     private final Long hostId;
     private final String name;
@@ -19,6 +20,9 @@ public class Event {
     @JoinColumn(name = "eventId")
     private final Set<Questpool> questpools;
 
+    public Long getHostId() {
+        return hostId;
+    }
 
     public Event(Long hostId, String name, Integer groupSize, Set<Questpool> questpools) {
         this.hostId = hostId;
