@@ -23,7 +23,12 @@ public class QuestpoolController {
 
     @GetMapping("/{qpId}")
     public ResponseEntity<Questpool> getByQuestpoolId(@PathVariable Long qpId) {
-        return ResponseEntity.ok(questpoolService.getByQuestpoolId(qpId));
+        try{
+            return ResponseEntity.ok(questpoolService.getByQuestpoolId(qpId));
+        }
+        catch (IllegalStateException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @DeleteMapping("/{qpId}")

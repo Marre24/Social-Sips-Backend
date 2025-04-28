@@ -54,7 +54,4 @@ public class QuestpoolService {
         questpoolRepository.save(qp);
     }
 
-    public void deleteQuestpool(Questpool qp) {
-
-    }
 }
