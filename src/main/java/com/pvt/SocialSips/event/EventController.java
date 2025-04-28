@@ -2,6 +2,7 @@ package com.pvt.SocialSips.event;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,17 @@ public class EventController {
 
         } catch (EntityNotFoundException exception){
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<String> postEvent(@RequestBody Event event){
+        try{
+            eventService.createEvent(event);
+            return new ResponseEntity<>("Event created", HttpStatus.OK);
+
+        } catch (DuplicateKeyException exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
