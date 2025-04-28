@@ -13,6 +13,7 @@ public class Event {
 
     @Id
     private final Long hostId;
+    private Boolean started = false;
     private final String name;
     private final Integer groupSize;
 
@@ -20,9 +21,7 @@ public class Event {
     @JoinColumn(name = "eventId")
     private final Set<Questpool> questpools;
 
-    public Long getHostId() {
-        return hostId;
-    }
+
 
     public Event(Long hostId, String name, Integer groupSize, Set<Questpool> questpools) {
         this.hostId = hostId;
@@ -31,5 +30,17 @@ public class Event {
         this.questpools = questpools;
     }
 
+
+    public Long getHostId() {
+        return hostId;
+    }
+
+    public Boolean hasStarted() {
+        return started;
+    }
+
+    public void start() {
+        started = true;
+    }
 
 }
