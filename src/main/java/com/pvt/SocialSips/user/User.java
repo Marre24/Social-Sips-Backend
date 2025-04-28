@@ -15,12 +15,17 @@ public class User {
     @Email
     private String email;
 
-    public @Email String getEmail() {
-        return email;
+    public User(){
+
     }
 
-    public void setEmail(@Email String email) {
+    public User(Long id, String email){
+        this.id = id;
         this.email = email;
+    }
+
+    public @Email String getEmail() {
+        return email;
     }
 
     public Long getId() {
