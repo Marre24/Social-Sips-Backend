@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.questpool;
 
+import com.pvt.SocialSips.quest.Quest;
 import com.pvt.SocialSips.quest.QuestRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestpoolService {
@@ -24,8 +27,8 @@ public class QuestpoolService {
         this.questRepository = questRepository;
     }
 
-    public Questpool getByQuestpoolId(Long userId) {
-        Optional<Questpool> questpoolOptional = questpoolRepository.findById(userId);
+    public Questpool getByQuestpoolId(Long qpId) {
+        Optional<Questpool> questpoolOptional = questpoolRepository.findById(qpId);
         return questpoolOptional.orElseThrow(() -> new IllegalStateException("No such questpool exists!"));
     }
 
@@ -37,29 +40,21 @@ public class QuestpoolService {
 
     public void createQuestpool(Questpool qp) {
         questRepository.saveAll(qp.getQuests());
-
         questpoolRepository.save(qp);
     }
 
     @Transactional
-    public void updateQuestpool(Questpool questpool, Long id) {
-        Optional<Questpool> optionalQuestpool = questpoolRepository.findById(id);
+    public void updateQuestpool(Set<Quest> quests, Long qpId) {
+        Questpool qp = getByQuestpoolId(qpId);
+        questRepository.deleteAll(qp.getQuests());
+        qp.getQuests().clear();
 
-        if(optionalQuestpool.isPresent()) {
-            questpoolRepository.delete(optionalQuestpool.get());
-
-            questpool.setId(id);
-            questpoolRepository.save(questpool);
-
-        } else {
-            throw new IllegalStateException("Questpool with id: " + id + " does not exist!");
-        }
-
-
+        qp.quests.addAll(quests);
+        questRepository.saveAll(qp.getQuests());
+        questpoolRepository.save(qp);
     }
 
     public void deleteQuestpool(Questpool qp) {
-        getByQuestpoolId(qp.getId());
-        questpoolRepository.delete(qp);
+
     }
 }
