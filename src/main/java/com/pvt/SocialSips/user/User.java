@@ -24,8 +24,16 @@ public class User {
         this.email = email;
     }
 
+    public void setEmail(@Email String email){
+        this.email = email;
+    }
+
     public @Email String getEmail() {
         return email;
+    }
+
+    public void setId(Long id){
+        this.id = id;
     }
 
     public Long getId() {
