@@ -1,7 +1,9 @@
 package com.pvt.SocialSips.questpool;
 
+import com.pvt.SocialSips.quest.Icebreaker;
 import com.pvt.SocialSips.quest.Quest;
 import com.pvt.SocialSips.quest.QuestRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -20,8 +22,8 @@ public class QuestpoolServiceTest {
 
     private static final String CATEGORY = "Category";
 
-    private static final Quest q1 = new Quest("Prompt One");
-    private static final Quest q2 = new Quest("Prompt Two");
+    private static final Icebreaker q1 = new Icebreaker("Prompt One");
+    private static final Icebreaker q2 = new Icebreaker("Prompt Two");
 
     private static final HashSet<Quest> quests = new HashSet<>(List.of(q1, q2));
 
@@ -38,7 +40,7 @@ public class QuestpoolServiceTest {
     public void getByQuestpoolId_IdDoesNotExist_ThrowsIllegalStateException() {
         when(questpoolRepository.findById(NON_EXISTING_QUESTPOOL_ID)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalStateException.class, () -> questpoolService.getByQuestpoolId(NON_EXISTING_QUESTPOOL_ID));
+        assertThrows(EntityNotFoundException.class, () -> questpoolService.getByQuestpoolId(NON_EXISTING_QUESTPOOL_ID));
     }
 
     @Test
@@ -70,7 +72,7 @@ public class QuestpoolServiceTest {
     public void deleteQuestpool_NonExistingQuestpool_IllegalStatExceptionThrown(){
         Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, quests);
         when(questpoolRepository.findById(qp.getId())).thenReturn(Optional.empty());
-        assertThrows(IllegalStateException.class,() -> questpoolService.deleteQuestpoolById(qp.getId()));
+        assertThrows(EntityNotFoundException.class,() -> questpoolService.deleteQuestpoolById(qp.getId()));
     }
 
 

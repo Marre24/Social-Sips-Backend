@@ -1,8 +1,15 @@
 package com.pvt.SocialSips.quest;
 
-public class Icebreaker extends Quest{
+import jakarta.persistence.Entity;
 
-    public Icebreaker(String prompt){
+@Entity
+public class Icebreaker extends Quest {
+
+    public Icebreaker() {
+
+    }
+
+    public Icebreaker(String prompt) {
         super(prompt);
     }
 

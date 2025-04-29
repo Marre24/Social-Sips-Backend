@@ -20,48 +20,50 @@ public class EventController {
     }
 
     @GetMapping("/{hostId}")
-    public ResponseEntity<?> getEvent(@PathVariable Long hostId){
-        try{
+    public ResponseEntity<?> getEvent(@PathVariable Long hostId) {
+        try {
             Event e = eventService.getEvent(hostId);
             return new ResponseEntity<>(e, HttpStatus.OK);
 
-        } catch (EntityNotFoundException exception){
+        } catch (EntityNotFoundException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> postEvent(@RequestBody Event event){
-        try{
+    public ResponseEntity<String> postEvent(@RequestBody Event event) {
+        try {
             eventService.createEvent(event);
             return new ResponseEntity<>("Event created", HttpStatus.OK);
 
-        } catch (DuplicateKeyException exception){
+        } catch (DuplicateKeyException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
     @PatchMapping("/start/{hostId}")
-    public ResponseEntity<String> startEvent(@PathVariable Long hostId){
-        try{
+    public ResponseEntity<String> startEvent(@PathVariable Long hostId) {
+        try {
             eventService.startEvent(hostId);
             return new ResponseEntity<>("Event Started", HttpStatus.OK);
 
-        } catch (Exception exception){
+        } catch (Exception exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @DeleteMapping("/{hostId}")
-    public ResponseEntity<String> deleteEvent(@PathVariable Long hostId){
-        try{
+    public ResponseEntity<String> deleteEvent(@PathVariable Long hostId) {
+        try {
             eventService.deleteEvent(hostId);
             return new ResponseEntity<>("Event deleted", HttpStatus.OK);
 
-        } catch (EntityNotFoundException exception){
+        } catch (EntityNotFoundException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    // TODO: 2025-04-29 Join event endpoint
 
 
 }

@@ -22,7 +22,8 @@ public class EventServiceTest {
     @InjectMocks
     private EventService eventService;
 
-    private final static Event EVENT = new Event(1L, "name", 2, new HashSet<>());
+    private final static Event EVENT = new Event(21343211L, "name", 2, new HashSet<>());
+    private final static String DEVICE_ID = "thisIsAUUID";
 
     @Test
     public void getEvent_EventExists_EventReturned() {
@@ -82,5 +83,27 @@ public class EventServiceTest {
         assertDoesNotThrow(() -> eventService.deleteEvent(EVENT.getHostId()));
     }
 
+    @Test
+    public void codeGenerator_IdIsTen_CodeIsGenerated(){
+        Event idTen = new Event(10L, "NonStartedEvent", 2, new HashSet<>());
 
+        assertNotNull(idTen.getJoinCode());
+    }
+
+    @Test
+    public void joinEvent_NonStartedEvent_GuestAdded(){
+        when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
+
+        eventService.joinEvent(EVENT.getJoinCode(), DEVICE_ID);
+        assertFalse(EVENT.getGuests().isEmpty());
+    }
+
+    @Test
+    public void joinEvent_StartedEvent_IllegalStateExceptionThrown(){
+        Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
+        startedEvent.setStarted();
+        when(eventRepository.findById(startedEvent.getHostId())).thenReturn(Optional.of(startedEvent));
+        
+        assertThrows(IllegalStateException.class, () -> eventService.joinEvent(startedEvent.getJoinCode(), DEVICE_ID));
+    }
 }
