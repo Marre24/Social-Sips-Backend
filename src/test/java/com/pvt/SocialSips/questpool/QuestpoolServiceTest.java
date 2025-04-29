@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.questpool;
 
+import com.pvt.SocialSips.quest.Icebreaker;
 import com.pvt.SocialSips.quest.Quest;
 import com.pvt.SocialSips.quest.QuestRepository;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,8 @@ public class QuestpoolServiceTest {
 
     private static final String CATEGORY = "Category";
 
-    private static final Quest q1 = new Quest("Prompt One");
-    private static final Quest q2 = new Quest("Prompt Two");
+    private static final Icebreaker q1 = new Icebreaker("Prompt One");
+    private static final Icebreaker q2 = new Icebreaker("Prompt Two");
 
     private static final HashSet<Quest> quests = new HashSet<>(List.of(q1, q2));
 
