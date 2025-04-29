@@ -1,24 +1,31 @@
 package com.pvt.SocialSips.quest;
 
 
-import java.util.Arrays;
+import jakarta.persistence.Entity;
 
+import java.util.Set;
+
+@Entity
 public class Trivia extends Quest {
 
-    private String[] options;
-    private int correctOption;
+    private Set<String> options;
+    private Integer correctOption;
 
-    public Trivia(Long id, String prompt, String[] options, int correctOption){
+    public Trivia() {
+
+    }
+
+    public Trivia(Long id, String prompt, Set<String> options, int correctOption){
         super(id, prompt);
         this.correctOption = correctOption;
         this.options = options;
     }
 
-    public void setOptions(String[] options){;
+    public void setOptions(Set<String> options){;
         this.options = options;
     }
 
-    public String[] getOptions() {
+    public Set<String> getOptions() {
         return options;
     }
 
@@ -26,8 +33,8 @@ public class Trivia extends Quest {
         this.correctOption = correctOption;
     }
 
-    public String getCorrectOption() {
-        return options[correctOption];
+    public Integer getCorrectOption() {
+        return correctOption;
     }
 
 
