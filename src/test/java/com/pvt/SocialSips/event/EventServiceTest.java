@@ -91,11 +91,19 @@ public class EventServiceTest {
     }
 
     @Test
-    public void joinEvent_NonStartedExistingEvent_EventJoined(){
+    public void joinEvent_NonStartedEvent_GuestAdded(){
         when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
 
         eventService.joinEvent(EVENT.getJoinCode(), DEVICE_ID);
         assertFalse(EVENT.getGuests().isEmpty());
     }
 
+    @Test
+    public void joinEvent_StartedEvent_IllegalStateExceptionThrown(){
+        Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
+        startedEvent.setStarted();
+        when(eventRepository.findById(startedEvent.getHostId())).thenReturn(Optional.of(startedEvent));
+        
+        assertThrows(IllegalStateException.class, () -> eventService.joinEvent(startedEvent.getJoinCode(), DEVICE_ID));
+    }
 }

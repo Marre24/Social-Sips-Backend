@@ -54,6 +54,9 @@ public class EventService {
 
     public void joinEvent(String joinCode, String deviceId){
         Event e = getEvent(Event.SQID.decode(joinCode).get(0));
+        if(e.getStarted())
+            throw new IllegalStateException("Tried to join a started event!");
+
         e.addGuest(deviceId);
     }
 
