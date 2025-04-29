@@ -46,7 +46,7 @@ public class QuestpoolService {
         questRepository.deleteAll(qp.getQuests());
         qp.getQuests().clear();
 
-        qp.quests.addAll(quests);
+        qp.getQuests().addAll(quests);
         questRepository.saveAll(qp.getQuests());
         questpoolRepository.save(qp);
     }
