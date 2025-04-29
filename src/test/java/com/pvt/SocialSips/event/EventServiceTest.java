@@ -82,5 +82,11 @@ public class EventServiceTest {
         assertDoesNotThrow(() -> eventService.deleteEvent(EVENT.getHostId()));
     }
 
+    @Test
+    public void codeGenerator_IdIsTen_CodeIsGenerated(){
+        Event idTen = new Event(10L, "NonStartedEvent", 2, new HashSet<>());
+
+        assertNotNull(idTen.getCode());
+    }
 
 }

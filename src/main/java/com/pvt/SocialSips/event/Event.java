@@ -5,7 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import org.sqids.Sqids;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -14,7 +16,7 @@ public class Event {
     @Id
     private Long hostId;
     private Boolean started = false;
-
+    private String joinCode;
 
     private String name;
     private Integer groupSize;
@@ -28,11 +30,14 @@ public class Event {
     }
 
     public Event(Long hostId, String name, Integer groupSize, Set<Questpool> questpools) {
+        joinCode = Sqids.builder().minLength(5).alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ").build().encode(List.of(hostId));
+
         this.hostId = hostId;
         this.name = name;
         this.groupSize = groupSize;
         this.questpools = questpools;
     }
+
     public String getName() {
         return name;
     }
@@ -69,4 +74,7 @@ public class Event {
         started = true;
     }
 
+    public String getCode() {
+        return joinCode;
+    }
 }
