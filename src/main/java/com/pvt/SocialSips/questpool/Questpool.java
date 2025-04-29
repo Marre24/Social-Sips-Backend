@@ -4,7 +4,6 @@ import com.pvt.SocialSips.quest.Quest;
 import jakarta.persistence.*;
 
 import java.util.Set;
-import java.util.Set;
 
 @Entity
 public class Questpool {
@@ -12,26 +11,25 @@ public class Questpool {
     @Id
     @GeneratedValue
     private Long id;
-    private String category;
-    @OneToMany
+    private String name;
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "qpId")
-    Set<Quest> quests;
+    private Set<Quest>  quests;
 
     public Questpool(){
 
     }
 
-    public Questpool(Long id, String category, Set<Quest> quests) {
+    public Questpool(Long id, String name, Set<Quest> quests) {
         this.id = id;
-        this.category = category;
+        this.name = name;
         this.quests = quests;
     }
 
-    public Questpool(String category, Set<Quest> quests) {
-        this.category = category;
+    public Questpool(String name, Set<Quest> quests) {
+        this.name = name;
         this.quests = quests;
     }
-
 
     public Long getId() {
         return id;
@@ -41,12 +39,12 @@ public class Questpool {
         this.id = id;
     }
 
-    public String getCategory() {
-        return category;
+    public String getName() {
+        return name;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<Quest> getQuests() {
