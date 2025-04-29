@@ -51,4 +51,11 @@ public class EventService {
 
         eventRepository.deleteById(hostId);
     }
+
+    public void joinEvent(String joinCode, String deviceId){
+        Event e = getEvent(Event.SQID.decode(joinCode).get(0));
+        e.addGuest(deviceId);
+    }
+
+
 }
