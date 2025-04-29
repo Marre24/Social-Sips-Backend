@@ -12,16 +12,20 @@ import java.util.Set;
 public class Event {
 
     @Id
-    private final Long hostId;
+    private Long hostId;
     private Boolean started = false;
-    private final String name;
-    private final Integer groupSize;
+
+
+    private String name;
+    private Integer groupSize;
 
     @OneToMany
     @JoinColumn(name = "eventId")
-    private final Set<Questpool> questpools;
+    private Set<Questpool> questpools;
 
 
+    public Event() {
+    }
 
     public Event(Long hostId, String name, Integer groupSize, Set<Questpool> questpools) {
         this.hostId = hostId;
@@ -29,17 +33,39 @@ public class Event {
         this.groupSize = groupSize;
         this.questpools = questpools;
     }
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getGroupSize() {
+        return groupSize;
+    }
+
+    public void setGroupSize(Integer groupSize) {
+        this.groupSize = groupSize;
+    }
+
+    public Set<Questpool> getQuestpools() {
+        return questpools;
+    }
+
+    public void setQuestpools(Set<Questpool> questpools) {
+        this.questpools = questpools;
+    }
 
     public Long getHostId() {
         return hostId;
     }
 
-    public Boolean hasStarted() {
+    public Boolean getStarted() {
         return started;
     }
 
-    public void start() {
+    public void setStarted() {
         started = true;
     }
 
