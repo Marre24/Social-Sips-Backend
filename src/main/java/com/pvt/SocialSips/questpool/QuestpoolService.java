@@ -2,6 +2,7 @@ package com.pvt.SocialSips.questpool;
 
 import com.pvt.SocialSips.quest.Quest;
 import com.pvt.SocialSips.quest.QuestRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class QuestpoolService {
 
     public Questpool getByQuestpoolId(Long qpId) {
         Optional<Questpool> questpoolOptional = questpoolRepository.findById(qpId);
-        return questpoolOptional.orElseThrow(() -> new IllegalStateException("No such questpool exists!"));
+        return questpoolOptional.orElseThrow(() -> new EntityNotFoundException("No such questpool exists!"));
     }
 
     public void deleteQuestpoolById(Long qpId){
