@@ -20,7 +20,6 @@ public class Event {
     private Long hostId;
     private Boolean started = false;
     private String joinCode;
-
     private String name;
     private Integer groupSize;
 
@@ -28,6 +27,7 @@ public class Event {
     @JoinColumn(name = "eventId")
     private Set<Questpool> questpools;
 
+    // TODO: 2025-04-29 add relationship
     private Set<String> guests = new HashSet<>();
 
 
@@ -79,13 +79,15 @@ public class Event {
         started = true;
     }
 
-    public String getJoinCode() {return joinCode;}
+    public String getJoinCode() {
+        return joinCode;
+    }
 
     public Set<String> getGuests() {
         return guests;
     }
 
-    public void addGuest(String deviceId){
+    public void addGuest(String deviceId) {
         guests.add(deviceId);
     }
 }

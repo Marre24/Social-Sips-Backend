@@ -14,10 +14,10 @@ import java.util.Set;
 public class QuestpoolService {
 
     @Autowired
-    private QuestRepository questRepository;
+    private final QuestRepository questRepository;
 
     @Autowired
-    private QuestpoolRepository questpoolRepository;
+    private final QuestpoolRepository questpoolRepository;
 
 
     public QuestpoolService(QuestRepository questRepository, QuestpoolRepository questpoolRepository) {
@@ -30,7 +30,7 @@ public class QuestpoolService {
         return questpoolOptional.orElseThrow(() -> new EntityNotFoundException("No such questpool exists!"));
     }
 
-    public void deleteQuestpoolById(Long qpId){
+    public void deleteQuestpoolById(Long qpId) {
         Questpool qp = getByQuestpoolId(qpId);
         questpoolRepository.deleteById(qpId);
     }

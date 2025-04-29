@@ -21,7 +21,7 @@ public class EventService {
     public Event getEvent(Long id) {
         Optional<Event> optionalEvent = eventRepository.findById(id);
 
-        if(optionalEvent.isEmpty())
+        if (optionalEvent.isEmpty())
             throw new EntityNotFoundException("Event with id: " + id + " does not exist");
 
         return optionalEvent.get();
@@ -39,7 +39,7 @@ public class EventService {
     public void startEvent(Long hostId) {
         Event event = getEvent(hostId);
 
-        if(event.getStarted())
+        if (event.getStarted())
             throw new IllegalStateException("Event has already started");
 
         event.setStarted();
@@ -52,9 +52,9 @@ public class EventService {
         eventRepository.deleteById(hostId);
     }
 
-    public void joinEvent(String joinCode, String deviceId){
+    public void joinEvent(String joinCode, String deviceId) {
         Event e = getEvent(Event.SQID.decode(joinCode).get(0));
-        if(e.getStarted())
+        if (e.getStarted())
             throw new IllegalStateException("Tried to join a started event!");
 
         e.addGuest(deviceId);
