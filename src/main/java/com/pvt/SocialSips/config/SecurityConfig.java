@@ -11,7 +11,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .oauth2Login(auth -> auth
                         .loginPage("/user/login")
                         .defaultSuccessUrl("/user/profile"))
