@@ -16,6 +16,12 @@ public class Trivia extends Quest {
 
     }
 
+    public Trivia(String prompt, Set<String> options, int correctOption) {
+        super(prompt);
+        this.correctOption = correctOption;
+        this.options = options;
+    }
+
     public Trivia(Long id, String prompt, Set<String> options, int correctOption) {
         super(id, prompt);
         this.correctOption = correctOption;
