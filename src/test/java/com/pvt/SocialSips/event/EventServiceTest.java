@@ -69,7 +69,7 @@ public class EventServiceTest {
     @Test
     public void startEvent_EventAlreadyStarted_IllegalStateExceptionThrown() {
         Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
-        startedEvent.setStarted();
+        startedEvent.setStarted(true);
 
         when(eventRepository.findById(startedEvent.getHostId())).thenReturn(Optional.of(startedEvent));
 
@@ -101,7 +101,7 @@ public class EventServiceTest {
     @Test
     public void joinEvent_StartedEvent_IllegalStateExceptionThrown(){
         Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
-        startedEvent.setStarted();
+        startedEvent.setStarted(true);
         when(eventRepository.findById(startedEvent.getHostId())).thenReturn(Optional.of(startedEvent));
         
         assertThrows(IllegalStateException.class, () -> eventService.joinEvent(startedEvent.getJoinCode(), DEVICE_ID));
