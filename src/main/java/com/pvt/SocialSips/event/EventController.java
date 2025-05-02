@@ -1,6 +1,7 @@
 package com.pvt.SocialSips.event;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class EventController {
             return new ResponseEntity<>("Event Started", HttpStatus.OK);
 
         } catch (Exception exception){
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
@@ -60,6 +61,17 @@ public class EventController {
 
         } catch (EntityNotFoundException exception){
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PatchMapping("/join/{joinCode}")
+    public ResponseEntity<String> joinEvent(@PathVariable String joinCode, @RequestParam String deviceId){
+        try{
+            eventService.joinEvent(joinCode,deviceId);
+            return new ResponseEntity<>("Event joined!", HttpStatus.OK);
+        }
+        catch(IllegalStateException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 

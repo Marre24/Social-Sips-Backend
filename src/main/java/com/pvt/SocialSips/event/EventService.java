@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.event;
 
+import com.pvt.SocialSips.user.Guest;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -42,7 +43,7 @@ public class EventService {
         if(event.getStarted())
             throw new IllegalStateException("Event has already started");
 
-        event.setStarted();
+        event.setStarted(true);
 
     }
 
@@ -57,7 +58,7 @@ public class EventService {
         if(e.getStarted())
             throw new IllegalStateException("Tried to join a started event!");
 
-        e.addGuest(deviceId);
+        e.addGuest(new Guest(deviceId));
     }
 
 

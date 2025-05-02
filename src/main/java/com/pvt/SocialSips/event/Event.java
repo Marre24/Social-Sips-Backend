@@ -1,10 +1,8 @@
 package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.questpool.Questpool;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import com.pvt.SocialSips.user.Guest;
+import jakarta.persistence.*;
 import org.sqids.Sqids;
 
 import java.util.HashSet;
@@ -25,22 +23,53 @@ public class Event {
     private Integer groupSize;
 
     @OneToMany
-    @JoinColumn(name = "eventId")
     private Set<Questpool> questpools;
 
-    private Set<String> guests = new HashSet<>();
-
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL) // Added cascade option to manage save operations
+    private Set<Guest> guests = new HashSet<>();
 
     public Event() {
     }
 
     public Event(Long hostId, String name, Integer groupSize, Set<Questpool> questpools) {
-        joinCode = SQID.encode(List.of(hostId));
-
+        joinCode = generateJoinCode(hostId);
         this.hostId = hostId;
         this.name = name;
         this.groupSize = groupSize;
         this.questpools = questpools;
+    }
+
+    public Event(Long hostId, String joinCode, Boolean started, String name, Integer groupSize, Set<Guest> guests){
+        this.joinCode = generateJoinCode(hostId);
+        this.guests = guests;
+        this.started = started;
+        this.name = name;
+        this.groupSize = groupSize;
+    }
+
+    public Long getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(Long hostId) {
+        this.hostId = hostId;
+        this.joinCode = generateJoinCode(hostId);
+    }
+
+    public Boolean getStarted() {
+        return started;
+    }
+
+    public void setStarted(Boolean started) {
+        this.started = started;
+    }
+
+    public String getJoinCode() {
+        return joinCode;
+    }
+
+    public void setJoinCode(String joinCode) {
+        this.joinCode = joinCode;
     }
 
     public String getName() {
@@ -67,25 +96,19 @@ public class Event {
         this.questpools = questpools;
     }
 
-    public Long getHostId() {
-        return hostId;
-    }
-
-    public Boolean getStarted() {
-        return started;
-    }
-
-    public void setStarted() {
-        started = true;
-    }
-
-    public String getJoinCode() {return joinCode;}
-
-    public Set<String> getGuests() {
+    public Set<Guest> getGuests() {
         return guests;
     }
 
-    public void addGuest(String deviceId){
+    public void setGuests(Set<Guest> guests) {
+        this.guests = guests;
+    }
+
+    public void addGuest(Guest deviceId) {
         guests.add(deviceId);
+    }
+
+    private String generateJoinCode(Long hostId){
+        return SQID.encode(List.of(hostId));
     }
 }
