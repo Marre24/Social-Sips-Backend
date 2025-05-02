@@ -1,6 +1,7 @@
 package com.pvt.SocialSips.event;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -20,50 +21,61 @@ public class EventController {
     }
 
     @GetMapping("/{hostId}")
-    public ResponseEntity<?> getEvent(@PathVariable Long hostId) {
-        try {
+    public ResponseEntity<?> getEvent(@PathVariable Long hostId){
+        try{
             Event e = eventService.getEvent(hostId);
             return new ResponseEntity<>(e, HttpStatus.OK);
 
-        } catch (EntityNotFoundException exception) {
+        } catch (EntityNotFoundException exception){
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> postEvent(@RequestBody Event event) {
-        try {
+    public ResponseEntity<String> postEvent(@RequestBody Event event){
+        try{
             eventService.createEvent(event);
             return new ResponseEntity<>("Event created", HttpStatus.OK);
 
-        } catch (DuplicateKeyException exception) {
+        } catch (DuplicateKeyException exception){
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
     @PatchMapping("/start/{hostId}")
-    public ResponseEntity<String> startEvent(@PathVariable Long hostId) {
-        try {
+    public ResponseEntity<String> startEvent(@PathVariable Long hostId){
+        try{
             eventService.startEvent(hostId);
             return new ResponseEntity<>("Event Started", HttpStatus.OK);
 
-        } catch (Exception exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
     @DeleteMapping("/{hostId}")
-    public ResponseEntity<String> deleteEvent(@PathVariable Long hostId) {
-        try {
+    public ResponseEntity<String> deleteEvent(@PathVariable Long hostId){
+        try{
             eventService.deleteEvent(hostId);
             return new ResponseEntity<>("Event deleted", HttpStatus.OK);
 
-        } catch (EntityNotFoundException exception) {
+        } catch (EntityNotFoundException exception){
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    // TODO: 2025-04-29 Join event endpoint
+    @PatchMapping("/join/{joinCode}")
+    public ResponseEntity<String> joinEvent(@PathVariable String joinCode, @RequestBody String deviceId){
+        try {
+            eventService.joinEvent(joinCode, deviceId);
+            return new ResponseEntity<>("Event joined!", HttpStatus.OK);
+
+        } catch (IllegalStateException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+        } catch (EntityNotFoundException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
 
 }
