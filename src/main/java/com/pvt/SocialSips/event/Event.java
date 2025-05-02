@@ -25,7 +25,8 @@ public class Event {
     @OneToMany
     private Set<Questpool> questpools;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL) // Added cascade option to manage save operations
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "event_id")
     private Set<Guest> guests = new HashSet<>();
 
     public Event() {
