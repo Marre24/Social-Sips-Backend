@@ -22,15 +22,15 @@ public abstract class Quest {
     private Long id;
     private String prompt;
 
-    public Quest(){
+    public Quest() {
 
     }
 
-    public Quest(String prompt){
+    public Quest(String prompt) {
         this.prompt = prompt;
     }
 
-    public Quest(Long id, String prompt){
+    public Quest(Long id, String prompt) {
         this.id = id;
         this.prompt = prompt;
     }

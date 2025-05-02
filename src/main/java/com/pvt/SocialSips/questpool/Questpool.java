@@ -14,19 +14,14 @@ public class Questpool {
     private String name;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "qpId")
-    private Set<Quest>  quests;
+    private Set<Quest> quests;
 
-    public Questpool(){
+    public Questpool() {
 
     }
 
     public Questpool(Long id, String name, Set<Quest> quests) {
         this.id = id;
-        this.name = name;
-        this.quests = quests;
-    }
-
-    public Questpool(String name, Set<Quest> quests) {
         this.name = name;
         this.quests = quests;
     }
