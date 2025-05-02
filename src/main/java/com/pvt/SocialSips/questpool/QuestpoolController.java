@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -59,8 +60,13 @@ public class QuestpoolController {
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
+    }
 
-
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllQuestpools(){
+        List<Questpool> questpools = questpoolService.getAllQuestpools();
+        if(questpools.isEmpty()) return new ResponseEntity<>("No questpools exists in the database.",HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(questpools, HttpStatus.OK);
     }
 
 }
