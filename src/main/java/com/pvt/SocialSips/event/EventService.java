@@ -53,6 +53,7 @@ public class EventService {
         eventRepository.deleteById(hostId);
     }
 
+    @Transactional
     public void joinEvent(String joinCode, String deviceId) {
         Event e = getEvent(Event.SQID.decode(joinCode).get(0));
         if (e.getStarted())
