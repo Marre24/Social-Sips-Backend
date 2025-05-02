@@ -7,19 +7,18 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class QuestpoolService {
 
-    @Autowired
     private final QuestRepository questRepository;
 
-    @Autowired
     private final QuestpoolRepository questpoolRepository;
 
-
+    @Autowired
     public QuestpoolService(QuestRepository questRepository, QuestpoolRepository questpoolRepository) {
         this.questpoolRepository = questpoolRepository;
         this.questRepository = questRepository;
@@ -30,7 +29,7 @@ public class QuestpoolService {
         return questpoolOptional.orElseThrow(() -> new EntityNotFoundException("No such questpool exists!"));
     }
 
-    public void deleteQuestpoolById(Long qpId) {
+    public void deleteQuestpoolById(Long qpId){
         Questpool qp = getByQuestpoolId(qpId);
         questpoolRepository.deleteById(qpId);
     }
@@ -52,4 +51,7 @@ public class QuestpoolService {
         questpoolRepository.save(qp);
     }
 
+    public List<Questpool> getAllQuestpools() {
+        return questpoolRepository.findAll();
+    }
 }
