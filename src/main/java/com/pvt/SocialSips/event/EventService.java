@@ -79,9 +79,8 @@ public class EventService {
         int groupSize = e.getGroupSize();
         int amountOfGroups = toBeMatched.size() / groupSize;
 
-        for(int i = 0; i < amountOfGroups; i++){
+        for(int i = 0; i < amountOfGroups; i++)
             groups.add(new ArrayList<>());
-        }
 
         for(int amountMatched = 0; amountMatched < toBeMatched.size(); amountMatched++){
             User u = toBeMatched.get(amountMatched);
