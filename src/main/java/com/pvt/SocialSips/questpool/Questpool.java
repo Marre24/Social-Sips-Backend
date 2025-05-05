@@ -28,6 +28,11 @@ public class Questpool {
         this.quests = quests;
     }
 
+    public Questpool(String name, Set<Quest> quests) {
+        this.name = name;
+        this.quests = quests;
+    }
+
     public Long getId() {
         return id;
     }
