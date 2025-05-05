@@ -45,7 +45,6 @@ public class SecurityConfig {
                 .headers(h -> h
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .oauth2Login(cfg -> cfg
-                        .loginPage("/login/oauth2")
                         .defaultSuccessUrl("/user/profile")
                         .userInfoEndpoint(custom -> custom.oidcUserService(oidcUserDetailsService))
                         .successHandler(authenticationSuccessHandler()))
@@ -57,7 +56,7 @@ public class SecurityConfig {
 
     @Bean
     FilterRegistrationBean<ForwardedHeaderFilter> forwardedHeaderFilter() {
-        final FilterRegistrationBean<ForwardedHeaderFilter> filterRegistrationBean = new FilterRegistrationBean<ForwardedHeaderFilter>();
+        final FilterRegistrationBean<ForwardedHeaderFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new ForwardedHeaderFilter());
         filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return filterRegistrationBean;
