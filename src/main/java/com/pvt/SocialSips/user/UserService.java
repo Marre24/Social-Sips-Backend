@@ -1,8 +1,9 @@
 package com.pvt.SocialSips.user;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 
@@ -16,17 +17,25 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User login(@Validated User user) {
-        Optional<User> u = userRepository.findById(user.getId());
-        if(authenticate(user)) return u.orElseThrow(() -> new IllegalStateException("Not a valid user!"));
+    public User login( OidcUserRequest request) {
+        System.out.println("\tAccessToken Scopes = ");
+        request.getAccessToken().getScopes().forEach(System.out::println);
+        System.out.println("OidcUserRequest");
+        request.getIdToken();
         return null;
     }
 
-    public boolean authenticate(User user){
-        return true;
+    @Transactional
+    public User register(User user) {
+        return userRepository.save(user);
     }
 
-    public void register(User user) {
+    public User getUserBySub(String sub) {
+        return userRepository.findBySub(sub).orElse(null);
+    }
 
+    public User getUserByDeviceId(String deviceId) {
+        Optional<User> user = userRepository.findByDeviceId(deviceId);
+        return user.orElse(null);
     }
 }
