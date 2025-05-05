@@ -28,8 +28,9 @@ public class Questpool {
         this.quests = quests;
     }
 
-    public Questpool(String name, Set<Quest> quests) {
+    public Questpool(String name, QuestpoolType type, Set<Quest> quests) {
         this.name = name;
+        this.type = type;
         this.quests = quests;
     }
 
