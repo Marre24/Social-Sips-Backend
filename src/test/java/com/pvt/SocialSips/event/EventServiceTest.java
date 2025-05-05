@@ -1,14 +1,18 @@
 package com.pvt.SocialSips.event;
 
+import com.pvt.SocialSips.user.User;
+import com.pvt.SocialSips.user.UserRepository;
+import com.pvt.SocialSips.user.UserService;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -19,11 +23,32 @@ public class EventServiceTest {
     @Mock
     private EventRepository eventRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private UserService userService;
+
     @InjectMocks
     private EventService eventService;
 
+
+
     private final static Event EVENT = new Event(21343211L, "name", 2, new HashSet<>());
     private final static String DEVICE_ID = "thisIsAUUID";
+    private final static ArrayList<User> GUESTS = new ArrayList<>(List.of(
+            new User("1"),
+            new User("2"),
+            new User("3"),
+            new User("4"),
+            new User("5"),
+            new User("6"),
+            new User("7"),
+            new User("8"),
+            new User("9"),
+            new User("10"),
+            new User("11"),
+            new User("12") ));
 
     @Test
     public void getEvent_EventExists_EventReturned() {
@@ -91,7 +116,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void joinEvent_NonStartedEvent_GuestAdded(){
+    public void joinEvent_NonStartedEvent_UserAdded(){
         when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
 
         eventService.joinEvent(EVENT.getJoinCode(), DEVICE_ID);
@@ -103,7 +128,8 @@ public class EventServiceTest {
         Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
         startedEvent.setStarted(true);
         when(eventRepository.findById(startedEvent.getHostId())).thenReturn(Optional.of(startedEvent));
-        
+
         assertThrows(IllegalStateException.class, () -> eventService.joinEvent(startedEvent.getJoinCode(), DEVICE_ID));
     }
+
 }

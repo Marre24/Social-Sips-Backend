@@ -1,11 +1,9 @@
 package com.pvt.SocialSips.event;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +43,7 @@ public class EventController {
     @PatchMapping("/start/{hostId}")
     public ResponseEntity<String> startEvent(@PathVariable Long hostId){
         try{
+
             eventService.startEvent(hostId);
             return new ResponseEntity<>("Event Started", HttpStatus.OK);
 

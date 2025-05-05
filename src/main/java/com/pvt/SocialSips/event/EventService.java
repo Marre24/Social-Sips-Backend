@@ -1,22 +1,25 @@
 package com.pvt.SocialSips.event;
 
-import com.pvt.SocialSips.user.Guest;
+import com.pvt.SocialSips.user.User;
+import com.pvt.SocialSips.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class EventService {
 
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
+    private final UserService userService;
 
-    public EventService(EventRepository eventRepository) {
+    @Autowired
+    public EventService(EventRepository eventRepository, UserService userService) {
         this.eventRepository = eventRepository;
+        this.userService = userService;
     }
 
     public Event getEvent(Long id) {
@@ -45,6 +48,7 @@ public class EventService {
 
         event.setStarted(true);
 
+
     }
 
     public void deleteEvent(Long hostId) {
@@ -56,11 +60,15 @@ public class EventService {
     @Transactional
     public void joinEvent(String joinCode, String deviceId) {
         Event e = getEvent(Event.SQID.decode(joinCode).get(0));
+        User user = userService.getUserByDeviceId(deviceId);
+
+        if(user == null)
+            user = userService.register(new User(deviceId));
+
         if (e.getStarted())
             throw new IllegalStateException("Tried to join a started event!");
 
-        e.addGuest(new Guest(deviceId));
+        e.addGuest(user);
     }
-
 
 }
