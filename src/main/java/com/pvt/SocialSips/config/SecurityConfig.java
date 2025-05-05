@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/user/profile").authenticated()
 
                 )
+                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .headers(h -> h
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .oauth2Login(cfg -> cfg
