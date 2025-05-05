@@ -71,4 +71,25 @@ public class EventService {
         e.addGuest(user);
     }
 
+    public ArrayList<ArrayList<User>> matchUsers(Event e){
+        ArrayList<User> toBeMatched = new ArrayList<>(e.getGuests());
+        Collections.shuffle(toBeMatched);
+        ArrayList<ArrayList<User>> groups = new ArrayList<>();
+
+        int groupSize = e.getGroupSize();
+        int amountOfGroups = toBeMatched.size() / groupSize;
+
+        for(int i = 0; i < amountOfGroups; i++){
+            groups.add(new ArrayList<>());
+        }
+
+        for(int amountMatched = 0; amountMatched < toBeMatched.size(); amountMatched++){
+            User u = toBeMatched.get(amountMatched);
+            groups.get(amountMatched % amountOfGroups).add(u);
+        }
+
+        //todo connect to solution for saving/processing groups, shouldn't return like this
+        return groups;
+    }
+
 }
