@@ -1,7 +1,7 @@
 package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.questpool.Questpool;
-import com.pvt.SocialSips.user.Guest;
+import com.pvt.SocialSips.user.User;
 import jakarta.persistence.*;
 import org.sqids.Sqids;
 
@@ -25,9 +25,11 @@ public class Event {
     @OneToMany
     private Set<Questpool> questpools;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "event_id")
-    private Set<Guest> guests = new HashSet<>();
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL) // Added cascade option to manage save operations
+    @JoinTable(
+            name = "event_id",
+            inverseJoinColumns = @JoinColumn(name = "guest"))
+    private Set<User> guests = new HashSet<>();
 
     public Event() {
     }
@@ -40,7 +42,7 @@ public class Event {
         this.questpools = questpools;
     }
 
-    public Event(Long hostId, String joinCode, Boolean started, String name, Integer groupSize, Set<Guest> guests){
+    public Event(Long hostId, String joinCode, Boolean started, String name, Integer groupSize, Set<User> guests){
         this.joinCode = generateJoinCode(hostId);
         this.guests = guests;
         this.started = started;
@@ -97,19 +99,20 @@ public class Event {
         this.questpools = questpools;
     }
 
-    public Set<Guest> getGuests() {
+    public Set<User> getGuests() {
         return guests;
     }
 
-    public void setGuests(Set<Guest> guests) {
+    public void setGuests(Set<User> guests) {
         this.guests = guests;
     }
 
-    public void addGuest(Guest deviceId) {
-        guests.add(deviceId);
+    public void addGuest(User user) {
+        guests.add(user);
     }
 
     private String generateJoinCode(Long hostId){
         return SQID.encode(List.of(hostId));
     }
+
 }
