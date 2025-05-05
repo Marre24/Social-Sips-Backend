@@ -36,7 +36,7 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/home", "/login/auth**", "/event/**", "/questpool/**",
+                                "/", "/home", "/event/**", "/questpool/**",
                                 "/css/**", "/h2-console", "/error", "/h2-console/**").permitAll()
                         .requestMatchers("/user/profile").authenticated()
 
