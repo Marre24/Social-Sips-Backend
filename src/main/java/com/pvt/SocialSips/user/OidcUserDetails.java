@@ -57,7 +57,7 @@ public class OidcUserDetails implements UserDetails, OidcUser {
 
     @Override
     public String getUsername() {
-        return "email";
+        return getSubject();
     }
 
     @Override

@@ -34,14 +34,14 @@ public class OidcUserDetailsService extends OidcUserService implements UserDetai
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
         OidcUser oidcUser = super.loadUser(userRequest);
         try {
-            return processOidcUser(userRequest, oidcUser);
+            return processOidcUser(oidcUser);
         } catch (Exception ex) {
             throw new InternalAuthenticationServiceException(ex.getMessage(), ex.getCause());
         }
     }
 
-    private OidcUser processOidcUser(OidcUserRequest userRequest, OidcUser oidcUser) {
-        User user = userService.getUserBySub(oidcUser.getEmail());
+    private OidcUser processOidcUser(OidcUser oidcUser) {
+        User user = userService.getUserBySub(oidcUser.getSubject());
 
         if (user == null) {
             user = new User();
@@ -59,8 +59,8 @@ public class OidcUserDetailsService extends OidcUserService implements UserDetai
     }
 
     @Override
-    public OidcUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userService.getUserBySub(email);
+    public OidcUserDetails loadUserByUsername(String sub) throws UsernameNotFoundException {
+        User user = userService.getUserBySub(sub);
 
         List<GrantedAuthority> authorities = user.getRoles()
                 .stream()
