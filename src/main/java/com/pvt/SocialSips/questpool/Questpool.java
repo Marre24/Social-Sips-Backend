@@ -12,6 +12,7 @@ public class Questpool {
     @GeneratedValue
     private Long id;
     private String name;
+    private QuestpoolType type;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "qpId")
     private Set<Quest> quests;
@@ -20,9 +21,10 @@ public class Questpool {
 
     }
 
-    public Questpool(Long id, String name, Set<Quest> quests) {
+    public Questpool(Long id, String name, QuestpoolType type, Set<Quest> quests) {
         this.id = id;
         this.name = name;
+        this.type = type;
         this.quests = quests;
     }
 
@@ -48,5 +50,13 @@ public class Questpool {
 
     public void setQuests(Set<Quest> quests) {
         this.quests = quests;
+    }
+
+    public QuestpoolType getType() {
+        return type;
+    }
+
+    public void setType(QuestpoolType type) {
+        this.type = type;
     }
 }

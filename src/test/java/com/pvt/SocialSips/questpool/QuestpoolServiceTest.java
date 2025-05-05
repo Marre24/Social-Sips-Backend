@@ -53,7 +53,7 @@ public class QuestpoolServiceTest {
 
     @Test
     public void createQuestpool_ValidArgs_QuestpoolAdded(){
-        Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, quests);
+        Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, QuestpoolType.ICEBREAKER, quests);
 
         when(questpoolRepository.save(qp)).thenReturn(qp);
 
@@ -63,14 +63,14 @@ public class QuestpoolServiceTest {
 
     @Test
     public void deleteQuestpool_ExistingQuestpool_QuestpoolRemoved(){
-        Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, quests);
+        Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, QuestpoolType.ICEBREAKER, quests);
         when(questpoolRepository.findById(qp.getId())).thenReturn(Optional.of(qp));
         assertDoesNotThrow(() -> questpoolService.deleteQuestpoolById(qp.getId()));
     }
 
     @Test
     public void deleteQuestpool_NonExistingQuestpool_IllegalStatExceptionThrown(){
-        Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, quests);
+        Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, QuestpoolType.ICEBREAKER, quests);
         when(questpoolRepository.findById(qp.getId())).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class,() -> questpoolService.deleteQuestpoolById(qp.getId()));
     }
