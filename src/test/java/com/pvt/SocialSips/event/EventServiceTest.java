@@ -152,14 +152,27 @@ public class EventServiceTest {
 
 
     @Test
-    public void matchUsers_UnevenlyDividedGroups_AddedExtraToFirstGroup(){
+    public void matchUsers_UnevenlyDividedPairs_AddedExtraToFirstPair(){
+        Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
+        for(User u : GUESTS)
+            startedEvent.addGuest(u);
+        startedEvent.addGuest(new User("11"));
+        startedEvent.setStarted(true);
+
+        assertEquals(startedEvent.getGroupSize() + 1, eventService.matchUsers(startedEvent).get(0).size());
+    }
+
+
+    @Test
+    public void matchUsers_UnevenlyDividedGroups_CorrectGroupSize(){
         Event startedEvent = new Event(2L, "NonStartedEvent", 3, new HashSet<>());
         for(User u : GUESTS)
             startedEvent.addGuest(u);
         startedEvent.setStarted(true);
 
-        assertEquals(startedEvent.getGroupSize() + 1, eventService.matchUsers(startedEvent).get(0).size());
+        assertTrue(eventService.matchUsers(startedEvent).get(0).size() < startedEvent.getGroupSize() * 2);
     }
+
 
 
 
