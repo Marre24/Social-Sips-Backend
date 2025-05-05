@@ -10,8 +10,8 @@ import jakarta.persistence.*;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = Trivia.class, name = "trivia"),
-        @JsonSubTypes.Type(value = Icebreaker.class, name = "icebreaker")
+        @JsonSubTypes.Type(value = Trivia.class, name = "TRIVIA"),
+        @JsonSubTypes.Type(value = Icebreaker.class, name = "ICEBREAKER")
 })
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
