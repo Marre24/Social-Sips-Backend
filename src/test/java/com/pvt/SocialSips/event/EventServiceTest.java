@@ -46,9 +46,7 @@ public class EventServiceTest {
             new User("7"),
             new User("8"),
             new User("9"),
-            new User("10"),
-            new User("11"),
-            new User("12") ));
+            new User("10") ));
 
     @Test
     public void getEvent_EventExists_EventReturned() {
@@ -131,5 +129,38 @@ public class EventServiceTest {
 
         assertThrows(IllegalStateException.class, () -> eventService.joinEvent(startedEvent.getJoinCode(), DEVICE_ID));
     }
+
+    @Test
+    public void matchUsers_EvenlyDividedGroups_CorrectGroupAmount(){
+        Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
+        for(User u : GUESTS)
+            startedEvent.addGuest(u);
+        startedEvent.setStarted(true);
+
+        assertEquals(startedEvent.getGuests().size() / startedEvent.getGroupSize(), eventService.matchUsers(startedEvent).size());
+    }
+
+    @Test
+    public void matchUsers_EvenlyDividedGroups_CorrectGroupSize(){
+        Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
+        for(User u : GUESTS)
+            startedEvent.addGuest(u);
+        startedEvent.setStarted(true);
+
+        assertEquals(startedEvent.getGroupSize(), eventService.matchUsers(startedEvent).get(0).size());
+    }
+
+
+    @Test
+    public void matchUsers_UnevenlyDividedGroups_AddedExtraToFirstGroup(){
+        Event startedEvent = new Event(2L, "NonStartedEvent", 3, new HashSet<>());
+        for(User u : GUESTS)
+            startedEvent.addGuest(u);
+        startedEvent.setStarted(true);
+
+        assertEquals(startedEvent.getGroupSize() + 1, eventService.matchUsers(startedEvent).get(0).size());
+    }
+
+
 
 }
