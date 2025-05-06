@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "https://group-2-75.pvt.dsv.su.se/")
 @RequestMapping("/event")
 public class EventController {
 
