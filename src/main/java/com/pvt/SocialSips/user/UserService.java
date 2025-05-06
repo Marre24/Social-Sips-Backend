@@ -1,9 +1,12 @@
 package com.pvt.SocialSips.user;
 
+import com.pvt.SocialSips.questpool.Questpool;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 public class UserService {
@@ -30,5 +33,9 @@ public class UserService {
 
     public User getUserBySub(String sub) {
         return userRepository.findById(sub).orElse(null);
+    }
+
+    public Set<Questpool> getAllQuestpoolsBySub(String sub) {
+        return userRepository.getReferenceById(sub).getQuestpools();
     }
 }

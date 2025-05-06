@@ -1,9 +1,12 @@
 package com.pvt.SocialSips.user;
 
+import com.pvt.SocialSips.questpool.Questpool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -39,5 +42,13 @@ public class UserController {
             return ResponseEntity.ok(user);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized user request.");
+    }
+
+
+    @GetMapping("/")
+    public ResponseEntity<?> getAllQuestpools(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+        String sub = defaultOidcUser.getSubject();
+
+        return new ResponseEntity<>(userService.getAllQuestpoolsBySub(sub), HttpStatus.OK);
     }
 }
