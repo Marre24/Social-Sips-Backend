@@ -5,19 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-public class HostService {
+public class UserService {
 
-    private final HostRepository hostRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public HostService(HostRepository hostRepository) {
-        this.hostRepository = hostRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public Host login(OidcUserRequest request) {
+    public User login(OidcUserRequest request) {
         System.out.println("\tAccessToken Scopes = ");
         request.getAccessToken().getScopes().forEach(System.out::println);
         System.out.println("OidcUserRequest");
@@ -26,11 +24,11 @@ public class HostService {
     }
 
     @Transactional
-    public Host register(Host host) {
-        return hostRepository.save(host);
+    public User register(User user) {
+        return userRepository.save(user);
     }
 
-    public Host getUserBySub(String sub) {
-        return hostRepository.findById(sub).orElse(null);
+    public User getUserBySub(String sub) {
+        return userRepository.findById(sub).orElse(null);
     }
 }

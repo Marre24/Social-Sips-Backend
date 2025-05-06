@@ -11,23 +11,23 @@ import java.security.Principal;
 @RestController
 @CrossOrigin(origins = "https://group-2-75.pvt.dsv.su.se/")
 @RequestMapping("/user")
-public class HostController {
+public class UserController {
 
-    private final HostService hostService;
+    private final UserService userService;
 
     @Autowired
-    public HostController(HostService hostService) {
-        this.hostService = hostService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(Host host) {
-        hostService.register(host);
+    public ResponseEntity<?> register(User user) {
+        userService.register(user);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(Host host) {
+    public ResponseEntity<?> login(User user) {
         return ResponseEntity.ok().build();
     }
 
@@ -35,8 +35,8 @@ public class HostController {
     public ResponseEntity<?> profile(Principal principal) {
         if (principal instanceof OAuth2AuthenticationToken oauth2) {
             String sub = oauth2.getPrincipal().getAttribute("sub");
-            Host host = hostService.getUserBySub(sub);
-            return ResponseEntity.ok(host);
+            User user = userService.getUserBySub(sub);
+            return ResponseEntity.ok(user);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized user request.");
     }

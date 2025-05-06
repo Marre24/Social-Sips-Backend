@@ -3,7 +3,6 @@ package com.pvt.SocialSips.user;
 import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.role.Role;
 import jakarta.persistence.*;
-import org.springframework.context.annotation.Primary;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "USERS")
-public class Host {
+public class User {
 
 
     @Id
@@ -27,16 +26,16 @@ public class Host {
     @JoinColumn(name = "hostId")
     private Set<Questpool> questpools = new HashSet<>();
 
-    public Host(){
+    public User(){
     }
 
-    public Host(String firstName, String sub){
+    public User(String firstName, String sub){
         this.sub = sub;
         this.firstName = firstName;
 
     }
 
-    public Host(String firstName, String sub, List<Role> roles){
+    public User(String firstName, String sub, List<Role> roles){
         this.sub = sub;
         this.firstName = firstName;
         this.roles = roles;

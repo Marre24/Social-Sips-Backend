@@ -1,11 +1,9 @@
 package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.questpool.Questpool;
-import com.pvt.SocialSips.user.Host;
 import jakarta.persistence.*;
 import org.sqids.Sqids;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 

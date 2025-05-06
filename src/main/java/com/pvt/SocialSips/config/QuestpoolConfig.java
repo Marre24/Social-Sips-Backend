@@ -5,9 +5,8 @@ import com.pvt.SocialSips.quest.Trivia;
 import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.questpool.QuestpoolService;
 import com.pvt.SocialSips.questpool.QuestpoolType;
-import com.pvt.SocialSips.user.Host;
-import com.pvt.SocialSips.user.HostRepository;
-import com.pvt.SocialSips.user.HostService;
+import com.pvt.SocialSips.user.User;
+import com.pvt.SocialSips.user.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +18,9 @@ import java.util.List;
 public class QuestpoolConfig {
 
     @Bean
-    CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService, HostService hostService) {
+    CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService, UserService userService) {
         return args -> {
-            Host standard = new Host("STANDARD", "STANDARD");
+            User standard = new User("STANDARD", "STANDARD");
 
             Questpool icebreakerOne = new Questpool(
                     "icebreakerOne",
@@ -59,7 +58,7 @@ public class QuestpoolConfig {
                     standard
             );
 
-            hostService.register(standard);
+            userService.register(standard);
 
             questpoolService.createQuestpoolWithHost(triviaOne, standard.getSub());
             questpoolService.createQuestpoolWithHost(triviaTwo, standard.getSub());
