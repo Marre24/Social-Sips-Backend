@@ -38,6 +38,6 @@ public class HostController {
             Host host = hostService.getUserBySub(sub);
             return ResponseEntity.ok(host);
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthrorized user request.");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized user request.");
     }
 }
