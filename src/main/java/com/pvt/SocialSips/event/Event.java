@@ -25,12 +25,6 @@ public class Event {
     @OneToMany
     private Set<Questpool> questpools;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL) // Added cascade option to manage save operations
-    @JoinTable(
-            name = "event_id",
-            inverseJoinColumns = @JoinColumn(name = "guest"))
-    private Set<Host> guests = new HashSet<>();
-
     public Event() {
     }
 
@@ -40,14 +34,6 @@ public class Event {
         this.name = name;
         this.groupSize = groupSize;
         this.questpools = questpools;
-    }
-
-    public Event(Long hostId, String joinCode, Boolean started, String name, Integer groupSize, Set<Host> guests){
-        this.joinCode = generateJoinCode(hostId);
-        this.guests = guests;
-        this.started = started;
-        this.name = name;
-        this.groupSize = groupSize;
     }
 
     public Long getHostId() {
@@ -97,18 +83,6 @@ public class Event {
 
     public void setQuestpools(Set<Questpool> questpools) {
         this.questpools = questpools;
-    }
-
-    public Set<Host> getGuests() {
-        return guests;
-    }
-
-    public void setGuests(Set<Host> guests) {
-        this.guests = guests;
-    }
-
-    public void addGuest(Host host) {
-        guests.add(host);
     }
 
     private String generateJoinCode(Long hostId){
