@@ -4,6 +4,7 @@ import com.pvt.SocialSips.quest.Icebreaker;
 import com.pvt.SocialSips.quest.Quest;
 import com.pvt.SocialSips.quest.QuestRepository;
 import com.pvt.SocialSips.user.Host;
+import com.pvt.SocialSips.user.HostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -36,6 +37,9 @@ public class QuestpoolServiceTest {
     @Mock
     private QuestRepository questRepository;
 
+    @Mock
+    private HostRepository hostRepository;
+
     @InjectMocks
     private QuestpoolService questpoolService;
 
@@ -59,6 +63,7 @@ public class QuestpoolServiceTest {
         Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, QuestpoolType.ICEBREAKER, quests, HOST);
 
         when(questpoolRepository.save(qp)).thenReturn(qp);
+        when(hostRepository.getReferenceById(HOST.getSub())).thenReturn(HOST);
 
         assertDoesNotThrow(() -> questpoolService.createQuestpoolWithHost(qp, HOST.getSub()));
     }
