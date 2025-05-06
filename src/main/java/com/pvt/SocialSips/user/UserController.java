@@ -21,13 +21,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(User user) {
-        userService.register(user);
+    public ResponseEntity<?> register(Host host) {
+        userService.register(host);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(User user) {
+    public ResponseEntity<?> login(Host host) {
         return ResponseEntity.ok().build();
     }
 
@@ -35,8 +35,8 @@ public class UserController {
     public ResponseEntity<?> profile(Principal principal) {
         if (principal instanceof OAuth2AuthenticationToken oauth2) {
             String sub = oauth2.getPrincipal().getAttribute("sub");
-            User user = userService.getUserBySub(sub);
-            return ResponseEntity.ok(user);
+            Host host = userService.getUserBySub(sub);
+            return ResponseEntity.ok(host);
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthrorized user request.");
     }

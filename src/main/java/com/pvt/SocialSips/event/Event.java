@@ -1,7 +1,7 @@
 package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.questpool.Questpool;
-import com.pvt.SocialSips.user.User;
+import com.pvt.SocialSips.user.Host;
 import jakarta.persistence.*;
 import org.sqids.Sqids;
 
@@ -29,7 +29,7 @@ public class Event {
     @JoinTable(
             name = "event_id",
             inverseJoinColumns = @JoinColumn(name = "guest"))
-    private Set<User> guests = new HashSet<>();
+    private Set<Host> guests = new HashSet<>();
 
     public Event() {
     }
@@ -42,7 +42,7 @@ public class Event {
         this.questpools = questpools;
     }
 
-    public Event(Long hostId, String joinCode, Boolean started, String name, Integer groupSize, Set<User> guests){
+    public Event(Long hostId, String joinCode, Boolean started, String name, Integer groupSize, Set<Host> guests){
         this.joinCode = generateJoinCode(hostId);
         this.guests = guests;
         this.started = started;
@@ -99,16 +99,16 @@ public class Event {
         this.questpools = questpools;
     }
 
-    public Set<User> getGuests() {
+    public Set<Host> getGuests() {
         return guests;
     }
 
-    public void setGuests(Set<User> guests) {
+    public void setGuests(Set<Host> guests) {
         this.guests = guests;
     }
 
-    public void addGuest(User user) {
-        guests.add(user);
+    public void addGuest(Host host) {
+        guests.add(host);
     }
 
     private String generateJoinCode(Long hostId){

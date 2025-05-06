@@ -2,15 +2,13 @@ package com.pvt.SocialSips.user;
 
 import com.pvt.SocialSips.role.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "USERS")
-public class User {
+public class Host {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,26 +23,26 @@ public class User {
     @JoinTable(name = "USER_ROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private List<Role> roles = new ArrayList<>();
 
-    public User(){
+    public Host(){
     }
 
-    public User(String deviceId) {
+    public Host(String deviceId) {
         this.deviceId = deviceId;
     }
 
-    public User(String firstName, String deviceId, String sub){
+    public Host(String firstName, String deviceId, String sub){
         this.sub = sub;
         this.firstName = firstName;
         this.deviceId = deviceId;
     }
 
-    public User(String firstName, String sub){
+    public Host(String firstName, String sub){
         this.sub = sub;
         this.firstName = firstName;
 
     }
 
-    public User(String firstName, String deviceId,String sub, List<Role> roles){
+    public Host(String firstName, String deviceId, String sub, List<Role> roles){
         this.deviceId = deviceId;
         this.sub = sub;
         this.firstName = firstName;

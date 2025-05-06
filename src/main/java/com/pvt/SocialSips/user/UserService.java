@@ -17,7 +17,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User login( OidcUserRequest request) {
+    public Host login(OidcUserRequest request) {
         System.out.println("\tAccessToken Scopes = ");
         request.getAccessToken().getScopes().forEach(System.out::println);
         System.out.println("OidcUserRequest");
@@ -26,16 +26,16 @@ public class UserService {
     }
 
     @Transactional
-    public User register(User user) {
-        return userRepository.save(user);
+    public Host register(Host host) {
+        return userRepository.save(host);
     }
 
-    public User getUserBySub(String sub) {
+    public Host getUserBySub(String sub) {
         return userRepository.findBySub(sub).orElse(null);
     }
 
-    public User getUserByDeviceId(String deviceId) {
-        Optional<User> user = userRepository.findByDeviceId(deviceId);
+    public Host getUserByDeviceId(String deviceId) {
+        Optional<Host> user = userRepository.findByDeviceId(deviceId);
         return user.orElse(null);
     }
 }

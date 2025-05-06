@@ -41,17 +41,17 @@ public class OidcUserDetailsService extends OidcUserService implements UserDetai
     }
 
     private OidcUser processOidcUser(OidcUser oidcUser) {
-        User user = userService.getUserBySub(oidcUser.getSubject());
+        Host host = userService.getUserBySub(oidcUser.getSubject());
 
-        if (user == null) {
-            user = new User();
-            user.setSub(oidcUser.getSubject());
-            user.setFirstName(oidcUser.getGivenName());
-            user.setDeviceId("Android_1337");
-            user.setRoles((Arrays.asList(new Role("OIDC_USER"), new Role("GUEST"))));
-            userService.register(user);
+        if (host == null) {
+            host = new Host();
+            host.setSub(oidcUser.getSubject());
+            host.setFirstName(oidcUser.getGivenName());
+            host.setDeviceId("Android_1337");
+            host.setRoles((Arrays.asList(new Role("OIDC_USER"), new Role("GUEST"))));
+            userService.register(host);
         }
-        List<GrantedAuthority> authorities = user.getRoles().stream()
+        List<GrantedAuthority> authorities = host.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
 
@@ -60,14 +60,14 @@ public class OidcUserDetailsService extends OidcUserService implements UserDetai
 
     @Override
     public OidcUserDetails loadUserByUsername(String sub) throws UsernameNotFoundException {
-        User user = userService.getUserBySub(sub);
+        Host host = userService.getUserBySub(sub);
 
-        List<GrantedAuthority> authorities = user.getRoles()
+        List<GrantedAuthority> authorities = host.getRoles()
                 .stream()
                 .map(role -> new SimpleGrantedAuthority("role_" + role.getName()))
                 .collect(Collectors.toList());
 
-        return new OidcUserDetails(new User(), authorities);
+        return new OidcUserDetails(new Host(), authorities);
     }
 }
 

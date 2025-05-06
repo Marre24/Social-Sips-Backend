@@ -1,6 +1,6 @@
 package com.pvt.SocialSips.event;
 
-import com.pvt.SocialSips.user.User;
+import com.pvt.SocialSips.user.Host;
 import com.pvt.SocialSips.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,21 +60,21 @@ public class EventService {
     @Transactional
     public void joinEvent(String joinCode, String deviceId) {
         Event e = getEvent(Event.SQID.decode(joinCode).get(0));
-        User user = userService.getUserByDeviceId(deviceId);
+        Host host = userService.getUserByDeviceId(deviceId);
 
-        if(user == null)
-            user = userService.register(new User(deviceId));
+        if(host == null)
+            host = userService.register(new Host(deviceId));
 
         if (e.getStarted())
             throw new IllegalStateException("Tried to join a started event!");
 
-        e.addGuest(user);
+        e.addGuest(host);
     }
 
-    public ArrayList<ArrayList<User>> matchUsers(Event e){
-        ArrayList<User> toBeMatched = new ArrayList<>(e.getGuests());
+    public ArrayList<ArrayList<Host>> matchUsers(Event e){
+        ArrayList<Host> toBeMatched = new ArrayList<>(e.getGuests());
         Collections.shuffle(toBeMatched);
-        ArrayList<ArrayList<User>> groups = new ArrayList<>();
+        ArrayList<ArrayList<Host>> groups = new ArrayList<>();
 
         int groupSize = e.getGroupSize();
         int amountOfGroups = toBeMatched.size() / groupSize;
@@ -83,7 +83,7 @@ public class EventService {
             groups.add(new ArrayList<>());
 
         for(int amountMatched = 0; amountMatched < toBeMatched.size(); amountMatched++){
-            User u = toBeMatched.get(amountMatched);
+            Host u = toBeMatched.get(amountMatched);
             groups.get(amountMatched % amountOfGroups).add(u);
         }
 

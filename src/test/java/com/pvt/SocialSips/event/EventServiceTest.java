@@ -1,14 +1,12 @@
 package com.pvt.SocialSips.event;
 
-import com.pvt.SocialSips.user.User;
+import com.pvt.SocialSips.user.Host;
 import com.pvt.SocialSips.user.UserRepository;
 import com.pvt.SocialSips.user.UserService;
-import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 
@@ -36,17 +34,17 @@ public class EventServiceTest {
 
     private final static Event EVENT = new Event(21343211L, "name", 2, new HashSet<>());
     private final static String DEVICE_ID = "thisIsAUUID";
-    private final static ArrayList<User> GUESTS = new ArrayList<>(List.of(
-            new User("1"),
-            new User("2"),
-            new User("3"),
-            new User("4"),
-            new User("5"),
-            new User("6"),
-            new User("7"),
-            new User("8"),
-            new User("9"),
-            new User("10") ));
+    private final static ArrayList<Host> GUESTS = new ArrayList<>(List.of(
+            new Host("1"),
+            new Host("2"),
+            new Host("3"),
+            new Host("4"),
+            new Host("5"),
+            new Host("6"),
+            new Host("7"),
+            new Host("8"),
+            new Host("9"),
+            new Host("10") ));
 
     @Test
     public void getEvent_EventExists_EventReturned() {
@@ -133,7 +131,7 @@ public class EventServiceTest {
     @Test
     public void matchUsers_EvenlyDividedGroups_CorrectGroupAmount(){
         Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
-        for(User u : GUESTS)
+        for(Host u : GUESTS)
             startedEvent.addGuest(u);
         startedEvent.setStarted(true);
 
@@ -143,7 +141,7 @@ public class EventServiceTest {
     @Test
     public void matchUsers_EvenlyDividedGroups_CorrectGroupSize(){
         Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
-        for(User u : GUESTS)
+        for(Host u : GUESTS)
             startedEvent.addGuest(u);
         startedEvent.setStarted(true);
 
@@ -154,9 +152,9 @@ public class EventServiceTest {
     @Test
     public void matchUsers_UnevenlyDividedPairs_AddedExtraToFirstPair(){
         Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
-        for(User u : GUESTS)
+        for(Host u : GUESTS)
             startedEvent.addGuest(u);
-        startedEvent.addGuest(new User("11"));
+        startedEvent.addGuest(new Host("11"));
         startedEvent.setStarted(true);
 
         assertEquals(startedEvent.getGroupSize() + 1, eventService.matchUsers(startedEvent).get(0).size());
@@ -166,7 +164,7 @@ public class EventServiceTest {
     @Test
     public void matchUsers_UnevenlyDividedGroups_CorrectGroupSize(){
         Event startedEvent = new Event(2L, "NonStartedEvent", 3, new HashSet<>());
-        for(User u : GUESTS)
+        for(Host u : GUESTS)
             startedEvent.addGuest(u);
         startedEvent.setStarted(true);
 
