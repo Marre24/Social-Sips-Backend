@@ -1,8 +1,8 @@
 package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.user.Host;
-import com.pvt.SocialSips.user.UserRepository;
-import com.pvt.SocialSips.user.UserService;
+import com.pvt.SocialSips.user.HostRepository;
+import com.pvt.SocialSips.user.HostService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,10 +22,10 @@ public class EventServiceTest {
     private EventRepository eventRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private HostRepository hostRepository;
 
     @Mock
-    private UserService userService;
+    private HostService hostService;
 
     @InjectMocks
     private EventService eventService;

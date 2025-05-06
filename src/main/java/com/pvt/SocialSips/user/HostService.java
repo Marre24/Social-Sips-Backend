@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class HostService {
 
-    private final UserRepository userRepository;
+    private final HostRepository hostRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public HostService(HostRepository hostRepository) {
+        this.hostRepository = hostRepository;
     }
 
     public Host login(OidcUserRequest request) {
@@ -27,15 +27,15 @@ public class UserService {
 
     @Transactional
     public Host register(Host host) {
-        return userRepository.save(host);
+        return hostRepository.save(host);
     }
 
     public Host getUserBySub(String sub) {
-        return userRepository.findBySub(sub).orElse(null);
+        return hostRepository.findBySub(sub).orElse(null);
     }
 
     public Host getUserByDeviceId(String deviceId) {
-        Optional<Host> user = userRepository.findByDeviceId(deviceId);
+        Optional<Host> user = hostRepository.findByDeviceId(deviceId);
         return user.orElse(null);
     }
 }
