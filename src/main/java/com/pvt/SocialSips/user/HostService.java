@@ -31,11 +31,6 @@ public class HostService {
     }
 
     public Host getUserBySub(String sub) {
-        return hostRepository.findBySub(sub).orElse(null);
-    }
-
-    public Host getUserByDeviceId(String deviceId) {
-        Optional<Host> user = hostRepository.findByDeviceId(deviceId);
-        return user.orElse(null);
+        return hostRepository.findById(sub).orElse(null);
     }
 }
