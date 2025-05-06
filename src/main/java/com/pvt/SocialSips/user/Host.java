@@ -2,6 +2,7 @@ package com.pvt.SocialSips.user;
 
 import com.pvt.SocialSips.role.Role;
 import jakarta.persistence.*;
+import org.springframework.context.annotation.Primary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +11,8 @@ import java.util.List;
 @Table(name = "USERS")
 public class Host {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @JoinTable(name = "user_deviceId", joinColumns = @JoinColumn(name = "USER_ID"))
-    private String deviceId;
+    @Id
     private String sub;
     private String firstName;
 
@@ -26,36 +23,17 @@ public class Host {
     public Host(){
     }
 
-    public Host(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
-    public Host(String firstName, String deviceId, String sub){
-        this.sub = sub;
-        this.firstName = firstName;
-        this.deviceId = deviceId;
-    }
-
     public Host(String firstName, String sub){
         this.sub = sub;
         this.firstName = firstName;
 
     }
 
-    public Host(String firstName, String deviceId, String sub, List<Role> roles){
-        this.deviceId = deviceId;
+    public Host(String firstName, String sub, List<Role> roles){
         this.sub = sub;
         this.firstName = firstName;
         this.roles = roles;
 
-    }
-
-    public void setId(Long id){
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getFirstName() {
@@ -64,14 +42,6 @@ public class Host {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
-
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
     }
 
     public List<Role> getRoles() {

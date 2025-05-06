@@ -47,7 +47,6 @@ public class OidcUserDetailsService extends OidcUserService implements UserDetai
             host = new Host();
             host.setSub(oidcUser.getSubject());
             host.setFirstName(oidcUser.getGivenName());
-            host.setDeviceId("Android_1337");
             host.setRoles((Arrays.asList(new Role("OIDC_USER"), new Role("GUEST"))));
             hostService.register(host);
         }
