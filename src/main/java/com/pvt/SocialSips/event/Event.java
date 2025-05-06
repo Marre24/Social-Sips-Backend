@@ -1,7 +1,7 @@
 package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.questpool.Questpool;
-import com.pvt.SocialSips.user.User;
+import com.pvt.SocialSips.user.Host;
 import jakarta.persistence.*;
 import org.sqids.Sqids;
 
@@ -25,12 +25,6 @@ public class Event {
     @OneToMany
     private Set<Questpool> questpools;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL) // Added cascade option to manage save operations
-    @JoinTable(
-            name = "event_id",
-            inverseJoinColumns = @JoinColumn(name = "guest"))
-    private Set<User> guests = new HashSet<>();
-
     public Event() {
     }
 
@@ -40,14 +34,6 @@ public class Event {
         this.name = name;
         this.groupSize = groupSize;
         this.questpools = questpools;
-    }
-
-    public Event(Long hostId, String joinCode, Boolean started, String name, Integer groupSize, Set<User> guests){
-        this.joinCode = generateJoinCode(hostId);
-        this.guests = guests;
-        this.started = started;
-        this.name = name;
-        this.groupSize = groupSize;
     }
 
     public Long getHostId() {
@@ -97,18 +83,6 @@ public class Event {
 
     public void setQuestpools(Set<Questpool> questpools) {
         this.questpools = questpools;
-    }
-
-    public Set<User> getGuests() {
-        return guests;
-    }
-
-    public void setGuests(Set<User> guests) {
-        this.guests = guests;
-    }
-
-    public void addGuest(User user) {
-        guests.add(user);
     }
 
     private String generateJoinCode(Long hostId){

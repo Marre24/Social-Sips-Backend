@@ -4,32 +4,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
 @RestController
+@CrossOrigin(origins = "https://group-2-75.pvt.dsv.su.se/")
 @RequestMapping("/user")
-public class UserController {
+public class HostController {
 
-    private final UserService userService;
+    private final HostService hostService;
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public HostController(HostService hostService) {
+        this.hostService = hostService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(User user) {
-        userService.register(user);
+    public ResponseEntity<?> register(Host host) {
+        hostService.register(host);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(User user) {
+    public ResponseEntity<?> login(Host host) {
         return ResponseEntity.ok().build();
     }
 
@@ -37,9 +35,9 @@ public class UserController {
     public ResponseEntity<?> profile(Principal principal) {
         if (principal instanceof OAuth2AuthenticationToken oauth2) {
             String sub = oauth2.getPrincipal().getAttribute("sub");
-            User user = userService.getUserBySub(sub);
-            return ResponseEntity.ok(user);
+            Host host = hostService.getUserBySub(sub);
+            return ResponseEntity.ok(host);
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthrorized user request.");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized user request.");
     }
 }

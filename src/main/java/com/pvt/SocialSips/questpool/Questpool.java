@@ -1,6 +1,7 @@
 package com.pvt.SocialSips.questpool;
 
 import com.pvt.SocialSips.quest.Quest;
+import com.pvt.SocialSips.user.Host;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -21,14 +22,14 @@ public class Questpool {
 
     }
 
-    public Questpool(Long id, String name, QuestpoolType type, Set<Quest> quests) {
-        this.id = id;
+    public Questpool(String name, QuestpoolType type, Set<Quest> quests, Host host) {
         this.name = name;
         this.type = type;
         this.quests = quests;
     }
 
-    public Questpool(String name, QuestpoolType type, Set<Quest> quests) {
+    public Questpool(Long id, String name, QuestpoolType type, Set<Quest> quests, Host host) {
+        this.id = id;
         this.name = name;
         this.type = type;
         this.quests = quests;

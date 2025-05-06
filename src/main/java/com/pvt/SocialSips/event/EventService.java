@@ -1,7 +1,7 @@
 package com.pvt.SocialSips.event;
 
-import com.pvt.SocialSips.user.User;
-import com.pvt.SocialSips.user.UserService;
+import com.pvt.SocialSips.user.Host;
+import com.pvt.SocialSips.user.HostService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -14,12 +14,12 @@ import java.util.*;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final UserService userService;
+    private final HostService hostService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, UserService userService) {
+    public EventService(EventRepository eventRepository, HostService hostService) {
         this.eventRepository = eventRepository;
-        this.userService = userService;
+        this.hostService = hostService;
     }
 
     public Event getEvent(Long id) {
@@ -57,33 +57,24 @@ public class EventService {
         eventRepository.deleteById(hostId);
     }
 
-    @Transactional
-    public void joinEvent(String joinCode, String deviceId) {
-        Event e = getEvent(Event.SQID.decode(joinCode).get(0));
-        User user = userService.getUserByDeviceId(deviceId);
+    public boolean canJoinEvent(String joinCode) {
+        Long code = Event.SQID.decode(joinCode).get(0);
 
-        if(user == null)
-            user = userService.register(new User(deviceId));
-
-        if (e.getStarted())
-            throw new IllegalStateException("Tried to join a started event!");
-
-        e.addGuest(user);
+        return !getEvent(code).getStarted();
     }
 
-    public ArrayList<ArrayList<User>> matchUsers(Event e){
-        ArrayList<User> toBeMatched = new ArrayList<>(e.getGuests());
+    public static ArrayList<ArrayList<String>> matchUsers(Set<String> guests, int groupSize){
+        ArrayList<String> toBeMatched = new ArrayList<>(guests);
         Collections.shuffle(toBeMatched);
-        ArrayList<ArrayList<User>> groups = new ArrayList<>();
+        ArrayList<ArrayList<String>> groups = new ArrayList<>();
 
-        int groupSize = e.getGroupSize();
         int amountOfGroups = toBeMatched.size() / groupSize;
 
         for(int i = 0; i < amountOfGroups; i++)
             groups.add(new ArrayList<>());
 
         for(int amountMatched = 0; amountMatched < toBeMatched.size(); amountMatched++){
-            User u = toBeMatched.get(amountMatched);
+            String u = toBeMatched.get(amountMatched);
             groups.get(amountMatched % amountOfGroups).add(u);
         }
 

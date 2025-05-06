@@ -1,14 +1,12 @@
 package com.pvt.SocialSips.event;
 
-import com.pvt.SocialSips.user.User;
-import com.pvt.SocialSips.user.UserRepository;
-import com.pvt.SocialSips.user.UserService;
-import jakarta.inject.Inject;
+import com.pvt.SocialSips.user.Host;
+import com.pvt.SocialSips.user.HostRepository;
+import com.pvt.SocialSips.user.HostService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 
@@ -24,29 +22,21 @@ public class EventServiceTest {
     private EventRepository eventRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private HostRepository hostRepository;
 
     @Mock
-    private UserService userService;
+    private HostService hostService;
 
     @InjectMocks
     private EventService eventService;
 
-
+    private final static int TWO_GROUP_SIZE = 2;
+    private final static int THREE_GROUP_SIZE = 3;
 
     private final static Event EVENT = new Event(21343211L, "name", 2, new HashSet<>());
     private final static String DEVICE_ID = "thisIsAUUID";
-    private final static ArrayList<User> GUESTS = new ArrayList<>(List.of(
-            new User("1"),
-            new User("2"),
-            new User("3"),
-            new User("4"),
-            new User("5"),
-            new User("6"),
-            new User("7"),
-            new User("8"),
-            new User("9"),
-            new User("10") ));
+    private final static Set<String> GUESTS = new HashSet<>(List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"));
+    private final static Set<String> ELEVEN_GUESTS = new HashSet<>(List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"));
 
     @Test
     public void getEvent_EventExists_EventReturned() {
@@ -100,80 +90,61 @@ public class EventServiceTest {
     }
 
     @Test
-    public void deleteEvent_EventExists_EventDeleted(){
+    public void deleteEvent_EventExists_EventDeleted() {
         when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
 
         assertDoesNotThrow(() -> eventService.deleteEvent(EVENT.getHostId()));
     }
 
     @Test
-    public void codeGenerator_IdIsTen_CodeIsGenerated(){
+    public void codeGenerator_IdIsTen_CodeIsGenerated() {
         Event idTen = new Event(10L, "NonStartedEvent", 2, new HashSet<>());
 
         assertNotNull(idTen.getJoinCode());
     }
 
     @Test
-    public void joinEvent_NonStartedEvent_UserAdded(){
+    public void canJoinEvent_NonStartedEvent_EventCouldBeJoined() {
         when(eventRepository.findById(EVENT.getHostId())).thenReturn(Optional.of(EVENT));
 
-        eventService.joinEvent(EVENT.getJoinCode(), DEVICE_ID);
-        assertFalse(EVENT.getGuests().isEmpty());
+        assertTrue(eventService.canJoinEvent(EVENT.getJoinCode()));
     }
 
     @Test
-    public void joinEvent_StartedEvent_IllegalStateExceptionThrown(){
+    public void canJoinEvent_StartedEvent_EventCouldntBeJoined() {
         Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
         startedEvent.setStarted(true);
         when(eventRepository.findById(startedEvent.getHostId())).thenReturn(Optional.of(startedEvent));
 
-        assertThrows(IllegalStateException.class, () -> eventService.joinEvent(startedEvent.getJoinCode(), DEVICE_ID));
+        assertFalse(eventService.canJoinEvent(startedEvent.getJoinCode()));
     }
 
     @Test
-    public void matchUsers_EvenlyDividedGroups_CorrectGroupAmount(){
-        Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
-        for(User u : GUESTS)
-            startedEvent.addGuest(u);
-        startedEvent.setStarted(true);
+    public void matchUsers_EvenlyDividedGroups_CorrectGroupAmount() {
 
-        assertEquals(startedEvent.getGuests().size() / startedEvent.getGroupSize(), eventService.matchUsers(startedEvent).size());
+        assertEquals(
+                GUESTS.size() / TWO_GROUP_SIZE,
+                EventService.matchUsers(GUESTS, TWO_GROUP_SIZE).size());
     }
 
     @Test
-    public void matchUsers_EvenlyDividedGroups_CorrectGroupSize(){
-        Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
-        for(User u : GUESTS)
-            startedEvent.addGuest(u);
-        startedEvent.setStarted(true);
+    public void matchUsers_EvenlyDividedGroups_CorrectGroupSize() {
 
-        assertEquals(startedEvent.getGroupSize(), eventService.matchUsers(startedEvent).get(0).size());
+        assertEquals(TWO_GROUP_SIZE, EventService.matchUsers(GUESTS, TWO_GROUP_SIZE).get(0).size());
     }
 
 
     @Test
-    public void matchUsers_UnevenlyDividedPairs_AddedExtraToFirstPair(){
-        Event startedEvent = new Event(2L, "NonStartedEvent", 2, new HashSet<>());
-        for(User u : GUESTS)
-            startedEvent.addGuest(u);
-        startedEvent.addGuest(new User("11"));
-        startedEvent.setStarted(true);
-
-        assertEquals(startedEvent.getGroupSize() + 1, eventService.matchUsers(startedEvent).get(0).size());
+    public void matchUsers_UnevenlyDividedPairs_AddedExtraToFirstPair() {
+        assertEquals(TWO_GROUP_SIZE + 1, EventService.matchUsers(ELEVEN_GUESTS, TWO_GROUP_SIZE).get(0).size());
     }
 
 
     @Test
-    public void matchUsers_UnevenlyDividedGroups_CorrectGroupSize(){
-        Event startedEvent = new Event(2L, "NonStartedEvent", 3, new HashSet<>());
-        for(User u : GUESTS)
-            startedEvent.addGuest(u);
-        startedEvent.setStarted(true);
+    public void matchUsers_UnevenlyDividedGroups_CorrectGroupSize() {
 
-        assertTrue(eventService.matchUsers(startedEvent).get(0).size() < startedEvent.getGroupSize() * 2);
+        assertEquals(THREE_GROUP_SIZE + 1, EventService.matchUsers(ELEVEN_GUESTS, THREE_GROUP_SIZE).get(0).size());
     }
-
-
 
 
 }

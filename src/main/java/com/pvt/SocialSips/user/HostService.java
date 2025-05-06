@@ -8,16 +8,16 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class HostService {
 
-    private final UserRepository userRepository;
+    private final HostRepository hostRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public HostService(HostRepository hostRepository) {
+        this.hostRepository = hostRepository;
     }
 
-    public User login( OidcUserRequest request) {
+    public Host login(OidcUserRequest request) {
         System.out.println("\tAccessToken Scopes = ");
         request.getAccessToken().getScopes().forEach(System.out::println);
         System.out.println("OidcUserRequest");
@@ -26,16 +26,11 @@ public class UserService {
     }
 
     @Transactional
-    public User register(User user) {
-        return userRepository.save(user);
+    public Host register(Host host) {
+        return hostRepository.save(host);
     }
 
-    public User getUserBySub(String sub) {
-        return userRepository.findBySub(sub).orElse(null);
-    }
-
-    public User getUserByDeviceId(String deviceId) {
-        Optional<User> user = userRepository.findByDeviceId(deviceId);
-        return user.orElse(null);
+    public Host getUserBySub(String sub) {
+        return hostRepository.findById(sub).orElse(null);
     }
 }

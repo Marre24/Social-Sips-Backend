@@ -23,11 +23,11 @@ import java.util.stream.Collectors;
 @Transactional
 public class OidcUserDetailsService extends OidcUserService implements UserDetailsService {
 
-    private final UserService userService;
+    private final HostService hostService;
 
     @Autowired
-    public OidcUserDetailsService(UserService userService) {
-        this.userService = userService;
+    public OidcUserDetailsService(HostService hostService) {
+        this.hostService = hostService;
     }
 
     @Override
@@ -41,17 +41,16 @@ public class OidcUserDetailsService extends OidcUserService implements UserDetai
     }
 
     private OidcUser processOidcUser(OidcUser oidcUser) {
-        User user = userService.getUserBySub(oidcUser.getSubject());
+        Host host = hostService.getUserBySub(oidcUser.getSubject());
 
-        if (user == null) {
-            user = new User();
-            user.setSub(oidcUser.getSubject());
-            user.setFirstName(oidcUser.getGivenName());
-            user.setDeviceId("Android_1337");
-            user.setRoles((Arrays.asList(new Role("OIDC_USER"), new Role("GUEST"))));
-            userService.register(user);
+        if (host == null) {
+            host = new Host();
+            host.setSub(oidcUser.getSubject());
+            host.setFirstName(oidcUser.getGivenName());
+            host.setRoles((Arrays.asList(new Role("OIDC_USER"), new Role("GUEST"))));
+            hostService.register(host);
         }
-        List<GrantedAuthority> authorities = user.getRoles().stream()
+        List<GrantedAuthority> authorities = host.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
 
@@ -60,14 +59,14 @@ public class OidcUserDetailsService extends OidcUserService implements UserDetai
 
     @Override
     public OidcUserDetails loadUserByUsername(String sub) throws UsernameNotFoundException {
-        User user = userService.getUserBySub(sub);
+        Host host = hostService.getUserBySub(sub);
 
-        List<GrantedAuthority> authorities = user.getRoles()
+        List<GrantedAuthority> authorities = host.getRoles()
                 .stream()
                 .map(role -> new SimpleGrantedAuthority("role_" + role.getName()))
                 .collect(Collectors.toList());
 
-        return new OidcUserDetails(new User(), authorities);
+        return new OidcUserDetails(new Host(), authorities);
     }
 }
 

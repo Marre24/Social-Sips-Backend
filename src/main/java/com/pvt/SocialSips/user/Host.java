@@ -1,23 +1,21 @@
 package com.pvt.SocialSips.user;
 
+import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.role.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import org.springframework.lang.NonNull;
+import org.springframework.context.annotation.Primary;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "USERS")
-public class User {
+public class Host {
+
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @JoinTable(name = "user_deviceId", joinColumns = @JoinColumn(name = "USER_ID"))
-    private String deviceId;
     private String sub;
     private String firstName;
 
@@ -25,39 +23,24 @@ public class User {
     @JoinTable(name = "USER_ROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private List<Role> roles = new ArrayList<>();
 
-    public User(){
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "hostId")
+    private Set<Questpool> questpools = new HashSet<>();
+
+    public Host(){
     }
 
-    public User(String deviceId) {
-        this.deviceId = deviceId;
-    }
-
-    public User(String firstName, String deviceId, String sub){
-        this.sub = sub;
-        this.firstName = firstName;
-        this.deviceId = deviceId;
-    }
-
-    public User(String firstName, String sub){
+    public Host(String firstName, String sub){
         this.sub = sub;
         this.firstName = firstName;
 
     }
 
-    public User(String firstName, String deviceId,String sub, List<Role> roles){
-        this.deviceId = deviceId;
+    public Host(String firstName, String sub, List<Role> roles){
         this.sub = sub;
         this.firstName = firstName;
         this.roles = roles;
 
-    }
-
-    public void setId(Long id){
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getFirstName() {
@@ -66,14 +49,6 @@ public class User {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
-
-    public String getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
     }
 
     public List<Role> getRoles() {
@@ -90,5 +65,13 @@ public class User {
 
     public void setSub(String sub) {
         this.sub = sub;
+    }
+
+    public void addQuestpool(Questpool qp) {
+        questpools.add(qp);
+    }
+
+    public Set<Questpool> getQuestpools() {
+        return questpools;
     }
 }
