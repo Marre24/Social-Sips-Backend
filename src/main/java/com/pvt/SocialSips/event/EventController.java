@@ -64,14 +64,13 @@ public class EventController {
         }
     }
 
-    @PatchMapping("/join/{joinCode}")
-    public ResponseEntity<String> joinEvent(@PathVariable String joinCode, @RequestBody String deviceId){
+    @GetMapping("/join/{joinCode}")
+    public ResponseEntity<String> canJoinEvent(@PathVariable String joinCode){
         try {
-            eventService.joinEvent(joinCode, deviceId);
-            return new ResponseEntity<>("Event joined!", HttpStatus.OK);
+            if (eventService.canJoinEvent(joinCode))
+                return new ResponseEntity<>("Event with join code: " + joinCode + " can be joined!", HttpStatus.OK);
+            return new ResponseEntity<>("Event with join code: " + joinCode + " has already started!", HttpStatus.CONFLICT);
 
-        } catch (IllegalStateException exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
         } catch (EntityNotFoundException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }

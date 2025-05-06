@@ -57,33 +57,24 @@ public class EventService {
         eventRepository.deleteById(hostId);
     }
 
-    @Transactional
-    public void joinEvent(String joinCode, String deviceId) {
-        Event e = getEvent(Event.SQID.decode(joinCode).get(0));
-        Host host = hostService.getUserByDeviceId(deviceId);
+    public boolean canJoinEvent(String joinCode) {
+        Long code = Event.SQID.decode(joinCode).get(0);
 
-        if(host == null)
-            host = hostService.register(new Host(deviceId));
-
-        if (e.getStarted())
-            throw new IllegalStateException("Tried to join a started event!");
-
-        e.addGuest(host);
+        return !getEvent(code).getStarted();
     }
 
-    public ArrayList<ArrayList<Host>> matchUsers(Event e){
-        ArrayList<Host> toBeMatched = new ArrayList<>(e.getGuests());
+    public static ArrayList<ArrayList<String>> matchUsers(Set<String> guests, int groupSize){
+        ArrayList<String> toBeMatched = new ArrayList<>(guests);
         Collections.shuffle(toBeMatched);
-        ArrayList<ArrayList<Host>> groups = new ArrayList<>();
+        ArrayList<ArrayList<String>> groups = new ArrayList<>();
 
-        int groupSize = e.getGroupSize();
         int amountOfGroups = toBeMatched.size() / groupSize;
 
         for(int i = 0; i < amountOfGroups; i++)
             groups.add(new ArrayList<>());
 
         for(int amountMatched = 0; amountMatched < toBeMatched.size(); amountMatched++){
-            Host u = toBeMatched.get(amountMatched);
+            String u = toBeMatched.get(amountMatched);
             groups.get(amountMatched % amountOfGroups).add(u);
         }
 
