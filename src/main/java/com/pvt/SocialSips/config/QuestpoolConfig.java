@@ -1,13 +1,11 @@
 package com.pvt.SocialSips.config;
 
 import com.pvt.SocialSips.quest.Icebreaker;
-import com.pvt.SocialSips.quest.Quest;
 import com.pvt.SocialSips.quest.Trivia;
 import com.pvt.SocialSips.questpool.Questpool;
-import com.pvt.SocialSips.questpool.QuestpoolRepository;
+import com.pvt.SocialSips.questpool.QuestpoolService;
 import com.pvt.SocialSips.questpool.QuestpoolType;
 import com.pvt.SocialSips.user.Host;
-import com.pvt.SocialSips.user.HostRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +17,7 @@ import java.util.List;
 public class QuestpoolConfig {
 
     @Bean
-    CommandLineRunner questpoolCommandLineRunner(QuestpoolRepository questpoolRepository, HostRepository hostRepository) {
+    CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService) {
         return args -> {
             Host standard = new Host("STANDARD", "STANDARD");
 
@@ -59,14 +57,10 @@ public class QuestpoolConfig {
                     standard
             );
 
-            /*Deletes everything including custom questpools*/
-            questpoolRepository.deleteAll();
-
-            hostRepository.save(standard);
-            questpoolRepository.save(icebreakerOne);
-            questpoolRepository.save(icebreakerTwo);
-            questpoolRepository.save(triviaOne);
-            questpoolRepository.save(triviaTwo);
+            questpoolService.createQuestpoolWithHost(triviaOne, standard);
+            questpoolService.createQuestpoolWithHost(triviaTwo, standard);
+            questpoolService.createQuestpoolWithHost(icebreakerOne, standard);
+            questpoolService.createQuestpoolWithHost(icebreakerTwo, standard);
         };
     }
 

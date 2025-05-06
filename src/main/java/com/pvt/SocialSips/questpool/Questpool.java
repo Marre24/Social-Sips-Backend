@@ -72,4 +72,11 @@ public class Questpool {
     public void setType(QuestpoolType type) {
         this.type = type;
     }
+    public Host getHost() {
+        return host;
+    }
+
+    public void setHost(Host host) {
+        this.host = host;
+    }
 }

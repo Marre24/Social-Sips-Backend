@@ -60,7 +60,7 @@ public class QuestpoolServiceTest {
 
         when(questpoolRepository.save(qp)).thenReturn(qp);
 
-        assertDoesNotThrow(() -> questpoolService.createQuestpool(qp));
+        assertDoesNotThrow(() -> questpoolService.createQuestpoolWithHost(qp));
     }
 
 

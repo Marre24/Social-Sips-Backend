@@ -48,7 +48,7 @@ public class QuestpoolController {
 
     @PostMapping("/")
     public ResponseEntity<Questpool> addQuestpool(@RequestBody Questpool questpool) {
-        questpoolService.createQuestpool(questpool);
+        questpoolService.createQuestpoolWithHost(questpool);
         return new ResponseEntity<>(questpool, HttpStatus.OK);
     }
 
