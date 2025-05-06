@@ -39,11 +39,11 @@ public class QuestpoolService {
         questpoolRepository.deleteById(qpId);
     }
 
-    public void createQuestpoolWithHost(Questpool qp) {
-        createQuestpoolWithHost(qp, qp.getHost());
-    }
 
-    public void createQuestpoolWithHost(Questpool qp, Host host) {
+    @Transactional
+    public void createQuestpoolWithHost(Questpool qp, String sub) {
+        Host host = hostRepository.getReferenceById(sub);
+
         host.addQuestpool(qp);
 
         hostRepository.save(host);

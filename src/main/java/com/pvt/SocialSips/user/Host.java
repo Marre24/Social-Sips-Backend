@@ -23,7 +23,8 @@ public class Host {
     @JoinTable(name = "USER_ROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private List<Role> roles = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "hostId")
     private Set<Questpool> questpools = new HashSet<>();
 
     public Host(){
@@ -68,7 +69,6 @@ public class Host {
 
     public void addQuestpool(Questpool qp) {
         questpools.add(qp);
-        qp.setHost(this);
     }
 
     public Set<Questpool> getQuestpools() {

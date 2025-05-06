@@ -6,6 +6,8 @@ import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.questpool.QuestpoolService;
 import com.pvt.SocialSips.questpool.QuestpoolType;
 import com.pvt.SocialSips.user.Host;
+import com.pvt.SocialSips.user.HostRepository;
+import com.pvt.SocialSips.user.HostService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +19,7 @@ import java.util.List;
 public class QuestpoolConfig {
 
     @Bean
-    CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService) {
+    CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService, HostService hostService) {
         return args -> {
             Host standard = new Host("STANDARD", "STANDARD");
 
@@ -57,10 +59,12 @@ public class QuestpoolConfig {
                     standard
             );
 
-            questpoolService.createQuestpoolWithHost(triviaOne, standard);
-            questpoolService.createQuestpoolWithHost(triviaTwo, standard);
-            questpoolService.createQuestpoolWithHost(icebreakerOne, standard);
-            questpoolService.createQuestpoolWithHost(icebreakerTwo, standard);
+            hostService.register(standard);
+
+            questpoolService.createQuestpoolWithHost(triviaOne, standard.getSub());
+            questpoolService.createQuestpoolWithHost(triviaTwo, standard.getSub());
+            questpoolService.createQuestpoolWithHost(icebreakerOne, standard.getSub());
+            questpoolService.createQuestpoolWithHost(icebreakerTwo, standard.getSub());
         };
     }
 

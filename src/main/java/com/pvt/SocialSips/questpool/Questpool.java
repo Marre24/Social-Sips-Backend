@@ -18,10 +18,6 @@ public class Questpool {
     @JoinColumn(name = "qpId")
     private Set<Quest> quests;
 
-    @ManyToOne
-    @JoinColumn(name = "hostId")
-    private Host host;
-
     public Questpool() {
 
     }
@@ -30,7 +26,6 @@ public class Questpool {
         this.name = name;
         this.type = type;
         this.quests = quests;
-        this.host = host;
     }
 
     public Questpool(Long id, String name, QuestpoolType type, Set<Quest> quests, Host host) {
@@ -38,7 +33,6 @@ public class Questpool {
         this.name = name;
         this.type = type;
         this.quests = quests;
-        this.host = host;
     }
 
     public Long getId() {
@@ -71,12 +65,5 @@ public class Questpool {
 
     public void setType(QuestpoolType type) {
         this.type = type;
-    }
-    public Host getHost() {
-        return host;
-    }
-
-    public void setHost(Host host) {
-        this.host = host;
     }
 }

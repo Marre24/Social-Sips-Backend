@@ -2,10 +2,13 @@ package com.pvt.SocialSips.questpool;
 
 
 import com.pvt.SocialSips.quest.Quest;
+import com.pvt.SocialSips.user.Host;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,9 +50,14 @@ public class QuestpoolController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Questpool> addQuestpool(@RequestBody Questpool questpool) {
-        questpoolService.createQuestpoolWithHost(questpool);
-        return new ResponseEntity<>(questpool, HttpStatus.OK);
+    public ResponseEntity<?> addQuestpool(@RequestBody Questpool questpool) {
+        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof OAuth2AuthenticationToken oauth2) {
+            String sub = oauth2.getPrincipal().getAttribute("sub");
+            questpoolService.createQuestpoolWithHost(questpool, sub);
+            return new ResponseEntity<Questpool>(questpool, HttpStatus.OK);
+        }
+        return new ResponseEntity<String>("User not authorized!", HttpStatus.FORBIDDEN);
     }
 
     @PatchMapping("/{qpId}")
