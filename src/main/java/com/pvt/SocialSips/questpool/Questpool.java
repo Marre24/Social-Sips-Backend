@@ -22,13 +22,13 @@ public class Questpool {
 
     }
 
-    public Questpool(String name, QuestpoolType type, Set<Quest> quests, User user) {
+    public Questpool(String name, QuestpoolType type, Set<Quest> quests) {
         this.name = name;
         this.type = type;
         this.quests = quests;
     }
 
-    public Questpool(Long id, String name, QuestpoolType type, Set<Quest> quests, User user) {
+    public Questpool(Long id, String name, QuestpoolType type, Set<Quest> quests) {
         this.id = id;
         this.name = name;
         this.type = type;

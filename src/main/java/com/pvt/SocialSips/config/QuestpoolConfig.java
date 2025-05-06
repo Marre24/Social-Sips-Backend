@@ -27,8 +27,7 @@ public class QuestpoolConfig {
                     QuestpoolType.ICEBREAKER,
                     new HashSet<>(List.of(
                             new Icebreaker("Ask about interests"),
-                            new Icebreaker("Ask about gaming"))),
-                    standard
+                            new Icebreaker("Ask about gaming")))
             );
 
             Questpool icebreakerTwo = new Questpool(
@@ -36,8 +35,7 @@ public class QuestpoolConfig {
                     QuestpoolType.ICEBREAKER,
                     new HashSet<>(List.of(
                             new Icebreaker("Ask about music"),
-                            new Icebreaker("Ask about fashion"))),
-                    standard
+                            new Icebreaker("Ask about fashion")))
             );
 
             Questpool triviaOne = new Questpool(
@@ -45,8 +43,7 @@ public class QuestpoolConfig {
                     QuestpoolType.TRIVIA,
                     new HashSet<>(List.of(
                             new Trivia("Question one", new HashSet<>(List.of("Correct", "opp2", "opp3", "opp4")), 1)
-                    )),
-                    standard
+                    ))
             );
 
             Questpool triviaTwo = new Questpool(
@@ -54,8 +51,7 @@ public class QuestpoolConfig {
                     QuestpoolType.TRIVIA,
                     new HashSet<>(List.of(
                             new Trivia("Question two", new HashSet<>(List.of("opp1", "correct", "opp3", "opp4")), 2)
-                    )),
-                    standard
+                    ))
             );
 
             userService.register(standard);
