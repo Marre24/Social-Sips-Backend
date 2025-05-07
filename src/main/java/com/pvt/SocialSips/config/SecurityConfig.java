@@ -36,9 +36,9 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/home", "/event/**", "/questpool/**",
+                                "/", "/home", "/event/**",
                                 "/css/**", "/error").permitAll()
-                        .requestMatchers("/user", "/user/**").authenticated()
+                        .requestMatchers("/user", "/user/**", "/questpool/**").authenticated()
 
                 )
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
