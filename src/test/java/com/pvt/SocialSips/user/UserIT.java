@@ -29,7 +29,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UserIntegrationTest {
+public class UserIT {
 
     private static final String URL = "https://localhost/";
 
@@ -45,7 +45,7 @@ public class UserIntegrationTest {
     private final MockMvc mockMvc;
 
     @Autowired
-    public UserIntegrationTest(UserRepository userRepository, MockMvc mockMvc) {
+    public UserIT(UserRepository userRepository, MockMvc mockMvc) {
         this.userRepository = userRepository;
         this.mockMvc = mockMvc;
     }
