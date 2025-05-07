@@ -25,6 +25,8 @@ public class QuestpoolController {
         this.questpoolService = questpoolService;
     }
 
+    //todo: refactor id to name and no name duplicates
+
     @GetMapping("/{qpId}")
     public ResponseEntity<?> getByQuestpoolId(@PathVariable Long qpId) {
         try{
