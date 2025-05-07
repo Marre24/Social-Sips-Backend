@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/", "/home", "/event/**", "/questpool/**",
                                 "/css/**", "/error").permitAll()
-                        .requestMatchers("/user/profile").authenticated()
+                        .requestMatchers("/user", "/user/**").authenticated()
 
                 )
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
