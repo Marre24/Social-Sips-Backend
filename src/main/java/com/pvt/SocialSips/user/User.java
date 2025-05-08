@@ -18,13 +18,13 @@ public class User {
     private String sub;
     private String firstName;
 
-    @OneToOne(mappedBy = "host", cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private Event event;
-
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private List<Role> roles = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "host_sub")
+    private Event event;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "hostId")
@@ -76,11 +76,11 @@ public class User {
         return questpools;
     }
 
-    public Event getEvent() {
-        return event;
+    public void setEvent(String name, Integer groupSize, Set<Questpool> questpools){
+        this.event = new Event(name, groupSize, questpools, getSub());
     }
 
-    public void setEvent(Event event) {
-        this.event = event;
+    public Event getEvent(){
+        return event;
     }
 }

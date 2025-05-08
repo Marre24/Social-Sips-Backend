@@ -22,24 +22,18 @@ public class Event {
     private String name;
     private Integer groupSize;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "host_sub")
-    private User host;
-
     @OneToMany
     private Set<Questpool> questpools;
 
     public Event() {
     }
 
-    public Event(String name, Integer groupSize, Set<Questpool> questpools, User host) {
-        joinCode = generateJoinCode(host.getSub());
-        this.hostSub = host.getSub();
+    public Event(String name, Integer groupSize, Set<Questpool> questpools, String hostSub) {
+        joinCode = generateJoinCode(hostSub);
+        this.hostSub = hostSub;
         this.name = name;
         this.groupSize = groupSize;
         this.questpools = questpools;
-        this.host = host;
     }
 
     public String getHostSub() {
@@ -94,5 +88,4 @@ public class Event {
     private String generateJoinCode(String hostId){
         return SQID.encode(List.of(Long.valueOf(hostId)));
     }
-
 }
