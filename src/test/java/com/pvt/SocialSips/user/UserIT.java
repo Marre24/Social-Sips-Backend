@@ -77,9 +77,9 @@ public class UserIT {
         USER.addQuestpool(QUESTPOOL_ONE);
         USER.addQuestpool(QUESTPOOL_TWO);
         USER.addQuestpool(QUESTPOOL_THREE);
-        userRepository.save(USER);
+        User user = userRepository.save(USER);
 
-        THREE_QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(USER.getQuestpools());
+        THREE_QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(user.getQuestpools());
     }
 
     @AfterAll
@@ -103,7 +103,7 @@ public class UserIT {
                         .with(oidcLogin().oidcUser(OIDC_USER)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$.length()").value(USER.getQuestpools().size()));
+                .andExpect(content().json(THREE_QUESTPOOLS_IN_JSON_EXPECTED));
     }
 
 
