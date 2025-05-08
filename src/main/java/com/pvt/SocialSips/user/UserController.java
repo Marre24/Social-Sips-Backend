@@ -24,13 +24,13 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<?> profile(Principal principal) {
+    public ResponseEntity<String> profile(Principal principal) {
         if (principal instanceof OAuth2AuthenticationToken oauth2) {
             String sub = oauth2.getPrincipal().getAttribute("sub");
             User user = userService.getUserBySub(sub);
-            return ResponseEntity.ok(user);
+            return new ResponseEntity<>(user.getFirstName(), HttpStatus.OK);
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized user request.");
+        return new ResponseEntity<>("Unauthorized user request!", HttpStatus.FORBIDDEN);
     }
 
 
