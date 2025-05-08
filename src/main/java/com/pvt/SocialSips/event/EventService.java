@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.event;
 
+import com.pvt.SocialSips.user.User;
 import com.pvt.SocialSips.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,15 @@ public class EventService {
         return optionalEvent.get();
     }
 
-    public void createEvent(Event event) {
-        if (eventRepository.findById(event.getHostSub()).isPresent())
-            throw new DuplicateKeyException("Event with id: " + event.getHostSub() + " already exists");
+    @Transactional
+    public void createEvent(Event event, String sub) {
+        User user = userService.getUserBySub(sub);
 
-        eventRepository.save(event);
+        if (eventRepository.findById(sub).isPresent())
+            throw new DuplicateKeyException("Host with id: " + sub + " already has an event!");
+
+        user.setEvent(event.getName(), event.getGroupSize(), event.getQuestpools());
+        userService.register(user);
     }
 
 

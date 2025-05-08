@@ -33,9 +33,9 @@ public class EventController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> postEvent(@RequestBody Event event){
+    public ResponseEntity<String> postEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser, @RequestBody Event event){
         try{
-            eventService.createEvent(event);
+            eventService.createEvent(event, defaultOidcUser.getSubject());
             return new ResponseEntity<>("Event created", HttpStatus.OK);
 
         } catch (DuplicateKeyException exception){
