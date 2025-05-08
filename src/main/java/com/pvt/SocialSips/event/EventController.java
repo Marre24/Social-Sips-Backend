@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,10 +21,10 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @GetMapping("/{hostId}")
-    public ResponseEntity<?> getEvent(@PathVariable Long hostId){
+    @GetMapping("/")
+    public ResponseEntity<?> getEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser){
         try{
-            Event e = eventService.getEvent(hostId);
+            Event e = eventService.getEvent(defaultOidcUser.getSubject());
             return new ResponseEntity<>(e, HttpStatus.OK);
 
         } catch (EntityNotFoundException exception){
@@ -41,11 +43,10 @@ public class EventController {
         }
     }
 
-    @PatchMapping("/start/{hostId}")
-    public ResponseEntity<String> startEvent(@PathVariable Long hostId){
+    @PatchMapping("/start/")
+    public ResponseEntity<String> startEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser){
         try{
-
-            eventService.startEvent(hostId);
+            eventService.startEvent(defaultOidcUser.getSubject());
             return new ResponseEntity<>("Event Started", HttpStatus.OK);
 
         } catch (Exception exception){
@@ -53,10 +54,10 @@ public class EventController {
         }
     }
 
-    @DeleteMapping("/{hostId}")
-    public ResponseEntity<String> deleteEvent(@PathVariable Long hostId){
+    @DeleteMapping("/")
+    public ResponseEntity<String> deleteEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser){
         try{
-            eventService.deleteEvent(hostId);
+            eventService.deleteEvent(defaultOidcUser.getSubject());
             return new ResponseEntity<>("Event deleted", HttpStatus.OK);
 
         } catch (EntityNotFoundException exception){
