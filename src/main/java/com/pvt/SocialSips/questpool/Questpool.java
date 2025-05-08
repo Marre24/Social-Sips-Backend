@@ -14,7 +14,7 @@ public class Questpool {
     private Long id;
     private String name;
     private QuestpoolType type;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "qpId")
     private Set<Quest> quests;
 

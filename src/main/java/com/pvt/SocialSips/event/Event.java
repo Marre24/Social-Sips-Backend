@@ -1,6 +1,7 @@
 package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.questpool.Questpool;
+import com.pvt.SocialSips.user.User;
 import jakarta.persistence.*;
 import org.sqids.Sqids;
 
@@ -13,7 +14,8 @@ public class Event {
     public static final Sqids SQID = Sqids.builder().minLength(5).alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ").build();
 
     @Id
-    private Long hostId;
+    @Column(name = "host_sub")
+    private String hostSub;
     private Boolean started = false;
     private String joinCode;
 
@@ -26,21 +28,21 @@ public class Event {
     public Event() {
     }
 
-    public Event(Long hostId, String name, Integer groupSize, Set<Questpool> questpools) {
-        joinCode = generateJoinCode(hostId);
-        this.hostId = hostId;
+    public Event(String name, Integer groupSize, Set<Questpool> questpools, String hostSub) {
+        joinCode = generateJoinCode(hostSub);
+        this.hostSub = hostSub;
         this.name = name;
         this.groupSize = groupSize;
         this.questpools = questpools;
     }
 
-    public Long getHostId() {
-        return hostId;
+    public String getHostSub() {
+        return hostSub;
     }
 
-    public void setHostId(Long hostId) {
-        this.hostId = hostId;
-        this.joinCode = generateJoinCode(hostId);
+    public void setHostSub(String hostSub) {
+        this.hostSub = hostSub;
+        this.joinCode = generateJoinCode(hostSub);
     }
 
     public Boolean getStarted() {
@@ -83,8 +85,7 @@ public class Event {
         this.questpools = questpools;
     }
 
-    private String generateJoinCode(Long hostId){
-        return SQID.encode(List.of(hostId));
+    private String generateJoinCode(String hostId){
+        return SQID.encode(List.of(Long.valueOf(hostId)));
     }
-
 }

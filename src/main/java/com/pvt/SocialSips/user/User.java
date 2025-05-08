@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.user;
 
+import com.pvt.SocialSips.event.Event;
 import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.role.Role;
 import jakarta.persistence.*;
@@ -13,7 +14,6 @@ import java.util.Set;
 @Table(name = "USERS")
 public class User {
 
-
     @Id
     private String sub;
     private String firstName;
@@ -21,6 +21,10 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "USER_ROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private List<Role> roles = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "host_sub")
+    private Event event;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "hostId")
@@ -32,14 +36,12 @@ public class User {
     public User(String firstName, String sub){
         this.sub = sub;
         this.firstName = firstName;
-
     }
 
     public User(String firstName, String sub, List<Role> roles){
         this.sub = sub;
         this.firstName = firstName;
         this.roles = roles;
-
     }
 
     public String getFirstName() {
@@ -72,5 +74,13 @@ public class User {
 
     public Set<Questpool> getQuestpools() {
         return questpools;
+    }
+
+    public void setEvent(String name, Integer groupSize, Set<Questpool> questpools){
+        this.event = new Event(name, groupSize, questpools, getSub());
+    }
+
+    public Event getEvent(){
+        return event;
     }
 }
