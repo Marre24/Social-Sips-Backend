@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.springframework.core.io.Resource;
@@ -15,7 +17,7 @@ import org.springframework.core.io.Resource;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("{FIREBASE_ADMIN_SDK}")
+    @Value("FIREBASE_ADMIN_SDK")
     private Resource serviceAccountResource;
 
     @PostConstruct
@@ -28,8 +30,8 @@ public class FirebaseConfig {
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println(e.getCause() + e.getMessage());
         }
     }
 }
