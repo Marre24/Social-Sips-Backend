@@ -23,25 +23,14 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(User user) {
-        userService.register(user);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(User user) {
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping("/profile")
-    public ResponseEntity<?> profile(Principal principal) {
+    public ResponseEntity<String> profile(Principal principal) {
         if (principal instanceof OAuth2AuthenticationToken oauth2) {
             String sub = oauth2.getPrincipal().getAttribute("sub");
             User user = userService.getUserBySub(sub);
-            return ResponseEntity.ok(user);
+            return new ResponseEntity<>(user.getFirstName(), HttpStatus.OK);
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized user request.");
+        return new ResponseEntity<>("Unauthorized user request!", HttpStatus.FORBIDDEN);
     }
 
 

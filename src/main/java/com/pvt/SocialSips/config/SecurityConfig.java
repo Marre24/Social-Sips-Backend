@@ -38,8 +38,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/", "/home", "/event/**", "/questpool/**",
-                                "/css/**", "/error", "/auth").permitAll()
-                        .requestMatchers("/user/**", "/user").authenticated()
+                                "/css/**", "/error").permitAll()
+                        .requestMatchers("/user/profile").authenticated()
 
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)

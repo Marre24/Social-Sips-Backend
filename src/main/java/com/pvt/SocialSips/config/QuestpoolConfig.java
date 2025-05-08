@@ -54,6 +54,7 @@ public class QuestpoolConfig {
                     ))
             );
 
+            userService.deleteUser(standard);
             userService.register(standard);
 
             questpoolService.createQuestpoolWithHost(triviaOne, standard.getSub());

@@ -38,4 +38,8 @@ public class UserService {
     public Set<Questpool> getAllQuestpoolsBySub(String sub) {
         return userRepository.getReferenceById(sub).getQuestpools();
     }
+
+    public void deleteUser(User standard) {
+        userRepository.deleteById(standard.getSub());
+    }
 }
