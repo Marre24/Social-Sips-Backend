@@ -68,10 +68,6 @@ public class QuestpoolIT {
 
     @BeforeAll
     public void setup() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-
         TEST_USER.addQuestpool(QUESTPOOL_ONE);
         TEST_USER.addQuestpool(QUESTPOOL_TWO);
         TEST_USER.addQuestpool(QUESTPOOL_THREE);
