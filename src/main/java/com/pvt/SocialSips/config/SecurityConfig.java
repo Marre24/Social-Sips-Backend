@@ -17,6 +17,7 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 
 @Configuration
@@ -37,10 +38,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/", "/home", "/event/**", "/questpool/**",
-                                "/css/**", "/error").permitAll()
-                        .requestMatchers("/user/profile").authenticated()
+                                "/css/**", "/error", "/auth").permitAll()
+                        .requestMatchers("/user/**", "/user").authenticated()
 
                 )
+                .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .headers(h -> h
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
