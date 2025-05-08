@@ -42,7 +42,7 @@ public class EventServiceTest {
     private final static User NON_STARTED_USER = new User("firstName", NON_STARTED_USER_SUB);
     private final static User STARTED_USER = new User("firstName", STARTED_USER_SUB);
 
-    private final static Event EVENT = new Event("name", 2, new HashSet<>(), USER);
+    private final static Event EVENT = new Event("name", 2, new HashSet<>(), USER_SUB);
     private final static Set<String> GUESTS = new HashSet<>(List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"));
     private final static Set<String> ELEVEN_GUESTS = new HashSet<>(List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"));
 
@@ -66,7 +66,9 @@ public class EventServiceTest {
         when(eventRepository.findById(USER_SUB)).thenReturn(Optional.empty());
         when(eventRepository.save(EVENT)).thenReturn(EVENT);
 
-        assertDoesNotThrow(() -> eventService.createEvent(EVENT));
+        when(userService.getUserBySub(USER_SUB)).thenReturn(USER);
+
+        assertDoesNotThrow(() -> eventService.createEvent(EVENT, USER_SUB));
     }
 
     @Test
@@ -74,12 +76,14 @@ public class EventServiceTest {
         when(eventRepository.findById(USER_SUB)).thenReturn(Optional.of(EVENT));
         when(eventRepository.save(EVENT)).thenReturn(EVENT);
 
-        assertThrows(DuplicateKeyException.class, () -> eventService.createEvent(EVENT));
+        when(userService.getUserBySub(USER_SUB)).thenReturn(USER);
+
+        assertThrows(DuplicateKeyException.class, () -> eventService.createEvent(EVENT, USER_SUB));
     }
 
     @Test
     public void startEvent_EventNotStarted_EventStarted() {
-        Event nonStartedEvent = new Event("NonStartedEvent", 2, new HashSet<>(), NON_STARTED_USER);
+        Event nonStartedEvent = new Event("NonStartedEvent", 2, new HashSet<>(), NON_STARTED_USER_SUB);
 
         when(eventRepository.findById(NON_STARTED_USER_SUB)).thenReturn(Optional.of(nonStartedEvent));
         eventService.startEvent(nonStartedEvent.getHostSub());
@@ -89,7 +93,7 @@ public class EventServiceTest {
 
     @Test
     public void startEvent_EventAlreadyStarted_IllegalStateExceptionThrown() {
-        Event startedEvent = new Event("NonStartedEvent", 2, new HashSet<>(), STARTED_USER);
+        Event startedEvent = new Event("NonStartedEvent", 2, new HashSet<>(), STARTED_USER_SUB);
         startedEvent.setStarted(true);
 
         when(eventRepository.findById(startedEvent.getHostSub())).thenReturn(Optional.of(startedEvent));
@@ -106,7 +110,7 @@ public class EventServiceTest {
 
     @Test
     public void codeGenerator_IdIsTen_CodeIsGenerated() {
-        Event idTen = new Event("NonStartedEvent", 2, new HashSet<>(), USER);
+        Event idTen = new Event("NonStartedEvent", 2, new HashSet<>(), USER_SUB);
 
         assertNotNull(idTen.getJoinCode());
     }
@@ -120,7 +124,7 @@ public class EventServiceTest {
 
     @Test
     public void canJoinEvent_StartedEvent_EventCouldntBeJoined() {
-        Event startedEvent = new Event("NonStartedEvent", 2, new HashSet<>(), USER);
+        Event startedEvent = new Event("NonStartedEvent", 2, new HashSet<>(), USER_SUB);
         startedEvent.setStarted(true);
         when(eventRepository.findById(startedEvent.getHostSub())).thenReturn(Optional.of(startedEvent));
 
