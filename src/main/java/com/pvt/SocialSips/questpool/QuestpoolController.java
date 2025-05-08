@@ -25,21 +25,8 @@ public class QuestpoolController {
         this.questpoolService = questpoolService;
     }
 
-    //todo: refactor id to name and no name duplicates
-
-    @GetMapping("/{qpId}")
-    public ResponseEntity<?> getByQuestpoolId(@PathVariable Long qpId) {
-        try{
-            Questpool questpool = questpoolService.getByQuestpoolId(qpId);
-            return new ResponseEntity<>(questpool, HttpStatus.OK);
-        }
-        catch (EntityNotFoundException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
     @DeleteMapping("/{qpId}")
-    public ResponseEntity<String> deleteByQuestpoolId(@PathVariable Long qpId){
+    public ResponseEntity<String> deleteByQuestpoolId(@PathVariable Long qpId, @AuthenticationPrincipal DefaultOidcUser defaultOidcUser){
         try{
             questpoolService.deleteQuestpoolById(qpId);
             return new ResponseEntity<>("Questpool was deleted!", HttpStatus.OK);
@@ -58,7 +45,7 @@ public class QuestpoolController {
     }
 
     @PatchMapping("/{qpId}")
-    public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable Long qpId) {
+    public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable Long qpId, @AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
         try{
             questpoolService.updateQuestpool(quests, qpId);
             return new ResponseEntity<>("Questpool has been updated!", HttpStatus.OK);
@@ -66,13 +53,6 @@ public class QuestpoolController {
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-    }
-
-    @GetMapping("/getAll")
-    public ResponseEntity<?> getAllQuestpools(){
-        List<Questpool> questpools = questpoolService.getAllQuestpools();
-        if(questpools.isEmpty()) return new ResponseEntity<>("No questpools exists in the database.",HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(questpools, HttpStatus.OK);
     }
 
 }

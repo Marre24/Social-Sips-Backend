@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -35,8 +36,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
+
+    @Transactional
+    //this method uses transactional and an unused call to getQuestpools to fetch the questpools to solve the standard lazy fetch
     public User getUserBySub(String sub) {
-        return userRepository.findById(sub).orElse(null);
+        Optional<User> user = userRepository.findById(sub);
+        if (user.isEmpty())
+            return null;
+        int size = user.get().getQuestpools().size();
+        return user.get();
     }
 
     public Set<Questpool> getAllQuestpoolsBySub(String sub) {
