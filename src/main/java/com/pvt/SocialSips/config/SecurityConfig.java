@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/", "/home", "/event/**", "/questpool/**",
                                 "/css/**", "/error").permitAll()
-                        .requestMatchers("/user/profile").authenticated()
+                        .requestMatchers("/user/**").authenticated()
 
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
