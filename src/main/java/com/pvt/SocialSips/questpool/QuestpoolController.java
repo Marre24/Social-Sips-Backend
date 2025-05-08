@@ -24,21 +24,8 @@ public class QuestpoolController {
     public QuestpoolController( QuestpoolService questpoolService) {
         this.questpoolService = questpoolService;
     }
-
-    //todo: refactor id to name and no name duplicates
-
-    @GetMapping("/{qpId}")
-    public ResponseEntity<?> getByQuestpoolId(@PathVariable Long qpId) {
-        try{
-            Questpool questpool = questpoolService.getByQuestpoolId(qpId);
-            return new ResponseEntity<>(questpool, HttpStatus.OK);
-        }
-        catch (EntityNotFoundException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
     @DeleteMapping("/{qpId}")
+
     public ResponseEntity<String> deleteByQuestpoolId(@PathVariable Long qpId){
         try{
             questpoolService.deleteQuestpoolById(qpId);
