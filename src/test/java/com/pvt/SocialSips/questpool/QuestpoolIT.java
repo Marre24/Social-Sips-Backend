@@ -31,8 +31,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 
@@ -55,6 +54,13 @@ public class QuestpoolIT {
     private static final Questpool QUESTPOOL_TWO = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
     private static final Questpool QUESTPOOL_THREE = new Questpool("A quest pool", QuestpoolType.TRIVIA,
             new HashSet<>(List.of(new Trivia("Question two", new HashSet<>(List.of("opp1", "correct", "opp3", "opp4")), 2))));
+
+    private static final String OLD_QUESTS = "[ { \"id\" : null, \"prompt\" : \"A prompt\", \"type\" : \"ICEBREAKER\" } ]";
+    private static final String NEW_QUESTS = "[ " +
+                                                    "{ \"id\" : null, \"prompt\" : \"A prompt\", \"type\" : \"ICEBREAKER\" }," +
+                                                    "{ \"id\" : null, \"prompt\" : \"A prompt\", \"type\" : \"ICEBREAKER\" }," +
+                                                    "{ \"id\" : null, \"prompt\" : \"A prompt\", \"type\" : \"ICEBREAKER\" }" +
+                                                " ]";
 
     private final UserService userService;
 
@@ -151,6 +157,55 @@ public class QuestpoolIT {
 
         int actual = userService.getUserBySub(TEST_USER_SUB).getQuestpools().size();
         assertEquals(expectedAmount, actual);
+    }
+
+    @Test
+    public void updateQuestpool_ValidHost_HTTPCodeIsOK() throws Exception {
+
+        var set = userService.getUserBySub(TEST_USER_SUB).getQuestpools();
+
+        assertFalse(set.isEmpty());
+
+        var it = set.iterator();
+        var questpool = it.next();
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId())
+                        .with(oidcLogin().oidcUser(OIDC_USER)).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(APPLICATION_JSON)
+                        .content(OLD_QUESTS))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void updateQuestpool_ValidHost_HostQuestpoolsSizeIsDecrementedByOne() throws Exception {
+        var set = userService.getUserBySub(TEST_USER_SUB).getQuestpools();
+
+        assertFalse(set.isEmpty());
+
+        var it = set.iterator();
+        var questpool = it.next();
+        var expectedNotToBe = questpool.getQuests();
+
+
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId())
+                        .with(oidcLogin().oidcUser(OIDC_USER)).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(APPLICATION_JSON)
+                        .content(NEW_QUESTS))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        var newSet = userService.getUserBySub(TEST_USER_SUB).getQuestpools();
+
+        assertFalse(set.isEmpty());
+
+        var newIt = newSet.iterator();
+        var actualQuests = newIt.next().getQuests();
+
+        assertNotEquals(expectedNotToBe, actualQuests);
     }
 
 }
