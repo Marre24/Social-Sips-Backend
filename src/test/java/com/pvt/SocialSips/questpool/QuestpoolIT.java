@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 
@@ -38,8 +39,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QuestpoolIT {
-
-    private static final String URL = "https://localhost/";
 
     private static final String TEST_USER_SUB = "TEST USER SUB";
     private static final User TEST_USER = new User(TEST_USER_SUB, TEST_USER_SUB, List.of(new Role("ROLE_OIDC_USER")));
@@ -72,19 +71,40 @@ public class QuestpoolIT {
     }
 
     @Test
-    public void createQuestpool_ValidHost_HTTPCodeIsOK() throws Exception {
+    public void addQuestpool_ValidHost_HTTPCodeIsOK() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(QUESTPOOL);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(URL + "questpool/")
-                        .with(oidcLogin().oidcUser(OIDC_USER))
+        mockMvc.perform(MockMvcRequestBuilders.post("/questpool/")
+                        .with(oidcLogin().oidcUser(OIDC_USER)).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(APPLICATION_JSON)
                         .content(requestJson))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void addQuestpool_ValidHost_HostQuestpoolsSizeIsIncrementedByOne() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(QUESTPOOL);
+
+        int expectedAmount = userService.getUserBySub(TEST_USER_SUB).getQuestpools().size() + 1;
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/questpool/")
+                        .with(oidcLogin().oidcUser(OIDC_USER)).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(APPLICATION_JSON)
+                        .content(requestJson))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        int actual = userService.getUserBySub(TEST_USER_SUB).getQuestpools().size();
+        assertEquals(expectedAmount, actual);
     }
 
 }
