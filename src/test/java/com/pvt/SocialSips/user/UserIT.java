@@ -56,6 +56,7 @@ public class UserIT {
             OidcIdToken.withTokenValue("id-token").claim("sub", TEST_USER_SUB).build(),
             "sub");
 
+
     private static String THREE_QUESTPOOLS_IN_JSON_EXPECTED;
 
     private final UserRepository userRepository;
@@ -85,6 +86,14 @@ public class UserIT {
     @AfterAll
     public void shutDown() {
         userRepository.delete(USER);
+    }
+
+    @Test
+    public void getAllQuestpools_UserNotAuthorized_IsRedirected() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get(URL + "user/")
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
     }
 
     @Test
