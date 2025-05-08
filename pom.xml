@@ -87,6 +87,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>6.4.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.sqids</groupId>
 			<artifactId>sqids</artifactId>
 			<version>0.1.0</version>
