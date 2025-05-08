@@ -21,26 +21,26 @@ public class EventService {
         this.userService = userService;
     }
 
-    public Event getEvent(Long id) {
-        Optional<Event> optionalEvent = eventRepository.findById(id);
+    public Event getEvent(String hostSub) {
+        Optional<Event> optionalEvent = eventRepository.findById(hostSub);
 
         if (optionalEvent.isEmpty())
-            throw new EntityNotFoundException("Event with id: " + id + " does not exist");
+            throw new EntityNotFoundException("Event with id: " + hostSub + " does not exist");
 
         return optionalEvent.get();
     }
 
     public void createEvent(Event event) {
-        if (eventRepository.findById(event.getHostId()).isPresent())
-            throw new DuplicateKeyException("Event with id: " + event.getHostId() + " already exists");
+        if (eventRepository.findById(event.getHostSub()).isPresent())
+            throw new DuplicateKeyException("Event with id: " + event.getHostSub() + " already exists");
 
         eventRepository.save(event);
     }
 
 
     @Transactional
-    public void startEvent(Long hostId) {
-        Event event = getEvent(hostId);
+    public void startEvent(String hostSub) {
+        Event event = getEvent(hostSub);
 
         if (event.getStarted())
             throw new IllegalStateException("Event has already started");
@@ -50,16 +50,16 @@ public class EventService {
 
     }
 
-    public void deleteEvent(Long hostId) {
-        getEvent(hostId);
+    public void deleteEvent(String hostSub) {
+        getEvent(hostSub);
 
-        eventRepository.deleteById(hostId);
+        eventRepository.deleteById(hostSub);
     }
 
     public boolean canJoinEvent(String joinCode) {
         Long code = Event.SQID.decode(joinCode).get(0);
 
-        return !getEvent(code).getStarted();
+        return !getEvent(code.toString()).getStarted();
     }
 
     public static ArrayList<ArrayList<String>> matchUsers(Set<String> guests, int groupSize){
