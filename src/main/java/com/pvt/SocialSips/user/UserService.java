@@ -1,5 +1,7 @@
 package com.pvt.SocialSips.user;
 
+import com.pvt.SocialSips.event.EventRepository;
+import com.pvt.SocialSips.event.EventService;
 import com.pvt.SocialSips.questpool.Questpool;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,12 @@ import java.util.Set;
 @Service
 public class UserService {
 
+    private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(EventRepository eventRepository, UserRepository userRepository) {
+        this.eventRepository = eventRepository;
         this.userRepository = userRepository;
     }
 
@@ -41,5 +45,6 @@ public class UserService {
 
     public void deleteUser(User standard) {
         userRepository.deleteById(standard.getSub());
+        eventRepository.deleteById(standard.getSub());
     }
 }
