@@ -15,13 +15,12 @@ import org.springframework.core.io.Resource;
 @Configuration
 public class FirebaseConfig {
 
-    @Value(value = "${FIREBASE_ADMIN_SDK}")
+    @Value("${FIREBASE_ADMIN_SDK}")
     private Resource serviceAccountResource;
 
     @PostConstruct
     public void initialize() {
-        try (InputStream serviceAccount = serviceAccountResource.getInputStream()){
-
+        try (InputStream serviceAccount = serviceAccountResource.getInputStream()) {
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();
@@ -34,3 +33,4 @@ public class FirebaseConfig {
         }
     }
 }
+
