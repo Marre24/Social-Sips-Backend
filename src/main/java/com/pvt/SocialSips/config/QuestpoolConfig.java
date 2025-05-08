@@ -5,9 +5,8 @@ import com.pvt.SocialSips.quest.Trivia;
 import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.questpool.QuestpoolService;
 import com.pvt.SocialSips.questpool.QuestpoolType;
-import com.pvt.SocialSips.user.Host;
-import com.pvt.SocialSips.user.HostRepository;
-import com.pvt.SocialSips.user.HostService;
+import com.pvt.SocialSips.user.User;
+import com.pvt.SocialSips.user.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,17 +18,16 @@ import java.util.List;
 public class QuestpoolConfig {
 
     @Bean
-    CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService, HostService hostService) {
+    CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService, UserService userService) {
         return args -> {
-            Host standard = new Host("STANDARD", "STANDARD");
+            User standard = new User("STANDARD", "STANDARD");
 
             Questpool icebreakerOne = new Questpool(
                     "icebreakerOne",
                     QuestpoolType.ICEBREAKER,
                     new HashSet<>(List.of(
                             new Icebreaker("Ask about interests"),
-                            new Icebreaker("Ask about gaming"))),
-                    standard
+                            new Icebreaker("Ask about gaming")))
             );
 
             Questpool icebreakerTwo = new Questpool(
@@ -37,8 +35,7 @@ public class QuestpoolConfig {
                     QuestpoolType.ICEBREAKER,
                     new HashSet<>(List.of(
                             new Icebreaker("Ask about music"),
-                            new Icebreaker("Ask about fashion"))),
-                    standard
+                            new Icebreaker("Ask about fashion")))
             );
 
             Questpool triviaOne = new Questpool(
@@ -46,8 +43,7 @@ public class QuestpoolConfig {
                     QuestpoolType.TRIVIA,
                     new HashSet<>(List.of(
                             new Trivia("Question one", new HashSet<>(List.of("Correct", "opp2", "opp3", "opp4")), 1)
-                    )),
-                    standard
+                    ))
             );
 
             Questpool triviaTwo = new Questpool(
@@ -55,11 +51,11 @@ public class QuestpoolConfig {
                     QuestpoolType.TRIVIA,
                     new HashSet<>(List.of(
                             new Trivia("Question two", new HashSet<>(List.of("opp1", "correct", "opp3", "opp4")), 2)
-                    )),
-                    standard
+                    ))
             );
 
-            hostService.register(standard);
+            userService.deleteUser(standard);
+            userService.register(standard);
 
             questpoolService.createQuestpoolWithHost(triviaOne, standard.getSub());
             questpoolService.createQuestpoolWithHost(triviaTwo, standard.getSub());

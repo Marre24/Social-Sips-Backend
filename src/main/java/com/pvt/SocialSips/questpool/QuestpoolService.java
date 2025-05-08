@@ -2,8 +2,8 @@ package com.pvt.SocialSips.questpool;
 
 import com.pvt.SocialSips.quest.Quest;
 import com.pvt.SocialSips.quest.QuestRepository;
-import com.pvt.SocialSips.user.Host;
-import com.pvt.SocialSips.user.HostRepository;
+import com.pvt.SocialSips.user.User;
+import com.pvt.SocialSips.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +20,13 @@ public class QuestpoolService {
 
     private final QuestpoolRepository questpoolRepository;
 
-    private final HostRepository hostRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public QuestpoolService(QuestRepository questRepository, QuestpoolRepository questpoolRepository, HostRepository hostRepository) {
+    public QuestpoolService(QuestRepository questRepository, QuestpoolRepository questpoolRepository, UserRepository userRepository) {
         this.questpoolRepository = questpoolRepository;
         this.questRepository = questRepository;
-        this.hostRepository = hostRepository;
+        this.userRepository = userRepository;
     }
 
     public Questpool getByQuestpoolId(Long qpId) {
@@ -42,11 +42,11 @@ public class QuestpoolService {
 
     @Transactional
     public void createQuestpoolWithHost(Questpool qp, String sub) {
-        Host host = hostRepository.getReferenceById(sub);
+        User user = userRepository.getReferenceById(sub);
 
-        host.addQuestpool(qp);
+        user.addQuestpool(qp);
 
-        hostRepository.save(host);
+        userRepository.save(user);
     }
 
     @Transactional

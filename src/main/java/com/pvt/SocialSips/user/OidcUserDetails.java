@@ -13,31 +13,31 @@ public class OidcUserDetails implements UserDetails, OidcUser {
     private Map<String, Object> attributes;
     private OidcUserInfo oidcUserInfo;
     private OidcIdToken oidcIdToken;
-    private final Host host;
+    private final User user;
 
     private final Collection<? extends GrantedAuthority> grantedAuthorities;
 
-    public OidcUserDetails(Host host, Collection<? extends GrantedAuthority> grantedAuthorities) {
-        this.host = host;
+    public OidcUserDetails(User user, Collection<? extends GrantedAuthority> grantedAuthorities) {
+        this.user = user;
         this.grantedAuthorities = grantedAuthorities;
         attributes = new HashMap<>();
     }
 
-    public OidcUserDetails(Host host, Collection<? extends GrantedAuthority> grantedAuthorities, OidcUserInfo oidcUserInfo, OidcIdToken oidcIdToken){
-        this.host = host;
+    public OidcUserDetails(User user, Collection<? extends GrantedAuthority> grantedAuthorities, OidcUserInfo oidcUserInfo, OidcIdToken oidcIdToken){
+        this.user = user;
         this.grantedAuthorities = grantedAuthorities != null ? grantedAuthorities : new ArrayList<>();
         this.oidcUserInfo = oidcUserInfo;
         this.oidcIdToken = oidcIdToken;
     }
 
-    public OidcUserDetails(Host host){
-        this(host, null);
+    public OidcUserDetails(User user){
+        this(user, null);
     }
 
 
     @Override
     public String getName() {
-        return host.getFirstName();
+        return user.getFirstName();
     }
 
     @Override

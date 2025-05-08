@@ -1,7 +1,6 @@
 package com.pvt.SocialSips.event;
 
-import com.pvt.SocialSips.user.Host;
-import com.pvt.SocialSips.user.HostService;
+import com.pvt.SocialSips.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -14,12 +13,12 @@ import java.util.*;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final HostService hostService;
+    private final UserService userService;
 
     @Autowired
-    public EventService(EventRepository eventRepository, HostService hostService) {
+    public EventService(EventRepository eventRepository, UserService userService) {
         this.eventRepository = eventRepository;
-        this.hostService = hostService;
+        this.userService = userService;
     }
 
     public Event getEvent(Long id) {
