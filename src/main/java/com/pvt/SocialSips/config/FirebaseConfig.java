@@ -15,7 +15,7 @@ import org.springframework.core.io.Resource;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${FIREBASE_ADMIN_SDK}")
+    @Value("{FIREBASE_ADMIN_SDK}")
     private Resource serviceAccountResource;
 
     @PostConstruct
