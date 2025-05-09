@@ -36,10 +36,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/", "/home", "/event/**", "/questpool/**",
-                                "/css/**", "/error").permitAll()
-                        .requestMatchers("/user/**").authenticated()
+                        .requestMatchers("/", "/home", "/css/**", "/error").permitAll()
+                        .requestMatchers("/event/join/**").permitAll()
+                        .requestMatchers("/user/**", "/event/", "/event/start/", "/questpool/**").authenticated()
 
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
