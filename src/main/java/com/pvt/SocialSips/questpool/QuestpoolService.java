@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -70,4 +71,7 @@ public class QuestpoolService {
         questpoolRepository.save(qp);
     }
 
+    public List<Questpool> getAllQuestpools() {
+        return questpoolRepository.findAll();
+    }
 }
