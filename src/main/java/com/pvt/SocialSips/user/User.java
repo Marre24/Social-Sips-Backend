@@ -22,23 +22,23 @@ public class User {
     @JoinTable(name = "USER_ROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
     private List<Role> roles = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "host_sub")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "sub", referencedColumnName = "host_sub")
     private Event event;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "hostId")
-    private Set<Questpool> questpools = new HashSet<>();
+    private final Set<Questpool> questpools = new HashSet<>();
 
-    public User(){
+    public User() {
     }
 
-    public User(String firstName, String sub){
+    public User(String firstName, String sub) {
         this.sub = sub;
         this.firstName = firstName;
     }
 
-    public User(String firstName, String sub, List<Role> roles){
+    public User(String firstName, String sub, List<Role> roles) {
         this.sub = sub;
         this.firstName = firstName;
         this.roles = roles;
@@ -76,11 +76,19 @@ public class User {
         return questpools;
     }
 
-    public void setEvent(String name, Integer groupSize, Set<Questpool> questpools){
+    public void setEvent(String name, Integer groupSize, Set<Questpool> questpools) {
         this.event = new Event(name, groupSize, questpools, getSub());
     }
 
-    public Event getEvent(){
+    public Event getEvent() {
         return event;
+    }
+
+    public void removeEvent() {
+        event = null;
+    }
+
+    public void removeQuestpool(Questpool qp) {
+        questpools.remove(qp);
     }
 }

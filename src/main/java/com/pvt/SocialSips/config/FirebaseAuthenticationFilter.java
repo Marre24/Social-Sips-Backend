@@ -28,7 +28,7 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
                 PreAuthenticatedAuthenticationToken authentication = new PreAuthenticatedAuthenticationToken(
                         decodedToken.getEmail(), null, Collections.emptyList());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                
+
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;

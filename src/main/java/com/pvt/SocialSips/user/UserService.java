@@ -1,7 +1,6 @@
 package com.pvt.SocialSips.user;
 
 import com.pvt.SocialSips.event.EventRepository;
-import com.pvt.SocialSips.event.EventService;
 import com.pvt.SocialSips.questpool.Questpool;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +52,16 @@ public class UserService {
 
     public void deleteUser(User standard) {
         userRepository.deleteById(standard.getSub());
-        eventRepository.deleteById(standard.getSub());
+    }
+
+    @Transactional
+    public void removeEventFrom(String hostSub) {
+        User user = getUserBySub(hostSub);
+        user.removeEvent();
+    }
+
+    @Transactional
+    public void removeQuestpoolFrom(User user, Questpool qp) {
+        user.removeQuestpool(qp);
     }
 }

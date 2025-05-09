@@ -8,7 +8,10 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class EventService {
@@ -58,31 +61,34 @@ public class EventService {
     public void deleteEvent(String hostSub) {
         getEvent(hostSub);
 
+        userService.removeEventFrom(hostSub);
         eventRepository.deleteById(hostSub);
     }
 
     public boolean canJoinEvent(String joinCode) {
-        Long code = Event.SQID.decode(joinCode).get(0);
+        var event = eventRepository.findByJoinCode(joinCode);
 
-        return !getEvent(code.toString()).getStarted();
+        if (event.isEmpty())
+            throw new EntityNotFoundException("Could not find event with join code: " + joinCode);
+
+        return !event.get().getStarted();
     }
 
-    public static ArrayList<ArrayList<String>> matchUsers(Set<String> guests, int groupSize){
+    public static ArrayList<ArrayList<String>> matchUsers(Set<String> guests, int groupSize) {
         ArrayList<String> toBeMatched = new ArrayList<>(guests);
         Collections.shuffle(toBeMatched);
         ArrayList<ArrayList<String>> groups = new ArrayList<>();
 
         int amountOfGroups = toBeMatched.size() / groupSize;
 
-        for(int i = 0; i < amountOfGroups; i++)
+        for (int i = 0; i < amountOfGroups; i++)
             groups.add(new ArrayList<>());
 
-        for(int amountMatched = 0; amountMatched < toBeMatched.size(); amountMatched++){
+        for (int amountMatched = 0; amountMatched < toBeMatched.size(); amountMatched++) {
             String u = toBeMatched.get(amountMatched);
             groups.get(amountMatched % amountOfGroups).add(u);
         }
 
-        //todo connect to solution for saving/processing groups, shouldn't return like this
         return groups;
     }
 

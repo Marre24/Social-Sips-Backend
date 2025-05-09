@@ -27,11 +27,11 @@ public class FirebaseUserController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> authenticateFirebaseToken(@RequestHeader String token, @AuthenticationPrincipal FirebaseToken firebaseToken){;
+    public ResponseEntity<?> authenticateFirebaseToken(@RequestHeader String token, @AuthenticationPrincipal FirebaseToken firebaseToken) {
 
         User user = userService.getUserBySub(firebaseToken.getUid());
-        if(user == null){
-            user = userService.register(new User(firebaseToken.getName(),firebaseToken.getUid(), List.of(new Role("OIDC_USER"), new Role("HOST"))));
+        if (user == null) {
+            user = userService.register(new User(firebaseToken.getName(), firebaseToken.getUid(), List.of(new Role("OIDC_USER"), new Role("HOST"))));
             List<GrantedAuthority> authorities = user.getRoles().stream()
                     .map(role -> new SimpleGrantedAuthority(role.getName()))
                     .collect(Collectors.toList());

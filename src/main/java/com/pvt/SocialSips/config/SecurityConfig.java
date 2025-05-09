@@ -36,10 +36,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/", "/home", "/event/**", "/questpool/**",
-                                "/css/**", "/error").permitAll()
-                        .requestMatchers("/user/**").authenticated()
+                        .requestMatchers("/", "/home", "/css/**", "/error").permitAll()
+                        .requestMatchers("/event/join/**").permitAll()
+                        .requestMatchers("/user/**", "/event/", "/event/start/", "/questpool/**").authenticated()
 
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
@@ -70,12 +69,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public RoleHierarchy roleHierarchy(){
+    public RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl.fromHierarchy("ADMIN > HOST > OIDC_USER > GUEST");
     }
 
     @Bean
-    public SecurityExpressionHandler<FilterInvocation> webExpressionHandler(){
+    public SecurityExpressionHandler<FilterInvocation> webExpressionHandler() {
         DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
         expressionHandler.setDefaultRolePrefix("ROLE_");
         expressionHandler.setRoleHierarchy(roleHierarchy());

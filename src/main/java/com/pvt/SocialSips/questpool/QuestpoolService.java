@@ -3,13 +3,12 @@ package com.pvt.SocialSips.questpool;
 import com.pvt.SocialSips.quest.Quest;
 import com.pvt.SocialSips.quest.QuestRepository;
 import com.pvt.SocialSips.user.User;
-import com.pvt.SocialSips.user.UserRepository;
+import com.pvt.SocialSips.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -20,13 +19,13 @@ public class QuestpoolService {
 
     private final QuestpoolRepository questpoolRepository;
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    public QuestpoolService(QuestRepository questRepository, QuestpoolRepository questpoolRepository, UserRepository userRepository) {
+    public QuestpoolService(QuestRepository questRepository, QuestpoolRepository questpoolRepository, UserService userService) {
         this.questpoolRepository = questpoolRepository;
         this.questRepository = questRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     public Questpool getByQuestpoolId(Long qpId) {
@@ -34,24 +33,35 @@ public class QuestpoolService {
         return questpoolOptional.orElseThrow(() -> new EntityNotFoundException("No such questpool exists!"));
     }
 
-    public void deleteQuestpoolById(Long qpId){
+    @Transactional
+    public void deleteQuestpoolById(Long qpId, String sub) {
+        User user = userService.getUserBySub(sub);
         Questpool qp = getByQuestpoolId(qpId);
-        questpoolRepository.deleteById(qpId);
+
+        if (!user.getQuestpools().contains(qp))
+            throw new IllegalCallerException("Tried to delete a questpool that is not owned by: " + user.getFirstName());
+
+        userService.removeQuestpoolFrom(user, qp);
     }
 
 
     @Transactional
     public void createQuestpoolWithHost(Questpool qp, String sub) {
-        User user = userRepository.getReferenceById(sub);
+        User user = userService.getUserBySub(sub);
 
         user.addQuestpool(qp);
 
-        userRepository.save(user);
+        userService.register(user);
     }
 
     @Transactional
-    public void updateQuestpool(Set<Quest> quests, Long qpId) {
+    public void updateQuestpool(Set<Quest> quests, Long qpId, String sub) {
+        User user = userService.getUserBySub(sub);
         Questpool qp = getByQuestpoolId(qpId);
+
+        if (!user.getQuestpools().contains(qp))
+            throw new IllegalCallerException("Tried to update a questpool that is not owned by: " + user.getFirstName());
+
         questRepository.deleteAll(qp.getQuests());
         qp.getQuests().clear();
 
@@ -60,7 +70,4 @@ public class QuestpoolService {
         questpoolRepository.save(qp);
     }
 
-    public List<Questpool> getAllQuestpools() {
-        return questpoolRepository.findAll();
-    }
 }

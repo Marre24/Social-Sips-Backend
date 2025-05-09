@@ -10,7 +10,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -21,18 +20,19 @@ public class QuestpoolController {
     private final QuestpoolService questpoolService;
 
     @Autowired
-    public QuestpoolController( QuestpoolService questpoolService) {
+    public QuestpoolController(QuestpoolService questpoolService) {
         this.questpoolService = questpoolService;
     }
 
     @DeleteMapping("/{qpId}")
-    public ResponseEntity<String> deleteByQuestpoolId(@PathVariable Long qpId, @AuthenticationPrincipal DefaultOidcUser defaultOidcUser){
-        try{
-            questpoolService.deleteQuestpoolById(qpId);
+    public ResponseEntity<String> deleteByQuestpoolId(@PathVariable Long qpId, @AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+        try {
+            questpoolService.deleteQuestpoolById(qpId, defaultOidcUser.getSubject());
             return new ResponseEntity<>("Questpool was deleted!", HttpStatus.OK);
-        }
-        catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalCallerException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
 
     }
@@ -46,12 +46,14 @@ public class QuestpoolController {
 
     @PatchMapping("/{qpId}")
     public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable Long qpId, @AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
-        try{
-            questpoolService.updateQuestpool(quests, qpId);
+        try {
+            questpoolService.updateQuestpool(quests, qpId, defaultOidcUser.getSubject());
             return new ResponseEntity<>("Questpool has been updated!", HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (IllegalCallerException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
     }
 

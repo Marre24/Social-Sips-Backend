@@ -10,7 +10,10 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -117,7 +120,7 @@ public class EventServiceTest {
 
     @Test
     public void canJoinEvent_NonStartedEvent_EventCouldBeJoined() {
-        when(eventRepository.findById(EVENT.getHostSub())).thenReturn(Optional.of(EVENT));
+        when(eventRepository.findByJoinCode(EVENT.getJoinCode())).thenReturn(Optional.of(EVENT));
 
         assertTrue(eventService.canJoinEvent(EVENT.getJoinCode()));
     }
@@ -126,7 +129,7 @@ public class EventServiceTest {
     public void canJoinEvent_StartedEvent_EventCouldntBeJoined() {
         Event startedEvent = new Event("NonStartedEvent", 2, new HashSet<>(), USER_SUB);
         startedEvent.setStarted(true);
-        when(eventRepository.findById(startedEvent.getHostSub())).thenReturn(Optional.of(startedEvent));
+        when(eventRepository.findByJoinCode(startedEvent.getJoinCode())).thenReturn(Optional.of(startedEvent));
 
         assertFalse(eventService.canJoinEvent(startedEvent.getJoinCode()));
     }

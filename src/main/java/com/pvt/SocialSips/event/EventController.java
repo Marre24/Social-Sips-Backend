@@ -14,59 +14,59 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/event")
 public class EventController {
 
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
 
+    @Autowired
     public EventController(EventService eventService) {
         this.eventService = eventService;
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> getEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser){
-        try{
+    public ResponseEntity<?> getEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+        try {
             Event e = eventService.getEvent(defaultOidcUser.getSubject());
             return new ResponseEntity<>(e, HttpStatus.OK);
 
-        } catch (EntityNotFoundException exception){
+        } catch (EntityNotFoundException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> postEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser, @RequestBody Event event){
-        try{
+    public ResponseEntity<String> createEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser, @RequestBody Event event) {
+        try {
             eventService.createEvent(event, defaultOidcUser.getSubject());
             return new ResponseEntity<>("Event created", HttpStatus.OK);
 
-        } catch (DuplicateKeyException exception){
+        } catch (DuplicateKeyException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
     @PatchMapping("/start/")
-    public ResponseEntity<String> startEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser){
-        try{
+    public ResponseEntity<String> startEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+        try {
             eventService.startEvent(defaultOidcUser.getSubject());
             return new ResponseEntity<>("Event Started", HttpStatus.OK);
 
-        } catch (Exception exception){
+        } catch (Exception exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<String> deleteEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser){
-        try{
+    public ResponseEntity<String> deleteEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+        try {
             eventService.deleteEvent(defaultOidcUser.getSubject());
             return new ResponseEntity<>("Event deleted", HttpStatus.OK);
 
-        } catch (EntityNotFoundException exception){
+        } catch (EntityNotFoundException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("/join/{joinCode}")
-    public ResponseEntity<String> canJoinEvent(@PathVariable String joinCode){
+    public ResponseEntity<String> canJoinEvent(@PathVariable String joinCode) {
         try {
             if (eventService.canJoinEvent(joinCode))
                 return new ResponseEntity<>("Event with join code: " + joinCode + " can be joined!", HttpStatus.OK);
