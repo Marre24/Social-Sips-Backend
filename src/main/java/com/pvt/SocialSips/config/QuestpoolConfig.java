@@ -50,7 +50,7 @@ public class QuestpoolConfig {
                     "triviaTwo",
                     QuestpoolType.TRIVIA,
                     new HashSet<>(List.of(
-                            new Trivia("Question two", new HashSet<>(List.of("opp1", "correct", "opp3", "opp4")), 2)
+                            new Trivia("Question two", new HashSet<>(List.of("opp1", "Correct", "opp3", "opp4")), 2)
                     ))
             );
 
