@@ -53,7 +53,6 @@ public class UserService {
 
     public void deleteUser(User standard) {
         userRepository.deleteById(standard.getSub());
-        eventRepository.deleteById(standard.getSub());
     }
 
     @Transactional
