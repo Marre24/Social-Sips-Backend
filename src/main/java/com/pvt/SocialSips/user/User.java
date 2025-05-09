@@ -87,4 +87,8 @@ public class User {
     public void removeEvent() {
         event = null;
     }
+
+    public void removeQuestpool(Questpool qp) {
+        questpools.remove(qp);
+    }
 }

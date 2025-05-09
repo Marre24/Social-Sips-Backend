@@ -28,11 +28,14 @@ public class QuestpoolController {
     @DeleteMapping("/{qpId}")
     public ResponseEntity<String> deleteByQuestpoolId(@PathVariable Long qpId, @AuthenticationPrincipal DefaultOidcUser defaultOidcUser){
         try{
-            questpoolService.deleteQuestpoolById(qpId);
+            questpoolService.deleteQuestpoolById(qpId, defaultOidcUser.getSubject());
             return new ResponseEntity<>("Questpool was deleted!", HttpStatus.OK);
         }
         catch (EntityNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (IllegalCallerException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
 
     }

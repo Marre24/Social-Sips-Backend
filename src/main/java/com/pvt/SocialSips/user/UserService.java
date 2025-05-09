@@ -61,4 +61,9 @@ public class UserService {
         User user = getUserBySub(hostSub);
         user.removeEvent();
     }
+
+    @Transactional
+    public void removeQuestpoolFrom(User user, Questpool qp) {
+        user.removeQuestpool(qp);
+    }
 }

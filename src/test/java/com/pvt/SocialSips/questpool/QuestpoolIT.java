@@ -49,6 +49,9 @@ public class QuestpoolIT {
             OidcIdToken.withTokenValue("id-token").claim("sub", TEST_USER_SUB).build(),
             "sub");
 
+    private static final String OTHER_TEST_USER_SUB = "OTHER TEST USER SUB";
+    private static final User OTHER_TEST_USER = new User(OTHER_TEST_USER_SUB, OTHER_TEST_USER_SUB, List.of(new Role("ROLE_OIDC_USER")));
+
     private static final Questpool QUESTPOOL_TO_BE_ADDED = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
     private static final Questpool QUESTPOOL_ONE = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
     private static final Questpool QUESTPOOL_TWO = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
@@ -78,12 +81,16 @@ public class QuestpoolIT {
         TEST_USER.addQuestpool(QUESTPOOL_TWO);
         TEST_USER.addQuestpool(QUESTPOOL_THREE);
 
+        OTHER_TEST_USER.addQuestpool(QUESTPOOL_ONE);
+
         userService.register(TEST_USER);
+        userService.register(OTHER_TEST_USER);
     }
 
     @AfterAll
     public void shutDown() {
         userService.deleteUser(TEST_USER);
+        userService.deleteUser(OTHER_TEST_USER);
     }
 
     @Test
@@ -160,6 +167,32 @@ public class QuestpoolIT {
     }
 
     @Test
+    public void deleteQuestpool_NonExistantQuestpool_HTTPStatusIsNotFound() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/-1")
+                        .with(oidcLogin().oidcUser(OIDC_USER)).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void deleteQuestpool_OtherUsersQuestpool_HTTPStatusIsForbidden() throws Exception {
+        var set = userService.getUserBySub(OTHER_TEST_USER_SUB).getQuestpools();
+
+        assertFalse(set.isEmpty());
+
+        var it = set.iterator();
+        var questpool = it.next();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId())
+                        .with(oidcLogin().oidcUser(OIDC_USER)).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
     public void updateQuestpool_ValidHost_HTTPCodeIsOK() throws Exception {
 
         var set = userService.getUserBySub(TEST_USER_SUB).getQuestpools();
@@ -187,8 +220,6 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
         var expectedNotToBe = questpool.getQuests();
-
-
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId())
                         .with(oidcLogin().oidcUser(OIDC_USER)).secure(true)

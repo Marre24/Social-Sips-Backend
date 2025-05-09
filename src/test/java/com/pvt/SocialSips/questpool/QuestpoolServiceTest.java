@@ -5,7 +5,9 @@ import com.pvt.SocialSips.quest.Quest;
 import com.pvt.SocialSips.quest.QuestRepository;
 import com.pvt.SocialSips.user.User;
 import com.pvt.SocialSips.user.UserRepository;
+import com.pvt.SocialSips.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,14 +26,18 @@ public class QuestpoolServiceTest {
     private static final Long NON_EXISTING_QUESTPOOL_ID = -1L;
     private static final Long QUESTPOOL_ID = 1L;
 
-    private static final String CATEGORY = "Category";
+    private static final String CATEGORY = "TRIVIA";
 
     private static final Icebreaker q1 = new Icebreaker("Prompt One");
     private static final Icebreaker q2 = new Icebreaker("Prompt Two");
 
     private static final HashSet<Quest> quests = new HashSet<>(List.of(q1, q2));
 
-    private static final User USER = new User();
+    private static final Questpool VALID_QUESTPOOL = new Questpool(QUESTPOOL_ID, CATEGORY, QuestpoolType.ICEBREAKER, quests);
+
+    private static final String SUB = "31987";
+
+    private static final User USER = new User("this is a name", SUB);
 
     @Mock
     private QuestpoolRepository questpoolRepository;
@@ -40,10 +46,16 @@ public class QuestpoolServiceTest {
     private QuestRepository questRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
 
     @InjectMocks
     private QuestpoolService questpoolService;
+
+    @BeforeAll
+    public static void setup(){
+        USER.getQuestpools().add(VALID_QUESTPOOL);
+    }
+
 
     @Test
     public void getByQuestpoolId_IdDoesNotExist_ThrowsIllegalStateException() {
@@ -62,27 +74,24 @@ public class QuestpoolServiceTest {
 
     @Test
     public void createQuestpool_ValidArgs_QuestpoolAdded() {
-        Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, QuestpoolType.ICEBREAKER, quests);
+        when(userService.getUserBySub(SUB)).thenReturn(USER);
 
-        when(questpoolRepository.save(qp)).thenReturn(qp);
-        when(userRepository.getReferenceById(USER.getSub())).thenReturn(USER);
-
-        assertDoesNotThrow(() -> questpoolService.createQuestpoolWithHost(qp, USER.getSub()));
+        assertDoesNotThrow(() -> questpoolService.createQuestpoolWithHost(VALID_QUESTPOOL, USER.getSub()));
     }
 
 
     @Test
     public void deleteQuestpool_ExistingQuestpool_QuestpoolRemoved() {
-        Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, QuestpoolType.ICEBREAKER, quests);
-        when(questpoolRepository.findById(qp.getId())).thenReturn(Optional.of(qp));
-        assertDoesNotThrow(() -> questpoolService.deleteQuestpoolById(qp.getId()));
+        when(userService.getUserBySub(SUB)).thenReturn(USER);
+        when(questpoolRepository.findById(VALID_QUESTPOOL.getId())).thenReturn(Optional.of(VALID_QUESTPOOL));
+
+        assertDoesNotThrow(() -> questpoolService.deleteQuestpoolById(VALID_QUESTPOOL.getId(), USER.getSub()));
     }
 
     @Test
     public void deleteQuestpool_NonExistingQuestpool_IllegalStatExceptionThrown() {
-        Questpool qp = new Questpool(QUESTPOOL_ID, CATEGORY, QuestpoolType.ICEBREAKER, quests);
-        when(questpoolRepository.findById(qp.getId())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> questpoolService.deleteQuestpoolById(qp.getId()));
+        when(questpoolRepository.findById(VALID_QUESTPOOL.getId())).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> questpoolService.deleteQuestpoolById(VALID_QUESTPOOL.getId(), USER.getSub()));
     }
 
 
