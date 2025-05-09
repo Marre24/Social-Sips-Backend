@@ -55,4 +55,10 @@ public class UserService {
         userRepository.deleteById(standard.getSub());
         eventRepository.deleteById(standard.getSub());
     }
+
+    @Transactional
+    public void removeEventFrom(String hostSub) {
+        User user = getUserBySub(hostSub);
+        user.removeEvent();
+    }
 }

@@ -58,6 +58,7 @@ public class EventService {
     public void deleteEvent(String hostSub) {
         getEvent(hostSub);
 
+        userService.removeEventFrom(hostSub);
         eventRepository.deleteById(hostSub);
     }
 

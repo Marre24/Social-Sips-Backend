@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -89,6 +90,7 @@ public class EventIT {
 
     @BeforeEach
     public void beforeEach(){
+
         userService.deleteUser(USER_WITHOUT_EVENT);
         userService.register(USER_WITHOUT_EVENT);
     }
@@ -142,6 +144,17 @@ public class EventIT {
     }
 
     @Test
+    public void createEvent_HostWithEvent_HTTPStatusIsConflict() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/event/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(EVENT_IN_JSON_EXPECTED))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isConflict());
+    }
+
+    @Test
     public void startEvent_HostWithEvent_EventStarted() throws Exception {
         postEventToHostWithoutEvent();
 
@@ -168,6 +181,29 @@ public class EventIT {
                         .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT_EVENTS)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isConflict());
+    }
+
+    @Test
+    public void deleteEvent_HostWithEvent_EventDeleted() throws Exception {
+        postEventToHostWithoutEvent();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/event/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT_EVENTS)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        assertEquals(null, userService.getUserBySub(USER_SUB_WITHOUT_EVENT).getEvent());
+    }
+
+    @Test
+    public void deleteEvent_HostWithoutEvent_HTTPStatusIsNotFound() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/event/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT_EVENTS)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
 

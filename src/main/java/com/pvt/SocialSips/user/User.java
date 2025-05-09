@@ -83,4 +83,8 @@ public class User {
     public Event getEvent(){
         return event;
     }
+
+    public void removeEvent() {
+        event = null;
+    }
 }
