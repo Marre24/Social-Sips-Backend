@@ -205,6 +205,30 @@ public class EventIT {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
+    @Test
+    public void canJoinEvent_NonStartedEvent_HTTPStatusIsOk() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT.getJoinCode()).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void canJoinEvent_StartedEvent_HTTPStatusIsConflict() throws Exception {
+        postEventToHostWithoutEvent();
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT_EVENTS)))
+                .andDo(MockMvcResultHandlers.print());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT_WITHOUT.getJoinCode()).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isConflict());
+    }
+
 
     private void postEventToHostWithoutEvent() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/event/").secure(true)
