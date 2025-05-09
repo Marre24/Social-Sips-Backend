@@ -16,7 +16,7 @@ import java.security.Principal;
 import java.util.Set;
 
 @RestController
-@CrossOrigin(origins = "https://group-2-75.pvt.dsv.su.se/")
+@CrossOrigin(origins = "https://group-2-75.pvt.dsv.su.se")
 @RequestMapping("/user")
 public class UserController {
 
