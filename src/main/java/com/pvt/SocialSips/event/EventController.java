@@ -49,8 +49,10 @@ public class EventController {
             eventService.startEvent(defaultOidcUser.getSubject());
             return new ResponseEntity<>("Event Started", HttpStatus.OK);
 
-        } catch (Exception exception) {
+        } catch (IllegalStateException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+        }catch (EntityNotFoundException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
