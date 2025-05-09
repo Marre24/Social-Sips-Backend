@@ -87,7 +87,7 @@ public class Event {
         this.questpools = questpools;
     }
 
-    private String generateJoinCode(String hostId){
+    private String generateJoinCode(String hostId) {
         return SQID.encode(List.of(Long.valueOf(hostId)));
     }
 }

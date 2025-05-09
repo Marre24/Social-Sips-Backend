@@ -28,17 +28,17 @@ public class User {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "hostId")
-    private Set<Questpool> questpools = new HashSet<>();
+    private final Set<Questpool> questpools = new HashSet<>();
 
-    public User(){
+    public User() {
     }
 
-    public User(String firstName, String sub){
+    public User(String firstName, String sub) {
         this.sub = sub;
         this.firstName = firstName;
     }
 
-    public User(String firstName, String sub, List<Role> roles){
+    public User(String firstName, String sub, List<Role> roles) {
         this.sub = sub;
         this.firstName = firstName;
         this.roles = roles;
@@ -76,11 +76,11 @@ public class User {
         return questpools;
     }
 
-    public void setEvent(String name, Integer groupSize, Set<Questpool> questpools){
+    public void setEvent(String name, Integer groupSize, Set<Questpool> questpools) {
         this.event = new Event(name, groupSize, questpools, getSub());
     }
 
-    public Event getEvent(){
+    public Event getEvent() {
         return event;
     }
 

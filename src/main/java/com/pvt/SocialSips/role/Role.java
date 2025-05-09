@@ -13,14 +13,15 @@ public class Role {
 
     private String name;
 
-    public Role(){
+    public Role() {
     }
 
-    public Role(Long id, String name){
+    public Role(Long id, String name) {
         this.id = id;
         this.name = name;
     }
-    public Role(String name){
+
+    public Role(String name) {
         this.name = name;
     }
 
@@ -32,7 +33,7 @@ public class Role {
         return id;
     }
 
-    public String toString(){
+    public String toString() {
         return name;
     }
 
@@ -40,7 +41,7 @@ public class Role {
         return name;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 

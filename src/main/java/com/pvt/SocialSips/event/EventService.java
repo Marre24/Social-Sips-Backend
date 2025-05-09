@@ -71,17 +71,17 @@ public class EventService {
         return !getEvent(code.toString()).getStarted();
     }
 
-    public static ArrayList<ArrayList<String>> matchUsers(Set<String> guests, int groupSize){
+    public static ArrayList<ArrayList<String>> matchUsers(Set<String> guests, int groupSize) {
         ArrayList<String> toBeMatched = new ArrayList<>(guests);
         Collections.shuffle(toBeMatched);
         ArrayList<ArrayList<String>> groups = new ArrayList<>();
 
         int amountOfGroups = toBeMatched.size() / groupSize;
 
-        for(int i = 0; i < amountOfGroups; i++)
+        for (int i = 0; i < amountOfGroups; i++)
             groups.add(new ArrayList<>());
 
-        for(int amountMatched = 0; amountMatched < toBeMatched.size(); amountMatched++){
+        for (int amountMatched = 0; amountMatched < toBeMatched.size(); amountMatched++) {
             String u = toBeMatched.get(amountMatched);
             groups.get(amountMatched % amountOfGroups).add(u);
         }

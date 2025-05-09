@@ -51,7 +51,7 @@ public class QuestpoolServiceTest {
     private QuestpoolService questpoolService;
 
     @BeforeAll
-    public static void setup(){
+    public static void setup() {
         USER.getQuestpools().add(VALID_QUESTPOOL);
     }
 

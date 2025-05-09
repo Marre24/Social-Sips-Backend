@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SocialSipsApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SocialSipsApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(SocialSipsApplication.class, args);
+    }
 
-	@GetMapping
-	public String hello() {
-		return "Hello world!";
-	}
+    @GetMapping
+    public String hello() {
+        return "Hello world!";
+    }
 }

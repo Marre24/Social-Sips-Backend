@@ -27,7 +27,7 @@ public class UserServiceTest {
     private final static User USER = new User("firstName", "ThisIsASub");
 
     @Test
-    public void getAllQuestpools_UserExists_QuestpoolsNotNull(){
+    public void getAllQuestpools_UserExists_QuestpoolsNotNull() {
         when(userRepository.getReferenceById(USER.getSub())).thenReturn(USER);
 
         Set<Questpool> questpoolSet = userService.getAllQuestpoolsBySub(USER.getSub());
@@ -36,7 +36,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getAllQuestpools_UserExists_CorrectAmountOfQPs(){
+    public void getAllQuestpools_UserExists_CorrectAmountOfQPs() {
         User userWithQuestpools = new User("name", "anotherSub");
         userWithQuestpools.addQuestpool(new Questpool("one", QuestpoolType.ICEBREAKER, new HashSet<>()));
         userWithQuestpools.addQuestpool(new Questpool("two", QuestpoolType.ICEBREAKER, new HashSet<>()));

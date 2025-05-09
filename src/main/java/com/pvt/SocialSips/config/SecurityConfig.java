@@ -70,12 +70,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public RoleHierarchy roleHierarchy(){
+    public RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl.fromHierarchy("ADMIN > HOST > OIDC_USER > GUEST");
     }
 
     @Bean
-    public SecurityExpressionHandler<FilterInvocation> webExpressionHandler(){
+    public SecurityExpressionHandler<FilterInvocation> webExpressionHandler() {
         DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
         expressionHandler.setDefaultRolePrefix("ROLE_");
         expressionHandler.setRoleHierarchy(roleHierarchy());

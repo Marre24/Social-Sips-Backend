@@ -26,14 +26,14 @@ public class OidcUserDetails implements UserDetails, OidcUser {
         attributes = new HashMap<>();
     }
 
-    public OidcUserDetails(User user, Collection<? extends GrantedAuthority> grantedAuthorities, OidcUserInfo oidcUserInfo, OidcIdToken oidcIdToken){
+    public OidcUserDetails(User user, Collection<? extends GrantedAuthority> grantedAuthorities, OidcUserInfo oidcUserInfo, OidcIdToken oidcIdToken) {
         this.user = user;
         this.grantedAuthorities = grantedAuthorities != null ? grantedAuthorities : new ArrayList<>();
         this.oidcUserInfo = oidcUserInfo;
         this.oidcIdToken = oidcIdToken;
     }
 
-    public OidcUserDetails(User user){
+    public OidcUserDetails(User user) {
         this(user, null);
     }
 

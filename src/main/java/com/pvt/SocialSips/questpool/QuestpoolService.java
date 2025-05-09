@@ -34,7 +34,7 @@ public class QuestpoolService {
     }
 
     @Transactional
-    public void deleteQuestpoolById(Long qpId, String sub){
+    public void deleteQuestpoolById(Long qpId, String sub) {
         User user = userService.getUserBySub(sub);
         Questpool qp = getByQuestpoolId(qpId);
 

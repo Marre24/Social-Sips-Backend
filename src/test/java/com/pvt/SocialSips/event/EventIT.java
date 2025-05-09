@@ -65,7 +65,7 @@ public class EventIT {
     private final MockMvc mockMvc;
 
     @Autowired
-    public EventIT(UserService userService, EventService eventService, MockMvc mockMvc){
+    public EventIT(UserService userService, EventService eventService, MockMvc mockMvc) {
         this.userService = userService;
         this.eventService = eventService;
         this.mockMvc = mockMvc;
@@ -87,9 +87,8 @@ public class EventIT {
     }
 
 
-
     @BeforeEach
-    public void beforeEach(){
+    public void beforeEach() {
 
         userService.deleteUser(USER_WITHOUT_EVENT);
         userService.register(USER_WITHOUT_EVENT);
