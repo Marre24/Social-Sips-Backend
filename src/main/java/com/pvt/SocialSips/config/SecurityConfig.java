@@ -42,8 +42,6 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
-                .headers(h -> h
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .oauth2Login(cfg -> cfg
                         .defaultSuccessUrl("/user/profile")
                         .userInfoEndpoint(custom -> custom.oidcUserService(oidcUserDetailsService))
