@@ -66,9 +66,12 @@ public class EventService {
     }
 
     public boolean canJoinEvent(String joinCode) {
-        Long code = Event.SQID.decode(joinCode).get(0);
+        var event = eventRepository.findByJoinCode(joinCode);
 
-        return !getEvent(code.toString()).getStarted();
+        if (event.isEmpty())
+            throw new EntityNotFoundException("Could not find event with join code: " + joinCode);
+
+        return !event.get().getStarted();
     }
 
     public static ArrayList<ArrayList<String>> matchUsers(Set<String> guests, int groupSize) {

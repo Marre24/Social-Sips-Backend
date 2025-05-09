@@ -5,15 +5,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import org.sqids.Sqids;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
 public class Event {
 
-    public static final Sqids SQID = Sqids.builder().minLength(5).alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ").build();
 
     @Id
     @Column(name = "host_sub")
@@ -31,7 +28,7 @@ public class Event {
     }
 
     public Event(String name, Integer groupSize, Set<Questpool> questpools, String hostSub) {
-        joinCode = generateJoinCode(hostSub);
+        joinCode = JoinCodeGenerator.generateLetterCode(hostSub);
         this.hostSub = hostSub;
         this.name = name;
         this.groupSize = groupSize;
@@ -44,7 +41,7 @@ public class Event {
 
     public void setHostSub(String hostSub) {
         this.hostSub = hostSub;
-        this.joinCode = generateJoinCode(hostSub);
+        joinCode = JoinCodeGenerator.generateLetterCode(hostSub);
     }
 
     public Boolean getStarted() {
@@ -85,9 +82,5 @@ public class Event {
 
     public void setQuestpools(Set<Questpool> questpools) {
         this.questpools = questpools;
-    }
-
-    private String generateJoinCode(String hostId) {
-        return SQID.encode(List.of(Long.valueOf(hostId)));
     }
 }

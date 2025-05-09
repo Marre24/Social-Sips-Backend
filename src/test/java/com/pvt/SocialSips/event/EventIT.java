@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class EventIT {
 
-    private static final String USER_SUB_WITH_EVENT = "731723";
+    private static final String USER_SUB_WITH_EVENT = "731723278365822873458";
 
     private static final User USER_WITH_EVENT = new User("THIS IS A FIRST NAME", USER_SUB_WITH_EVENT, List.of(new Role("ROLE_OIDC_USER")));
     private static final Event EVENT = new Event("THIS IS AN EVENT", 2, new HashSet<>(), USER_SUB_WITH_EVENT);
@@ -48,7 +48,7 @@ public class EventIT {
             OidcIdToken.withTokenValue("id-token").claim("sub", USER_SUB_WITH_EVENT).build(),
             "sub");
 
-    private static final String USER_SUB_WITHOUT_EVENT = "696969";
+    private static final String USER_SUB_WITHOUT_EVENT = "696969696969969696996";
     private static final User USER_WITHOUT_EVENT = new User("THIS IS A FIRST NAME", USER_SUB_WITHOUT_EVENT, List.of(new Role("ROLE_OIDC_USER")));
     private static final Event EVENT_WITHOUT = new Event("THIS IS AN EVENT", 2, new HashSet<>(), USER_SUB_WITHOUT_EVENT);
 
