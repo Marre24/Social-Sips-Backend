@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@CrossOrigin(origins = "https://group-2-75.pvt.dsv.su.se/")
 @RequestMapping("/questpool")
 public class QuestpoolController {
 
