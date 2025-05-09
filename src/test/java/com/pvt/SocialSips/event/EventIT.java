@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -109,6 +110,15 @@ public class EventIT {
     }
 
     @Test
+    public void getEvent_WithoutEvent_HTTPStatusNotFound() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT_EVENTS)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
     public void createEvent_HostWithoutEvent_HTTPCodeOk() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/event/").secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
@@ -121,12 +131,7 @@ public class EventIT {
 
     @Test
     public void createEvent_HostWithoutEvent_EventCreated() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/event/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT_EVENTS))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(EVENT_WITHOUT_IN_JSON_EXPECTED))
-                .andDo(MockMvcResultHandlers.print());
+        postEventToHostWithoutEvent();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/event/").secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
@@ -136,4 +141,42 @@ public class EventIT {
                 .andExpect(content().json(EVENT_WITHOUT_IN_JSON_EXPECTED));
     }
 
+    @Test
+    public void startEvent_HostWithEvent_EventStarted() throws Exception {
+        postEventToHostWithoutEvent();
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT_EVENTS)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        assertTrue(userService.getUserBySub(USER_SUB_WITHOUT_EVENT).getEvent().getStarted());
+    }
+
+    @Test
+    public void startEvent_HostWithStartedEvent_HTTPCodeIsConflict() throws Exception {
+        postEventToHostWithoutEvent();
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT_EVENTS)))
+                .andDo(MockMvcResultHandlers.print());
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT_EVENTS)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isConflict());
+    }
+
+
+    private void postEventToHostWithoutEvent() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/event/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT_EVENTS))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(EVENT_WITHOUT_IN_JSON_EXPECTED))
+                .andDo(MockMvcResultHandlers.print());
+    }
 }
