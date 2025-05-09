@@ -89,7 +89,6 @@ public class EventService {
             groups.get(amountMatched % amountOfGroups).add(u);
         }
 
-        //todo connect to solution for saving/processing groups, shouldn't return like this
         return groups;
     }
 
