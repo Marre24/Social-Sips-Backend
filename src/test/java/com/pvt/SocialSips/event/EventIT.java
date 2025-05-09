@@ -27,8 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -193,7 +192,7 @@ public class EventIT {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        assertEquals(null, userService.getUserBySub(USER_SUB_WITHOUT_EVENT).getEvent());
+        assertNull(userService.getUserBySub(USER_SUB_WITHOUT_EVENT).getEvent());
     }
 
     @Test
