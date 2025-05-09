@@ -1,24 +1,24 @@
 package com.pvt.SocialSips.user;
 
-import com.pvt.SocialSips.event.EventRepository;
 import com.pvt.SocialSips.questpool.Questpool;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class UserService {
 
-    private final EventRepository eventRepository;
+    private static final String STANDARD_SUB = "STANDARD";
+
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(EventRepository eventRepository, UserRepository userRepository) {
-        this.eventRepository = eventRepository;
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -47,7 +47,9 @@ public class UserService {
     }
 
     public Set<Questpool> getAllQuestpoolsBySub(String sub) {
-        return userRepository.getReferenceById(sub).getQuestpools();
+        HashSet<Questpool> allQp = new HashSet<>(userRepository.getReferenceById(STANDARD_SUB).getQuestpools());
+        allQp.addAll(userRepository.getReferenceById(sub).getQuestpools());
+        return allQp;
     }
 
     public void deleteUser(User standard) {
