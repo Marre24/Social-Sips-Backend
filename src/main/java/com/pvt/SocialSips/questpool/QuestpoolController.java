@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -55,6 +56,13 @@ public class QuestpoolController {
         } catch (IllegalCallerException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllQuestpools(){
+        List<Questpool> questpools = questpoolService.getAllQuestpools();
+        if(questpools.isEmpty()) return new ResponseEntity<>("No questpools exists in the database!",HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(questpools, HttpStatus.OK);
     }
 
 }
