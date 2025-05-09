@@ -58,8 +58,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         registry.addMapping("/questpool/getAll")
                 .allowedOrigins(
                         "https://social-sips-ec954.web.app",
-                        "https://social-sips-ec954.firebaseapp.com",
-                        "https://group-2-75.pvt.dsv.su.se")
+                        "https://social-sips-ec954.firebaseapp.com")
                 .allowedMethods("GET")
                 .allowedHeaders("*")
                 .allowCredentials(true);
