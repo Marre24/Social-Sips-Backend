@@ -1,7 +1,6 @@
 package com.pvt.SocialSips.questpool;
 
 import com.pvt.SocialSips.quest.Quest;
-import com.pvt.SocialSips.user.User;
 import jakarta.persistence.*;
 
 import java.util.Set;

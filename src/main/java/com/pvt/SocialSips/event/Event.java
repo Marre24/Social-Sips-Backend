@@ -1,8 +1,10 @@
 package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.questpool.Questpool;
-import com.pvt.SocialSips.user.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import org.sqids.Sqids;
 
 import java.util.List;

@@ -4,7 +4,6 @@ import com.pvt.SocialSips.quest.Icebreaker;
 import com.pvt.SocialSips.quest.Quest;
 import com.pvt.SocialSips.quest.QuestRepository;
 import com.pvt.SocialSips.user.User;
-import com.pvt.SocialSips.user.UserRepository;
 import com.pvt.SocialSips.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeAll;

@@ -1,7 +1,6 @@
 package com.pvt.SocialSips.user;
 
 import com.pvt.SocialSips.event.EventRepository;
-import com.pvt.SocialSips.event.EventService;
 import com.pvt.SocialSips.questpool.Questpool;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
