@@ -37,9 +37,8 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home", "/css/**", "/error").permitAll()
-                        .requestMatchers("/event/join/**").permitAll()
-                        .requestMatchers("/user/**", "/event/", "/event/start/", "/questpool/**").authenticated()
-
+                        .requestMatchers("/event/join/**", "/questpool/**").permitAll()
+                        .requestMatchers("/user/**", "/event/", "/event/start/").authenticated()
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
