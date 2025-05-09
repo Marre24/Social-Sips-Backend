@@ -27,6 +27,7 @@ public class UserServiceTest {
     private UserService userService;
 
     private final static User USER_WITH_QUESTPOOLS = new User("firstName", "ThisIsASub");
+    private final static User USER_WITHOUT_QUESTPOOLS = new User("firName", "ThisIsASuuub");
     private final static User STANDARD = new User("STANDARD", "STANDARD");
 
     private final static int AMOUNT_OF_STD_QUESTPOOLS = 1;
@@ -41,15 +42,22 @@ public class UserServiceTest {
         USER_WITH_QUESTPOOLS.addQuestpool(new Questpool("two", QuestpoolType.ICEBREAKER, new HashSet<>()));
         USER_WITH_QUESTPOOLS.addQuestpool(new Questpool("three", QuestpoolType.ICEBREAKER, new HashSet<>()));
         when(userRepository.getReferenceById(USER_WITH_QUESTPOOLS.getSub())).thenReturn(USER_WITH_QUESTPOOLS);
+
+        when(userRepository.getReferenceById(USER_WITHOUT_QUESTPOOLS.getSub())).thenReturn(USER_WITHOUT_QUESTPOOLS);
     }
 
     @Test
     public void getAllQuestpools_UserExists_QuestpoolsNotNull() {
-        when(userRepository.getReferenceById(USER_WITH_QUESTPOOLS.getSub())).thenReturn(USER_WITH_QUESTPOOLS);
-
-        Set<Questpool> questpoolSet = userService.getAllQuestpoolsBySub(USER_WITH_QUESTPOOLS.getSub());
+        Set<Questpool> questpoolSet = userService.getAllQuestpoolsBySub(USER_WITHOUT_QUESTPOOLS.getSub());
 
         assertNotNull(questpoolSet);
+    }
+
+    @Test
+    public void getAllQuestpools_UserWithoutQPs_OnlyStandardQPs() {
+        Set<Questpool> questpoolSet = userService.getAllQuestpoolsBySub(USER_WITHOUT_QUESTPOOLS.getSub());
+
+        assertEquals(STANDARD.getQuestpools(), questpoolSet);
     }
 
     @Test
