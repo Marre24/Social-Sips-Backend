@@ -167,7 +167,7 @@ public class QuestpoolIT {
     }
 
     @Test
-    public void deleteQuestpool_NonExistantQuestpool_HTTPStatusIsNotFound() throws Exception {
+    public void deleteQuestpool_NonExistingQuestpool_HTTPStatusIsNotFound() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/-1")
                         .with(oidcLogin().oidcUser(OIDC_USER)).secure(true)
@@ -212,7 +212,7 @@ public class QuestpoolIT {
     }
 
     @Test
-    public void updateQuestpool_ValidHost_HostQuestpoolsSizeIsDecrementedByOne() throws Exception {
+    public void updateQuestpool_ValidHost_HostQuestpoolsIsChanged() throws Exception {
         var set = userService.getUserBySub(TEST_USER_SUB).getQuestpools();
 
         assertFalse(set.isEmpty());
@@ -239,4 +239,22 @@ public class QuestpoolIT {
         assertNotEquals(expectedNotToBe, actualQuests);
     }
 
+
+    @Test
+    public void updateQuestpool_AnotherHostsQuestpool_HTTPStatusForbidden() throws Exception {
+        var set = userService.getUserBySub(OTHER_TEST_USER_SUB).getQuestpools();
+
+        assertFalse(set.isEmpty());
+
+        var it = set.iterator();
+        var questpool = it.next();
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId())
+                        .with(oidcLogin().oidcUser(OIDC_USER)).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(APPLICATION_JSON)
+                        .content(NEW_QUESTS))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
 }

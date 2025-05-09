@@ -3,7 +3,6 @@ package com.pvt.SocialSips.questpool;
 import com.pvt.SocialSips.quest.Quest;
 import com.pvt.SocialSips.quest.QuestRepository;
 import com.pvt.SocialSips.user.User;
-import com.pvt.SocialSips.user.UserRepository;
 import com.pvt.SocialSips.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -57,8 +56,13 @@ public class QuestpoolService {
     }
 
     @Transactional
-    public void updateQuestpool(Set<Quest> quests, Long qpId) {
+    public void updateQuestpool(Set<Quest> quests, Long qpId, String sub) {
+        User user = userService.getUserBySub(sub);
         Questpool qp = getByQuestpoolId(qpId);
+
+        if (!user.getQuestpools().contains(qp))
+            throw new IllegalCallerException("Tried to update a questpool that is not owned by: " + user.getFirstName());
+
         questRepository.deleteAll(qp.getQuests());
         qp.getQuests().clear();
 
@@ -67,7 +71,4 @@ public class QuestpoolService {
         questpoolRepository.save(qp);
     }
 
-    public List<Questpool> getAllQuestpools() {
-        return questpoolRepository.findAll();
-    }
 }

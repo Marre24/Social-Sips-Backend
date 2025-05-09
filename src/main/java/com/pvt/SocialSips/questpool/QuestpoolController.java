@@ -50,11 +50,14 @@ public class QuestpoolController {
     @PatchMapping("/{qpId}")
     public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable Long qpId, @AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
         try{
-            questpoolService.updateQuestpool(quests, qpId);
+            questpoolService.updateQuestpool(quests, qpId, defaultOidcUser.getSubject());
             return new ResponseEntity<>("Questpool has been updated!", HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (IllegalCallerException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
     }
 
