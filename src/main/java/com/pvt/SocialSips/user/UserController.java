@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.user;
 
+import com.pvt.SocialSips.questpool.Questpool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.Set;
 
 @RestController
 @CrossOrigin(origins = "https://group-2-75.pvt.dsv.su.se/")
@@ -37,7 +39,7 @@ public class UserController {
 
 
     @GetMapping("/")
-    public ResponseEntity<?> getAllQuestpools(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+    public ResponseEntity<Set<Questpool>> getAllQuestpools(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
         String sub = defaultOidcUser.getSubject();
 
         return new ResponseEntity<>(userService.getAllQuestpoolsBySub(sub), HttpStatus.OK);
