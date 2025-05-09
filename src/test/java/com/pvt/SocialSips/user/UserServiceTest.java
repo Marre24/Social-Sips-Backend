@@ -2,7 +2,9 @@ package com.pvt.SocialSips.user;
 
 import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.questpool.QuestpoolType;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,11 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserServiceTest {
 
 
@@ -24,27 +26,43 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    private final static User USER = new User("firstName", "ThisIsASub");
+    private final static User USER_WITH_QUESTPOOLS = new User("firstName", "ThisIsASub");
+    private final static User STANDARD = new User("STANDARD", "STANDARD");
+
+    private final static int AMOUNT_OF_STD_QUESTPOOLS = 1;
+    private final static int AMOUNT_OF_USR_QUESTPOOLS = 3;
+
+    @BeforeAll
+    public void setup(){
+        STANDARD.addQuestpool(new Questpool("standard questpool", QuestpoolType.ICEBREAKER, new HashSet<>()));
+        when(userRepository.getReferenceById(STANDARD.getSub())).thenReturn(STANDARD);
+
+        USER_WITH_QUESTPOOLS.addQuestpool(new Questpool("one", QuestpoolType.ICEBREAKER, new HashSet<>()));
+        USER_WITH_QUESTPOOLS.addQuestpool(new Questpool("two", QuestpoolType.ICEBREAKER, new HashSet<>()));
+        USER_WITH_QUESTPOOLS.addQuestpool(new Questpool("three", QuestpoolType.ICEBREAKER, new HashSet<>()));
+        when(userRepository.getReferenceById(USER_WITH_QUESTPOOLS.getSub())).thenReturn(USER_WITH_QUESTPOOLS);
+    }
 
     @Test
     public void getAllQuestpools_UserExists_QuestpoolsNotNull() {
-        when(userRepository.getReferenceById(USER.getSub())).thenReturn(USER);
+        when(userRepository.getReferenceById(USER_WITH_QUESTPOOLS.getSub())).thenReturn(USER_WITH_QUESTPOOLS);
 
-        Set<Questpool> questpoolSet = userService.getAllQuestpoolsBySub(USER.getSub());
+        Set<Questpool> questpoolSet = userService.getAllQuestpoolsBySub(USER_WITH_QUESTPOOLS.getSub());
 
         assertNotNull(questpoolSet);
     }
 
     @Test
     public void getAllQuestpools_UserExists_CorrectAmountOfQPs() {
-        User userWithQuestpools = new User("name", "anotherSub");
-        userWithQuestpools.addQuestpool(new Questpool("one", QuestpoolType.ICEBREAKER, new HashSet<>()));
-        userWithQuestpools.addQuestpool(new Questpool("two", QuestpoolType.ICEBREAKER, new HashSet<>()));
-        userWithQuestpools.addQuestpool(new Questpool("three", QuestpoolType.ICEBREAKER, new HashSet<>()));
-        when(userRepository.getReferenceById(userWithQuestpools.getSub())).thenReturn(userWithQuestpools);
+        Set<Questpool> questpoolSet = userService.getAllQuestpoolsBySub(USER_WITH_QUESTPOOLS.getSub());
 
-        Set<Questpool> questpoolSet = userService.getAllQuestpoolsBySub(userWithQuestpools.getSub());
+        assertEquals(AMOUNT_OF_STD_QUESTPOOLS + AMOUNT_OF_USR_QUESTPOOLS, questpoolSet.size());
+    }
 
-        assertEquals(3, questpoolSet.size());
+    @Test
+    public void getAllQuestpools_UserExists_ReturnsStandardQPs() {
+        Set<Questpool> questpoolSet = userService.getAllQuestpoolsBySub(USER_WITH_QUESTPOOLS.getSub());
+
+        assertTrue(questpoolSet.containsAll(STANDARD.getQuestpools()));
     }
 }

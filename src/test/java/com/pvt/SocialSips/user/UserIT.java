@@ -9,6 +9,7 @@ import com.pvt.SocialSips.quest.Trivia;
 import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.questpool.QuestpoolType;
 import com.pvt.SocialSips.role.Role;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserIT {
+    private static final String STANDARD_SUB = "STANDARD";
     private static final String TEST_USER_SUB = "TEST USER SUB";
+    private static final String TEST_USER_WITHOUT_SUB = "TEST USER WITHOUT SUB";
     private static final String TEST_USER_FIRST_NAME = "THIS IS A FIRST NAME";
 
     private static final User USER = new User(TEST_USER_FIRST_NAME, TEST_USER_SUB, List.of(new Role("ROLE_OIDC_USER")));
@@ -53,20 +56,29 @@ public class UserIT {
             OidcIdToken.withTokenValue("id-token").claim("sub", TEST_USER_SUB).build(),
             "sub");
 
+    private static final User USER_WITHOUT = new User(TEST_USER_FIRST_NAME, TEST_USER_WITHOUT_SUB, List.of(new Role("ROLE_OIDC_USER")));
 
-    private static String THREE_QUESTPOOLS_IN_JSON_EXPECTED;
+    private static final OidcUser OIDC_USER_WITHOUT = new DefaultOidcUser(
+            AuthorityUtils.createAuthorityList("ROLE_OIDC_USER"),
+            OidcIdToken.withTokenValue("id-token").claim("sub", TEST_USER_WITHOUT_SUB).build(),
+            "sub");
 
-    private final UserRepository userRepository;
+
+    private static String QUESTPOOLS_IN_JSON_EXPECTED;
+    private static String STANDARD_QUESTPOOLS_IN_JSON_EXPECTED;
+
+    private final UserService userService;
 
     private final MockMvc mockMvc;
 
     @Autowired
-    public UserIT(UserRepository userRepository, MockMvc mockMvc) {
-        this.userRepository = userRepository;
+    public UserIT(UserService userService, MockMvc mockMvc) {
+        this.userService = userService;
         this.mockMvc = mockMvc;
     }
 
     @BeforeAll
+    @Transactional
     public void setup() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
@@ -75,14 +87,20 @@ public class UserIT {
         USER.addQuestpool(QUESTPOOL_ONE);
         USER.addQuestpool(QUESTPOOL_TWO);
         USER.addQuestpool(QUESTPOOL_THREE);
-        User user = userRepository.save(USER);
+        User user = userService.register(USER);
 
-        THREE_QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(user.getQuestpools());
+        userService.register(USER_WITHOUT);
+
+        HashSet<Questpool> allQp = new HashSet<>(userService.getUserBySub(STANDARD_SUB).getQuestpools());
+        STANDARD_QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(allQp);
+        allQp.addAll(userService.getUserBySub(user.getSub()).getQuestpools());
+        QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(allQp);
     }
 
     @AfterAll
     public void shutDown() {
-        userRepository.deleteById(USER.getSub());
+        userService.deleteUser(USER);
+        userService.deleteUser(USER_WITHOUT);
     }
 
     @Test
@@ -109,7 +127,17 @@ public class UserIT {
                         .with(oidcLogin().oidcUser(OIDC_USER)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().json(THREE_QUESTPOOLS_IN_JSON_EXPECTED));
+                .andExpect(content().json(QUESTPOOLS_IN_JSON_EXPECTED));
+    }
+
+    @Test
+    public void getAllQuestpools_HostWithoutQuestpools_OnlyStandardQuestpoolsReturned() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().json(STANDARD_QUESTPOOLS_IN_JSON_EXPECTED));
     }
 
     @Test
