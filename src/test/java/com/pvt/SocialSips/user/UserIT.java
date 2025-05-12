@@ -93,10 +93,7 @@ public class UserIT {
 
         userService.register(USER_WITHOUT);
 
-        HashSet<Questpool> allQp = new HashSet<>(userService.getUserBySub(STANDARD_SUB).getQuestpools());
-        STANDARD_QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(allQp);
-        allQp.addAll(userService.getUserBySub(user.getSub()).getQuestpools());
-        QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(allQp);
+        QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(userService.getUserBySub(user.getSub()).getQuestpools());
     }
 
     @AfterAll
@@ -133,13 +130,13 @@ public class UserIT {
     }
 
     @Test
-    public void getAllQuestpools_HostWithoutQuestpools_OnlyStandardQuestpoolsReturned() throws Exception {
+    public void getAllQuestpools_HostWithoutQuestpools_EmptySetReturned() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/user/").secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().json(STANDARD_QUESTPOOLS_IN_JSON_EXPECTED));
+                .andExpect(content().json("[]"));
     }
 
     @Test
