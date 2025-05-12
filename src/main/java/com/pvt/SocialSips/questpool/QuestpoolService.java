@@ -70,8 +70,4 @@ public class QuestpoolService {
         questRepository.saveAll(qp.getQuests());
         questpoolRepository.save(qp);
     }
-
-    public List<Questpool> getAllQuestpools() {
-        return questpoolRepository.findAll();
-    }
 }

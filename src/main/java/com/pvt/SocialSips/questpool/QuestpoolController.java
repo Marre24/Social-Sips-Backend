@@ -56,12 +56,4 @@ public class QuestpoolController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
     }
-
-    @GetMapping("/getAll")
-    public ResponseEntity<?> getAllQuestpools(){
-        List<Questpool> questpools = questpoolService.getAllQuestpools();
-        if(questpools.isEmpty()) return new ResponseEntity<>("No questpools exists in the database!",HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(questpools, HttpStatus.OK);
-    }
-
 }

@@ -38,8 +38,8 @@ public class SecurityConfig implements WebMvcConfigurer {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home", "/css/**", "/error").permitAll()
-                        .requestMatchers("/event/join/**", "/questpool/**").permitAll()
-                        .requestMatchers("/user/**", "/event/", "/event/start/").authenticated()
+                        .requestMatchers("/event/join/**").permitAll()
+                        .requestMatchers("/user/**", "/event/", "/event/start/",  "/questpool/**").authenticated()
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
