@@ -48,8 +48,10 @@ public class UserIT {
     private static final User USER = new User(TEST_USER_FIRST_NAME, TEST_USER_SUB, List.of(new Role("ROLE_OIDC_USER")));
     private static final Questpool QUESTPOOL_ONE = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
     private static final Questpool QUESTPOOL_TWO = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
-    private static final Questpool QUESTPOOL_THREE = new Questpool("A quest pool", QuestpoolType.TRIVIA,
-            new HashSet<>(List.of(new Trivia("Question two", new HashSet<>(List.of("opp1", "correct", "opp3", "opp4")), 2))));
+    private static final Questpool QUESTPOOL_THREE = new Questpool(
+            "A quest pool",
+            QuestpoolType.TRIVIA,
+            new HashSet<>(List.of(new Trivia("Question two", "correct;opp2;opp3;opp4"))));
 
     private static final OidcUser OIDC_USER = new DefaultOidcUser(
             AuthorityUtils.createAuthorityList("ROLE_OIDC_USER"),

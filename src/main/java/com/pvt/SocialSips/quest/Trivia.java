@@ -8,41 +8,28 @@ import java.util.Set;
 @Entity
 public class Trivia extends Quest {
 
-    // TODO: 2025-04-29 set dont have a structure, correct option needs a structure to work
-    private Set<String> options;
-    private Integer correctOption;
+    // Semicolon separated, first option is always the correct one
+    private String answers;
 
     public Trivia() {
 
     }
 
-    public Trivia(String prompt, Set<String> options, int correctOption) {
+    public Trivia(String prompt, String answers) {
         super(prompt);
-        this.correctOption = correctOption;
-        this.options = options;
+        this.answers = answers;
     }
 
-    public Trivia(Long id, String prompt, Set<String> options, int correctOption) {
+    public Trivia(Long id, String prompt, String answers) {
         super(id, prompt);
-        this.correctOption = correctOption;
-        this.options = options;
+        this.answers = answers;
     }
 
-    public void setOptions(Set<String> options) {
-        this.options = options;
+    public String getAnswers() {
+        return answers;
     }
 
-    public Set<String> getOptions() {
-        return options;
+    public void setAnswers(String answers) {
+        this.answers = answers;
     }
-
-    public void setCorrectOption(int correctOption) {
-        this.correctOption = correctOption;
-    }
-
-    public Integer getCorrectOption() {
-        return correctOption;
-    }
-
-
 }

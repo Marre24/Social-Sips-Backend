@@ -42,16 +42,16 @@ public class QuestpoolConfig {
                     "triviaOne",
                     QuestpoolType.TRIVIA,
                     new HashSet<>(List.of(
-                            new Trivia("Question one", new HashSet<>(List.of("Correct", "opp2", "opp3", "opp4")), 1)
-                    ))
+                            new Trivia("Question one", "Correct;opp2;opp3;opp4"))
+                    )
             );
 
             Questpool triviaTwo = new Questpool(
                     "triviaTwo",
                     QuestpoolType.TRIVIA,
                     new HashSet<>(List.of(
-                            new Trivia("Question two", new HashSet<>(List.of("opp1", "Correct", "opp3", "opp4")), 2)
-                    ))
+                            new Trivia("Question two", "Correct;opp2;opp3;opp4"))
+                    )
             );
 
             userService.deleteUser(standard);
