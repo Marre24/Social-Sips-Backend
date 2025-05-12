@@ -1,0 +1,13 @@
+﻿Culture
+In literature, what do you call a poem or text where the graphic arrangement of words on the page forms a picture or design?
+Calligram;Ambigram;Tercet;Sonnet
+Which painter made Campbell’s soup cans famous?
+Andy Warhol;Roy Lichtenstein;David Hockney;Edward Hopper
+How many keys are there on a piano keyboard?
+88;80;100;62
+Which famous movie star starred in the classic films "Roman Holiday," "Breakfast at Tiffany's", "Sabrina", and “War and Peace”?
+Audrey Hepburn;Lauren Bacall;Sophia Loren;Vivien Leigh
+Who wrote the novel "1984"?
+George Orwell;Aldous Huxley;Ray Bradbury;J.R.R. Tolkien
+Which famous artist is known for his work featuring "drip" painting, including "No. 5, 1948"?
+Jackson Pollock;Pablo Picasso;Vincent van Gogh;Andy Warhol
