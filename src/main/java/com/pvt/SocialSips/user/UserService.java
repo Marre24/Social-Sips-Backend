@@ -47,9 +47,9 @@ public class UserService {
     }
 
     public Set<Questpool> getAllQuestpoolsBySub(String sub) {
-        HashSet<Questpool> allQp = new HashSet<>(userRepository.getReferenceById(STANDARD_SUB).getQuestpools());
-        allQp.addAll(userRepository.getReferenceById(sub).getQuestpools());
-        return allQp;
+        User user = getUserBySub(sub);
+
+        return user.getQuestpools();
     }
 
     public void deleteUser(User standard) {
