@@ -55,11 +55,11 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/questpool/getAll")
+        registry.addMapping("/**")
                 .allowedOrigins(
                         "https://social-sips-ec954.web.app",
                         "https://social-sips-ec954.firebaseapp.com")
-                .allowedMethods("GET")
+                .allowedMethods("GET", "POST", "PATCH", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }

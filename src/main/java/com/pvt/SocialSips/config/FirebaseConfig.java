@@ -11,12 +11,12 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 
-@Configuration
+//Configuration
 public class FirebaseConfig {
 
     @Value("${FIREBASE_ADMIN_SDK}")
     private Resource serviceAccountResource;
-
+/*
     @PostConstruct
     public void initialize() {
         try (InputStream serviceAccount = serviceAccountResource.getInputStream()) {
@@ -31,5 +31,7 @@ public class FirebaseConfig {
             System.out.println(e.getCause() + e.getMessage());
         }
     }
+
+ */
 }
 
