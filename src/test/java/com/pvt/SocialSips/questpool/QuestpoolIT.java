@@ -259,4 +259,13 @@ public class QuestpoolIT {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
+
+    @Test
+    public void getStandardQuestpools_StandardHostExists_HTTPCodeIsOk() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/questpool/standard/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
 }

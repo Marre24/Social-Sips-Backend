@@ -13,7 +13,6 @@ import java.util.Set;
 @Service
 public class UserService {
 
-    private static final String STANDARD_SUB = "STANDARD";
 
     private final UserRepository userRepository;
 

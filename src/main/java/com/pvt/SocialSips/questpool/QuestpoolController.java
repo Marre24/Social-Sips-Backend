@@ -56,4 +56,14 @@ public class QuestpoolController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
     }
+
+    @GetMapping("/standard/")
+    public ResponseEntity<?> getAllStandardQuestpools(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser){
+        try {
+            Set<Questpool> questpools = questpoolService.getAllStandardQuestpools();
+            return new ResponseEntity<>(questpools, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 }
