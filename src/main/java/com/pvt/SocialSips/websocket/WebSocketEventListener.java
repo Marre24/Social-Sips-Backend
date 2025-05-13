@@ -38,16 +38,19 @@ public class WebSocketEventListener {
     public void handleWebSocketEventDisconnect(SessionDisconnectEvent event) {
         String sessionId = event.getSessionId();
         String deviceId = sessionRegistry.get(sessionId).getDeviceId();
-        String eventId = sessionRegistry.get(sessionId).getEventId();
-        String colorId = groupRegistry.getGuestsGroup(eventId, deviceId);
-        System.out.println(event.getMessage());
-        this.template.convertAndSend("/topic/public/event/" + eventId, new EventMessage(MessageType.LEAVE_EVENT));
 
-        if (colorId != null) {
-            groupRegistry.removeGuestFromGroup(eventId, colorId, deviceId);
+        if (!deviceId.equals("HOST")) {
+            String eventId = sessionRegistry.get(sessionId).getEventId();
+            String colorId = groupRegistry.getGuestsGroup(eventId, deviceId);
+            this.template.convertAndSend("/topic/public/event/" + eventId, new EventMessage(MessageType.LEAVE_EVENT));
+
+            if (colorId != null) {
+                groupRegistry.removeGuestFromGroup(eventId, colorId, deviceId);
+            }
+
+            sessionRegistry.remove(sessionId);
         }
 
-        sessionRegistry.remove(sessionId);
     }
 
     /*when subscribing to an eventid alert everyone else in the same event*/
@@ -64,7 +67,9 @@ public class WebSocketEventListener {
 
             if (deviceIdHeader != null && !deviceIdHeader.isEmpty()) {
                 String deviceId = deviceIdHeader.get(0);
-                sessionRegistry.put(sessionId, new Guest(deviceId, eventId));
+                if (!deviceId.equals("HOST")) {
+                    sessionRegistry.put(sessionId, new Guest(deviceId, eventId));
+                }
             }
         }
     }
