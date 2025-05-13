@@ -40,6 +40,7 @@ public class WebSocketEventListener {
         String deviceId = sessionRegistry.get(sessionId).getDeviceId();
         String eventId = sessionRegistry.get(sessionId).getEventId();
         String colorId = groupRegistry.getGuestsGroup(eventId, deviceId);
+        System.out.println(event.getMessage());
         this.template.convertAndSend("/topic/public/event/" + eventId, new EventMessage(MessageType.LEAVE_EVENT));
 
         if (colorId != null) {
