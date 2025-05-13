@@ -41,6 +41,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers("/event/**", "/questpool/**", "/ws/**").permitAll()
                         .requestMatchers("/user/**").authenticated()
                 )
+                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .oauth2Login(cfg -> cfg
                         .defaultSuccessUrl("/user/profile")
