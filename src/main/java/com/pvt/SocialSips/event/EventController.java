@@ -10,7 +10,6 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "https://group-2-75.pvt.dsv.su.se/")
 @RequestMapping("/event")
 public class EventController {
 
@@ -43,7 +42,19 @@ public class EventController {
         }
     }
 
-    @PatchMapping("/start/")
+    @PostMapping("/test/")
+    public ResponseEntity<String> createEvent(@RequestBody Event event) {
+        try {
+            eventService.createEvent(event);
+            return new ResponseEntity<>("Event created", HttpStatus.OK);
+
+        } catch (DuplicateKeyException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+
+            @PatchMapping("/start/")
     public ResponseEntity<String> startEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
         try {
             eventService.startEvent(defaultOidcUser.getSubject());

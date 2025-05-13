@@ -40,9 +40,16 @@ public class EventService {
 
         if (eventRepository.findById(sub).isPresent())
             throw new DuplicateKeyException("Host with id: " + sub + " already has an event!");
-
+        ;
         user.setEvent(event.getName(), event.getGroupSize(), event.getQuestpools());
         userService.register(user);
+    }
+
+    @Transactional
+    public void createEvent(Event event) {
+        if (eventRepository.findById(event.getHostSub()).isPresent())
+            throw new DuplicateKeyException("Host with id: " + event.getHostSub() + " already has an event!");
+        eventRepository.save(event);
     }
 
 
