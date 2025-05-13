@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class QuestpoolParser {
 
-    private final static String PATH = "src/main/resources/questpools";
+    private final static String PATH = "questpools/";
     private final static File DIR = new File(PATH);
 
     public static Set<Questpool> getAllStandardQuestpools(){
