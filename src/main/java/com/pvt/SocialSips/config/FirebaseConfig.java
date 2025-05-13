@@ -31,5 +31,6 @@ public class FirebaseConfig {
             System.out.println(e.getCause() + e.getMessage());
         }
     }
+
 }
 

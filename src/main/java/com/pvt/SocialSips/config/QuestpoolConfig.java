@@ -3,6 +3,7 @@ package com.pvt.SocialSips.config;
 import com.pvt.SocialSips.quest.Icebreaker;
 import com.pvt.SocialSips.quest.Trivia;
 import com.pvt.SocialSips.questpool.Questpool;
+import com.pvt.SocialSips.questpool.QuestpoolParser;
 import com.pvt.SocialSips.questpool.QuestpoolService;
 import com.pvt.SocialSips.questpool.QuestpoolType;
 import com.pvt.SocialSips.user.User;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Configuration
 public class QuestpoolConfig {
@@ -22,45 +24,13 @@ public class QuestpoolConfig {
         return args -> {
             User standard = new User("STANDARD", "STANDARD");
 
-            Questpool icebreakerOne = new Questpool(
-                    "icebreakerOne",
-                    QuestpoolType.ICEBREAKER,
-                    new HashSet<>(List.of(
-                            new Icebreaker("Ask about interests"),
-                            new Icebreaker("Ask about gaming")))
-            );
-
-            Questpool icebreakerTwo = new Questpool(
-                    "icebreakerTwo",
-                    QuestpoolType.ICEBREAKER,
-                    new HashSet<>(List.of(
-                            new Icebreaker("Ask about music"),
-                            new Icebreaker("Ask about fashion")))
-            );
-
-            Questpool triviaOne = new Questpool(
-                    "triviaOne",
-                    QuestpoolType.TRIVIA,
-                    new HashSet<>(List.of(
-                            new Trivia("Question one", new HashSet<>(List.of("Correct", "opp2", "opp3", "opp4")), 1)
-                    ))
-            );
-
-            Questpool triviaTwo = new Questpool(
-                    "triviaTwo",
-                    QuestpoolType.TRIVIA,
-                    new HashSet<>(List.of(
-                            new Trivia("Question two", new HashSet<>(List.of("opp1", "Correct", "opp3", "opp4")), 2)
-                    ))
-            );
+            Set<Questpool> questpools = QuestpoolParser.getAllStandardQuestpools();
 
             userService.deleteUser(standard);
             userService.register(standard);
 
-            questpoolService.createQuestpoolWithHost(triviaOne, standard.getSub());
-            questpoolService.createQuestpoolWithHost(triviaTwo, standard.getSub());
-            questpoolService.createQuestpoolWithHost(icebreakerOne, standard.getSub());
-            questpoolService.createQuestpoolWithHost(icebreakerTwo, standard.getSub());
+            for (Questpool questpool : questpools)
+                questpoolService.createQuestpoolWithHost(questpool, standard.getSub());
         };
     }
 

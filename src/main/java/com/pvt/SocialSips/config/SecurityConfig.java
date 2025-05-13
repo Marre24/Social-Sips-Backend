@@ -38,11 +38,11 @@ public class SecurityConfig implements WebMvcConfigurer {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home", "/css/**", "/error").permitAll()
-                        .requestMatchers("/event/join/**", "/questpool/**").permitAll()
-                        .requestMatchers("/user/**", "/event/", "/event/start/").authenticated()
+                        .requestMatchers("/event/join/**", "/questpool/**", "/event/",
+                                "/event/start/", "/ws/**", "/topic/**").permitAll()
+                        .requestMatchers("/user/**").authenticated()
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
-                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .oauth2Login(cfg -> cfg
                         .defaultSuccessUrl("/user/profile")
                         .userInfoEndpoint(custom -> custom.oidcUserService(oidcUserDetailsService))
@@ -55,11 +55,12 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/questpool/getAll")
+        registry.addMapping("/**")
                 .allowedOrigins(
+                        "https://localhost:50000",
                         "https://social-sips-ec954.web.app",
                         "https://social-sips-ec954.firebaseapp.com")
-                .allowedMethods("GET")
+                .allowedMethods("GET", "POST", "PATCH", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
