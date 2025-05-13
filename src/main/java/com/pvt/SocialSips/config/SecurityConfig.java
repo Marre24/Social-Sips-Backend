@@ -41,6 +41,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers("/event/**", "/questpool/**", "/ws/**", "/login/**").permitAll()
                         .requestMatchers("/user/**").authenticated()
                 )
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/event/**", "/questpool/**", "/ws/**")
+                )
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .oauth2Login(cfg -> cfg
