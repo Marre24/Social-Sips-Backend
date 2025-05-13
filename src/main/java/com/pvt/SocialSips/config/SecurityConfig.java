@@ -38,8 +38,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home", "/css/**", "/error").permitAll()
-                        .requestMatchers("/event/join/**", "/questpool/**", "/event/",
-                                "/event/start/", "/ws/**", "/topic/**").permitAll()
+                        .requestMatchers("/event/**", "/questpool/**", "/ws/**").permitAll()
                         .requestMatchers("/user/**").authenticated()
                 )
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
@@ -62,6 +61,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         "https://social-sips-ec954.web.app",
                         "https://social-sips-ec954.firebaseapp.com")
                 .allowedMethods("GET", "POST", "PATCH", "DELETE")
+                .allowedHeaders("Content-Type", "Authorization")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
