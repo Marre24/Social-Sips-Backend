@@ -16,6 +16,8 @@ import java.util.Set;
 @Service
 public class QuestpoolService {
 
+    private static final String STANDARD_SUB = "STANDARD";
+
     private final QuestRepository questRepository;
 
     private final QuestpoolRepository questpoolRepository;
@@ -71,7 +73,9 @@ public class QuestpoolService {
         questpoolRepository.save(qp);
     }
 
-    public List<Questpool> getAllQuestpools() {
-        return questpoolRepository.findAll();
+    public Set<Questpool> getAllStandardQuestpools() {
+        User standardUser = userService.getUserBySub(STANDARD_SUB);
+
+        return standardUser.getQuestpools();
     }
 }

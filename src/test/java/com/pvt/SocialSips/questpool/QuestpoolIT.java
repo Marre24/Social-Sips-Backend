@@ -55,8 +55,10 @@ public class QuestpoolIT {
     private static final Questpool QUESTPOOL_TO_BE_ADDED = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
     private static final Questpool QUESTPOOL_ONE = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
     private static final Questpool QUESTPOOL_TWO = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
-    private static final Questpool QUESTPOOL_THREE = new Questpool("A quest pool", QuestpoolType.TRIVIA,
-            new HashSet<>(List.of(new Trivia("Question two", new HashSet<>(List.of("opp1", "correct", "opp3", "opp4")), 2))));
+    private static final Questpool QUESTPOOL_THREE = new Questpool(
+            "A quest pool",
+            QuestpoolType.TRIVIA,
+            new HashSet<>(List.of(new Trivia("Question two", "correct;opp2;opp3;opp4"))));
 
     private static final String OLD_QUESTS = "[ { \"id\" : null, \"prompt\" : \"A prompt\", \"type\" : \"ICEBREAKER\" } ]";
     private static final String NEW_QUESTS = "[ " +
@@ -256,5 +258,14 @@ public class QuestpoolIT {
                         .content(NEW_QUESTS))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    public void getStandardQuestpools_StandardHostExists_HTTPCodeIsOk() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/questpool/standard/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

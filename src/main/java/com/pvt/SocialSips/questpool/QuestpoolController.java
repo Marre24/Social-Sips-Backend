@@ -57,11 +57,13 @@ public class QuestpoolController {
         }
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<?> getAllQuestpools(){
-        List<Questpool> questpools = questpoolService.getAllQuestpools();
-        if(questpools.isEmpty()) return new ResponseEntity<>("No questpools exists in the database!",HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(questpools, HttpStatus.OK);
+    @GetMapping("/standard/")
+    public ResponseEntity<?> getAllStandardQuestpools(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser){
+        try {
+            Set<Questpool> questpools = questpoolService.getAllStandardQuestpools();
+            return new ResponseEntity<>(questpools, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
-
 }

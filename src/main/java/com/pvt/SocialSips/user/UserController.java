@@ -39,9 +39,15 @@ public class UserController {
 
 
     @GetMapping("/")
-    public ResponseEntity<Set<Questpool>> getAllQuestpools(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
-        String sub = defaultOidcUser.getSubject();
+    public ResponseEntity<?> getAllQuestpools(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+        try {
+            String sub = defaultOidcUser.getSubject();
+            var questpools = userService.getAllQuestpoolsBySub(sub);
+            return new ResponseEntity<>(questpools, HttpStatus.OK);
+        } catch (Exception e){
 
-        return new ResponseEntity<>(userService.getAllQuestpoolsBySub(sub), HttpStatus.OK);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+
     }
 }

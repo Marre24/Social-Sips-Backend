@@ -48,8 +48,10 @@ public class UserIT {
     private static final User USER = new User(TEST_USER_FIRST_NAME, TEST_USER_SUB, List.of(new Role("ROLE_OIDC_USER")));
     private static final Questpool QUESTPOOL_ONE = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
     private static final Questpool QUESTPOOL_TWO = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
-    private static final Questpool QUESTPOOL_THREE = new Questpool("A quest pool", QuestpoolType.TRIVIA,
-            new HashSet<>(List.of(new Trivia("Question two", new HashSet<>(List.of("opp1", "correct", "opp3", "opp4")), 2))));
+    private static final Questpool QUESTPOOL_THREE = new Questpool(
+            "A quest pool",
+            QuestpoolType.TRIVIA,
+            new HashSet<>(List.of(new Trivia("Question two", "correct;opp2;opp3;opp4"))));
 
     private static final OidcUser OIDC_USER = new DefaultOidcUser(
             AuthorityUtils.createAuthorityList("ROLE_OIDC_USER"),
@@ -91,10 +93,7 @@ public class UserIT {
 
         userService.register(USER_WITHOUT);
 
-        HashSet<Questpool> allQp = new HashSet<>(userService.getUserBySub(STANDARD_SUB).getQuestpools());
-        STANDARD_QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(allQp);
-        allQp.addAll(userService.getUserBySub(user.getSub()).getQuestpools());
-        QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(allQp);
+        QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(userService.getUserBySub(user.getSub()).getQuestpools());
     }
 
     @AfterAll
@@ -131,13 +130,13 @@ public class UserIT {
     }
 
     @Test
-    public void getAllQuestpools_HostWithoutQuestpools_OnlyStandardQuestpoolsReturned() throws Exception {
+    public void getAllQuestpools_HostWithoutQuestpools_EmptySetReturned() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/user/").secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().json(STANDARD_QUESTPOOLS_IN_JSON_EXPECTED));
+                .andExpect(content().json("[]"));
     }
 
     @Test
