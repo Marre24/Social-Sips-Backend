@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -42,9 +43,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers("/user/**").authenticated()
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/event/**", "/questpool/**", "/ws/**")
+                        .ignoringRequestMatchers("/user/**","/event/**", "/questpool/**", "/ws/**")
                 )
-                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .oauth2Login(cfg -> cfg
                         .defaultSuccessUrl("/user/profile")
@@ -60,7 +60,6 @@ public class SecurityConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                        "https://localhost:50000",
                         "https://social-sips-ec954.web.app",
                         "https://social-sips-ec954.firebaseapp.com")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
