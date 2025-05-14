@@ -48,7 +48,6 @@ public class SecurityConfig implements WebMvcConfigurer {
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .oauth2Login(cfg -> cfg
-                        .defaultSuccessUrl("/user/profile")
                         .userInfoEndpoint(custom -> custom.oidcUserService(oidcUserDetailsService))
                         .successHandler(authenticationSuccessHandler()))
                 .formLogin(AbstractHttpConfigurer::disable)
