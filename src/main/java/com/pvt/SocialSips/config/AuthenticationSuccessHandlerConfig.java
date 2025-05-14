@@ -13,6 +13,8 @@ public class AuthenticationSuccessHandlerConfig implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
                                         Authentication authentication) throws IOException {
+       if (httpRequest.getMethod().equalsIgnoreCase("OPTIONS"))
+           httpResponse.setStatus(200);
         httpResponse.sendRedirect("/user/profile");
     }
 }
