@@ -9,6 +9,7 @@ import org.springframework.core.Ordered;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,10 +27,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final OidcUserDetailsService oidcUserDetailsService;
+    private final AuthenticationSuccessHandlerConfig successHandlerConfig;
 
     @Autowired
-    public SecurityConfig(OidcUserDetailsService oidcUserDetailsService) {
+    public SecurityConfig(OidcUserDetailsService oidcUserDetailsService, AuthenticationSuccessHandlerConfig successHandlerConfig) {
         this.oidcUserDetailsService = oidcUserDetailsService;
+        this.successHandlerConfig = successHandlerConfig;
     }
 
     @Bean
@@ -47,11 +50,18 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .oauth2Login(cfg -> cfg
                         .loginPage("/oauth2/authorization/google")
+                        .successHandler(authenticationSuccessHandler())
                         .userInfoEndpoint(custom -> custom.oidcUserService(oidcUserDetailsService)))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .httpBasic(Customizer.withDefaults())
                 .build();
+    }
+
+    @Override
+    public void configurePathMatch(PathMatchConfigurer configurer) {
+        configurer.setUseTrailingSlashMatch(true);
     }
 
     @Override
@@ -61,7 +71,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         "https://social-sips-ec954.web.app",
                         "https://social-sips-ec954.firebaseapp.com")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-                .allowedHeaders("Content-Type", "Authorization")
+                .allowedHeaders("Content-Type", "Authorization", "X-CSRF-TOKEN")
                 .allowCredentials(true);
     }
 
@@ -71,6 +81,11 @@ public class SecurityConfig implements WebMvcConfigurer {
         filterRegistrationBean.setFilter(new ForwardedHeaderFilter());
         filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return filterRegistrationBean;
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return successHandlerConfig;
     }
 
     @Bean
