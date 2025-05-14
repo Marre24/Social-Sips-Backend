@@ -26,12 +26,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final OidcUserDetailsService oidcUserDetailsService;
-    private final AuthenticationSuccessHandlerConfig successHandlerConfig;
 
     @Autowired
-    public SecurityConfig(OidcUserDetailsService oidcUserDetailsService, AuthenticationSuccessHandlerConfig successHandlerConfig) {
+    public SecurityConfig(OidcUserDetailsService oidcUserDetailsService) {
         this.oidcUserDetailsService = oidcUserDetailsService;
-        this.successHandlerConfig = successHandlerConfig;
     }
 
     @Bean
@@ -48,8 +46,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .oauth2Login(cfg -> cfg
-                        .userInfoEndpoint(custom -> custom.oidcUserService(oidcUserDetailsService))
-                        .successHandler(authenticationSuccessHandler()))
+                        .loginPage("/oauth2/authorization/google")
+                        .userInfoEndpoint(custom -> custom.oidcUserService(oidcUserDetailsService)))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
@@ -73,11 +71,6 @@ public class SecurityConfig implements WebMvcConfigurer {
         filterRegistrationBean.setFilter(new ForwardedHeaderFilter());
         filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return filterRegistrationBean;
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return successHandlerConfig;
     }
 
     @Bean
