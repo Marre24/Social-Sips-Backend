@@ -102,16 +102,21 @@ public class UserIT {
         userService.deleteUser(USER_WITHOUT);
     }
 
+
     @Test
     public void getAllQuestpools_HostExists_HTTPCodeIsOk() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + TEST_USER_SUB).secure(true))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     public void getAllQuestpools_HostWithQuestpools_QuestpoolsReturned() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + TEST_USER_SUB).secure(true))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json(QUESTPOOLS_IN_JSON_EXPECTED));
@@ -119,7 +124,9 @@ public class UserIT {
 
     @Test
     public void getAllQuestpools_HostWithoutQuestpools_EmptySetReturned() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + TEST_USER_WITHOUT_SUB).secure(true))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(oidcLogin().oidcUser(OIDC_USER_WITHOUT)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json("[]"));
@@ -134,6 +141,5 @@ public class UserIT {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(USER.getFirstName()));
     }
-
 
 }

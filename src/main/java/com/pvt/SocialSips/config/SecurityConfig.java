@@ -40,7 +40,8 @@ public class SecurityConfig implements WebMvcConfigurer {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home", "/css/**", "/error").permitAll()
-                         .requestMatchers("/event/**", "/questpool/**", "/ws/**", "/login/**", "/user/**").permitAll()
+                        .requestMatchers("/event/join/**").permitAll()
+                        .requestMatchers("/user/**", "/event/", "/event/start/", "/questpool/**").authenticated()
                 )
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .csrf(csrf -> csrf
