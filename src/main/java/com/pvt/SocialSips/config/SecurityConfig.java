@@ -1,6 +1,7 @@
 package com.pvt.SocialSips.config;
 
 import com.pvt.SocialSips.user.OidcUserDetailsService;
+import com.pvt.SocialSips.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -28,11 +29,12 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     private final OidcUserDetailsService oidcUserDetailsService;
     private final AuthenticationSuccessHandlerConfig successHandlerConfig;
-
+    private final UserService userService;
     @Autowired
-    public SecurityConfig(OidcUserDetailsService oidcUserDetailsService, AuthenticationSuccessHandlerConfig successHandlerConfig) {
+    public SecurityConfig(OidcUserDetailsService oidcUserDetailsService, AuthenticationSuccessHandlerConfig successHandlerConfig, UserService userService) {
         this.oidcUserDetailsService = oidcUserDetailsService;
         this.successHandlerConfig = successHandlerConfig;
+        this.userService = userService;
     }
 
     @Bean
@@ -40,14 +42,14 @@ public class SecurityConfig implements WebMvcConfigurer {
         return http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home", "/css/**", "/error").permitAll()
-                        .requestMatchers("/event/join/**").permitAll()
+                        .requestMatchers("/event/join/**", "/auth/token").permitAll()
                         .requestMatchers("/user/**", "/event/", "/event/start/", "/questpool/**").authenticated()
                 )
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/user/**","/event/**", "/questpool/**", "/ws/**")
                 )
-                .addFilterBefore(new FirebaseAuthenticationFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new FirebaseAuthenticationFilter(userService), BasicAuthenticationFilter.class)
                 .oauth2Login(cfg -> cfg
                         .loginPage("/oauth2/authorization/google")
                         .successHandler(authenticationSuccessHandler())
