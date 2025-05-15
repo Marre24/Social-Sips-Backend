@@ -1,6 +1,7 @@
 package com.pvt.SocialSips.user;
 
 import com.pvt.SocialSips.questpool.Questpool;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -40,7 +41,7 @@ public class UserService {
     public User getUserBySub(String sub) {
         Optional<User> user = userRepository.findById(sub);
         if (user.isEmpty())
-            return null;
+            throw new EntityNotFoundException("User with sub: " + sub + " was not found!");
         int size = user.get().getQuestpools().size();
         return user.get();
     }
