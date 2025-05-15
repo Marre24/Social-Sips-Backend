@@ -7,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Set;
@@ -37,10 +34,9 @@ public class UserController {
     }
 
 
-    @GetMapping("/")
-    public ResponseEntity<?> getAllQuestpools(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+    @GetMapping("/{sub}")
+    public ResponseEntity<?> getAllQuestpools(@PathVariable String sub) {
         try {
-            String sub = defaultOidcUser.getSubject();
             var questpools = userService.getAllQuestpoolsBySub(sub);
             return new ResponseEntity<>(questpools, HttpStatus.OK);
         } catch (Exception e){
