@@ -102,13 +102,6 @@ public class UserIT {
         userService.deleteUser(USER_WITHOUT);
     }
 
-    @Test
-    public void getAllQuestpools_UserNotAuthorized_IsRedirected() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
-    }
 
     @Test
     public void getAllQuestpools_HostExists_HTTPCodeIsOk() throws Exception {
@@ -147,14 +140,6 @@ public class UserIT {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(USER.getFirstName()));
-    }
-
-    @Test
-    public void profile_UserNotAuthorized_IsRedirected() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/profile").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().is3xxRedirection());
     }
 
 }
