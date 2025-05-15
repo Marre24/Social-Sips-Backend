@@ -41,8 +41,8 @@ public class SecurityConfig implements WebMvcConfigurer {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home", "/css/**", "/error").permitAll()
-                        .requestMatchers("/event/join/**", "/auth/token").permitAll()
+                        .requestMatchers("/", "/home", "/css/**", "/error", "/__/hosting/**").permitAll()
+                        .requestMatchers("/event/join/**", "/auth/token", "/.well-known/**").permitAll()
                         .requestMatchers("/user/**", "/event/", "/event/start/", "/questpool/**").authenticated()
                 )
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
