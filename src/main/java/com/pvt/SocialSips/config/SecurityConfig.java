@@ -54,7 +54,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .userInfoEndpoint(custom -> custom.oidcUserService(oidcUserDetailsService)))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
@@ -70,8 +70,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "https://social-sips-ec954.web.app",
                         "https://social-sips-ec954.firebaseapp.com")
-                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
-                .allowedHeaders("Content-Type", "Authorization", "X-CSRF-TOKEN")
+                .allowedMethods("*")
+                .allowedHeaders("*")
                 .allowCredentials(true);
     }
 
