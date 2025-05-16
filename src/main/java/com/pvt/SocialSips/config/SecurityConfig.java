@@ -2,12 +2,14 @@ package com.pvt.SocialSips.config;
 
 import com.pvt.SocialSips.user.OidcUserDetailsService;
 import com.pvt.SocialSips.user.UserService;
+import io.micrometer.common.lang.NonNullApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
@@ -30,20 +32,18 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     private final OidcUserDetailsService oidcUserDetailsService;
     private final AuthenticationSuccessHandlerConfig successHandlerConfig;
-    private final UserService userService;
 
     @Autowired
     public SecurityConfig(OidcUserDetailsService oidcUserDetailsService, AuthenticationSuccessHandlerConfig successHandlerConfig, UserService userService) {
         this.oidcUserDetailsService = oidcUserDetailsService;
         this.successHandlerConfig = successHandlerConfig;
-        this.userService = userService;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home", "/css/**", "/error", "/__/hosting/**").permitAll()
+                        .requestMatchers( "/", "/home", "/css/**", "/error", "/__/hosting/**").permitAll()
                         .requestMatchers("/event/join/**", "/auth/token", "/.well-known/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .requestMatchers(HttpMethod.PUT).permitAll()
@@ -53,11 +53,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers(HttpMethod.GET).permitAll()
                         .requestMatchers("/user/**", "/event/", "/event/start/", "/questpool/**").authenticated()
                 )
-                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/user/**", "/event/**", "/questpool/**", "/ws/**", "/auth/token")
                 )
-                .addFilterBefore(new FirebaseAuthenticationFilter(userService), BasicAuthenticationFilter.class)
                 .oauth2Login(cfg -> cfg
                         .successHandler(authenticationSuccessHandler())
                         .userInfoEndpoint(custom -> custom.oidcUserService(oidcUserDetailsService)))
@@ -68,21 +66,30 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .build();
     }
 
+    @Bean
+    public WebMvcConfigurer corsConfigurer(){
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(@NonNull CorsRegistry registry) {
+                    registry.addMapping("/**")
+                            .allowedOrigins(
+                                    "https://social-sips-ec954.web.app",
+                                    "https://social-sips-ec954.firebaseapp.com"
+                                    , "ws://127.0.0.1:5000/")
+                            .allowedMethods("*")
+                            .allowedHeaders("*")
+                            .allowCredentials(true);
+                WebMvcConfigurer.super.addCorsMappings(registry);
+            }
+        };
+    }
+
     @Override
     public void configurePathMatch(PathMatchConfigurer configurer) {
         configurer.setUseTrailingSlashMatch(true);
     }
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins(
-                        "https://social-sips-ec954.web.app",
-                        "https://social-sips-ec954.firebaseapp.com")
-                .allowedMethods("*")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-    }
+
 
     @Bean
     FilterRegistrationBean<ForwardedHeaderFilter> forwardedHeaderFilter() {

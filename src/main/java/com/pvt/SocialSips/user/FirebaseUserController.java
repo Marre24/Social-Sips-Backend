@@ -1,5 +1,7 @@
 package com.pvt.SocialSips.user;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.pvt.SocialSips.role.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +32,13 @@ public class FirebaseUserController {
     @PostMapping("/token")
     public ResponseEntity<?> authenticateFirebaseToken(@RequestHeader String token, @AuthenticationPrincipal FirebaseToken firebaseToken) {
 
-//        User user = userService.getUserBySub(firebaseToken.getUid());
-//        if (user == null) {
-//            user = userService.register(new User(firebaseToken.getName(), firebaseToken.getUid(), List.of(new Role("OIDC_USER"), new Role("HOST"))));
-//            List<GrantedAuthority> authorities = user.getRoles().stream()
-//                    .map(role -> new SimpleGrantedAuthority(role.getName()))
-//                    .collect(Collectors.toList());
-//        }
+        User user = userService.getUserBySub(firebaseToken.getUid());
+        if (user == null) {
+            user = userService.register(new User(firebaseToken.getName(), firebaseToken.getUid(), List.of(new Role("OIDC_USER"), new Role("HOST"))));
+            List<GrantedAuthority> authorities = user.getRoles().stream()
+                    .map(role -> new SimpleGrantedAuthority(role.getName()))
+                    .collect(Collectors.toList());
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body("REACHED THIS POINT xD");
     }
