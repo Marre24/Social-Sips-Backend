@@ -2,7 +2,6 @@ package com.pvt.SocialSips.config;
 
 import com.pvt.SocialSips.user.OidcUserDetailsService;
 import com.pvt.SocialSips.user.UserService;
-import io.micrometer.common.lang.NonNullApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +20,6 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -30,6 +28,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class SecurityConfig implements WebMvcConfigurer {
 
+    private final String[] PROTECTED_ENDPOINTS = {"/user/**", "/event/", "/event/start/", "/questpool/**"};
     private final OidcUserDetailsService oidcUserDetailsService;
     private final AuthenticationSuccessHandlerConfig successHandlerConfig;
 
@@ -51,7 +50,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers(HttpMethod.PATCH).permitAll()
                         .requestMatchers(HttpMethod.DELETE).permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
-                        .requestMatchers("/user/**", "/event/", "/event/start/", "/questpool/**").authenticated()
+                        .requestMatchers(PROTECTED_ENDPOINTS    ).authenticated()
                 )
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/user/**", "/event/**", "/questpool/**", "/ws/**", "/auth/token")

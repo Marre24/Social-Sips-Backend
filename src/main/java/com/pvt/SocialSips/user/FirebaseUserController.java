@@ -10,10 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,24 +21,25 @@ import java.util.stream.Collectors;
 @RequestMapping("/auth")
 public class FirebaseUserController {
 
-    private final UserService userService;
+    private final OidcUserDetailsService oidcUserDetailsService;
 
     @Autowired
-    public FirebaseUserController(UserService userService) {
-        this.userService = userService;
+    public FirebaseUserController(OidcUserDetailsService oidcUserDetailsService) {
+        this.oidcUserDetailsService = oidcUserDetailsService;
     }
 
     @PostMapping("/token")
-    public ResponseEntity<?> authenticateFirebaseToken(@RequestHeader String token, @AuthenticationPrincipal FirebaseToken firebaseToken) {
+    public ResponseEntity<?> authenticateFirebaseToken(OidcUserRequest oidcUserRequest, @RequestBody FirebaseToken firebaseToken) {
 
-        User user = userService.getUserBySub(firebaseToken.getUid());
-        if (user == null) {
-            user = userService.register(new User(firebaseToken.getName(), firebaseToken.getUid(), List.of(new Role("OIDC_USER"), new Role("HOST"))));
-            List<GrantedAuthority> authorities = user.getRoles().stream()
-                    .map(role -> new SimpleGrantedAuthority(role.getName()))
-                    .collect(Collectors.toList());
-        }
+        OidcUser user = oidcUserDetailsService.loadUser(oidcUserRequest);
+//        if (user == null) {
+//
+//            user = userService.register(new User(firebaseToken.getName(), firebaseToken.getUid(), List.of(new Role("OIDC_USER"), new Role("HOST"))));
+//            List<GrantedAuthority> authorities = user.getRoles().stream()
+//                    .map(role -> new SimpleGrantedAuthority(role.getName()))
+//                    .collect(Collectors.toList());
+//        }
 
-        return ResponseEntity.status(HttpStatus.OK).body("REACHED THIS POINT xD");
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 }
