@@ -59,7 +59,6 @@ public class SecurityConfig implements WebMvcConfigurer {
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(userService), BasicAuthenticationFilter.class)
                 .oauth2Login(cfg -> cfg
-                        .loginPage("/oauth2/authorization/google")
                         .successHandler(authenticationSuccessHandler())
                         .userInfoEndpoint(custom -> custom.oidcUserService(oidcUserDetailsService)))
                 .formLogin(AbstractHttpConfigurer::disable)
