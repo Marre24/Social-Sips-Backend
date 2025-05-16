@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.user;
 
+import com.google.auth.oauth2.GoogleAuthUtils;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,12 +35,15 @@ public class FirebaseUserController {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<?> authenticateFirebaseToken(GoogleCredentials credentials, @RequestBody FirebaseToken firebaseToken) throws FirebaseAuthException {
+    public ResponseEntity<?> authenticateFirebaseToken(@RequestBody FirebaseToken firebaseToken) throws FirebaseAuthException {
         FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(firebaseToken.toString());
 
         List<Role> roles = List.of(new Role("HOST"), new Role("OIDC_USER"));
+
                 PreAuthenticatedAuthenticationToken authentication = new PreAuthenticatedAuthenticationToken(
-                decodedToken.getEmail(), null, Collections.emptyList());
+                decodedToken.getEmail(),
+                        null,
+                        roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         if(userService.getUserBySub(firebaseToken.getUid()) == null){
             User user = new User(firebaseToken.getName(),firebaseToken.getUid(), roles);
