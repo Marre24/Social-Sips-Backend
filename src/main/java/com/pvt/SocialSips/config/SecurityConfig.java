@@ -31,6 +31,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     private final OidcUserDetailsService oidcUserDetailsService;
     private final AuthenticationSuccessHandlerConfig successHandlerConfig;
     private final UserService userService;
+
     @Autowired
     public SecurityConfig(OidcUserDetailsService oidcUserDetailsService, AuthenticationSuccessHandlerConfig successHandlerConfig, UserService userService) {
         this.oidcUserDetailsService = oidcUserDetailsService;
@@ -44,12 +45,17 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/home", "/css/**", "/error", "/__/hosting/**").permitAll()
                         .requestMatchers("/event/join/**", "/auth/token", "/.well-known/**").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                        .requestMatchers(HttpMethod.PUT).permitAll()
+                        .requestMatchers(HttpMethod.POST).permitAll()
+                        .requestMatchers(HttpMethod.PATCH).permitAll()
+                        .requestMatchers(HttpMethod.DELETE).permitAll()
+                        .requestMatchers(HttpMethod.GET).permitAll()
                         .requestMatchers("/user/**", "/event/", "/event/start/", "/questpool/**").authenticated()
                 )
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/user/**","/event/**", "/questpool/**", "/ws/**", "/auth/token")
+                        .ignoringRequestMatchers("/user/**", "/event/**", "/questpool/**", "/ws/**", "/auth/token")
                 )
                 .addFilterBefore(new FirebaseAuthenticationFilter(userService), BasicAuthenticationFilter.class)
                 .oauth2Login(cfg -> cfg
