@@ -35,7 +35,7 @@ public class FirebaseUserController {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<?> authenticateFirebaseToken(@RequestBody FirebaseToken firebaseToken) throws FirebaseAuthException {
+    public ResponseEntity<?> authenticateFirebaseToken(@RequestHeader FirebaseToken firebaseToken) throws FirebaseAuthException {
         FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(firebaseToken.toString());
 
         List<Role> roles = List.of(new Role("HOST"), new Role("OIDC_USER"));
@@ -49,8 +49,7 @@ public class FirebaseUserController {
             User user = new User(firebaseToken.getName(),firebaseToken.getUid(), roles);
             userService.register(user);
         }
-
-
+        
         return ResponseEntity.status(HttpStatus.OK).body("User authenticated.");
     }
 }
