@@ -1,19 +1,19 @@
 package com.pvt.SocialSips.user;
 
-import com.pvt.SocialSips.questpool.Questpool;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/user")
@@ -38,9 +38,17 @@ public class UserController {
 
 
     @GetMapping("/")
-    public ResponseEntity<?> getAllQuestpools(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+    public ResponseEntity<?> getAllQuestpools(@AuthenticationPrincipal Authentication auth) {
         try {
-            String sub = defaultOidcUser.getSubject();
+            String sub = "";
+            if(auth.getPrincipal() instanceof DefaultOidcUser defaultOidcUser){
+                sub = defaultOidcUser.getSubject();
+            }
+            else if(auth.getPrincipal() instanceof String firebaseToken){
+                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(firebaseToken);
+                sub = decodedToken.getUid();
+            }
+
             var questpools = userService.getAllQuestpoolsBySub(sub);
             return new ResponseEntity<>(questpools, HttpStatus.OK);
         } catch (Exception e){
