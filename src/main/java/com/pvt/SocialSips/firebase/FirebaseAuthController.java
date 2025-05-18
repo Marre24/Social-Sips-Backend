@@ -58,7 +58,7 @@ public class FirebaseAuthController {
 
     @PostMapping("/token")
     public ResponseEntity<?> authenticateFirebaseToken(@RequestHeader String token)  throws FirebaseAuthException {
-        FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+        FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token.replace("Token ", ""));
         List<Role> roles = List.of(new Role("HOST"), new Role("OIDC_USER"));
 
                 PreAuthenticatedAuthenticationToken authentication = new PreAuthenticatedAuthenticationToken(
