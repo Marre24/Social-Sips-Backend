@@ -53,8 +53,6 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers(HttpMethod.GET, PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(PROTECTED_ENDPOINTS).authenticated()
                 )
-                .oauth2Login(cfg -> cfg
-                        .userInfoEndpoint(custom -> custom.oidcUserService(oidcUserDetailsService)))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(firebaseAuthenticationFilter, BasicAuthenticationFilter.class)
