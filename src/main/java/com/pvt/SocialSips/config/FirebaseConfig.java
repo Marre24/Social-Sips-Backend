@@ -9,18 +9,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.PostConstruct;
 import java.io.*;
 
 @Configuration
 public class FirebaseConfig {
 
     @Value("${FIREBASE_ADMIN_SDK}")
-    private File file;
+    private Resource resource;
 
     @Bean
     public FirebaseApp firebaseApp() {
-        try (InputStream inputStream = new DataInputStream(new FileInputStream(file))) {
+        try (InputStream inputStream = new DataInputStream(new FileInputStream(resource.getFile()))) {
             FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(inputStream)).build();
 
             return FirebaseApp.initializeApp(options);
