@@ -19,8 +19,8 @@ public class FirebaseConfig {
 
     @Bean
     public FirebaseApp firebaseApp() {
-        try (InputStream inputStream = new DataInputStream(new FileInputStream(resource.getFile()))) {
-            FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(inputStream)).build();
+        try {
+            FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(resource.getInputStream())).build();
 
             return FirebaseApp.initializeApp(options);
         } catch (IOException e) {
