@@ -14,7 +14,7 @@ import java.io.*;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${FIREBASE_ADMIN_SDK}")
+    @Value("${firebase.admin.sdk.path}")
     private Resource resource;
 
     @Bean
