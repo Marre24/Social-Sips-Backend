@@ -10,33 +10,29 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 @Configuration
 public class FirebaseConfig {
 
     @Value("${FIREBASE_ADMIN_SDK}")
-    private Resource serviceAccountResource;
+    private File file;
 
-    @PostConstruct
-    public void initialize() {
-        try (InputStream serviceAccount = serviceAccountResource.getInputStream()) {
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
+    @Bean
+    public FirebaseApp firebaseApp() {
+        try (InputStream inputStream = new DataInputStream(new FileInputStream(file))) {
+            FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(inputStream)).build();
 
-            if (FirebaseApp.getApps().isEmpty()) {
-                FirebaseApp.initializeApp(options);
-            }
+            return FirebaseApp.initializeApp(options);
         } catch (IOException e) {
             System.out.println(e.getCause() + e.getMessage());
         }
+        return null;
     }
 
     @Bean
-    public FirebaseAuth firebaseAuth() {
-        return FirebaseAuth.getInstance(FirebaseApp.getInstance());
+    public FirebaseAuth firebaseAuth(FirebaseApp firebaseApp) {
+        return FirebaseAuth.getInstance(firebaseApp);
     }
 
 }
