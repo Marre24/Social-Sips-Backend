@@ -1,90 +1,76 @@
 package com.pvt.SocialSips.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-import com.google.firebase.database.annotations.NotNull;
-import com.pvt.SocialSips.user.User;
-import com.pvt.SocialSips.user.UserService;
+import com.pvt.SocialSips.token.FirebaseAuthenticationToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
+import static com.pvt.SocialSips.constants.WebConstants.*;
+
+@Component
 public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
 
-    private final UserService userService;
+    private final FirebaseAuth firebaseAuth;
+    private final ObjectMapper objectMapper;
 
-    public FirebaseAuthenticationFilter(UserService userService) {
-        this.userService = userService;
+    public FirebaseAuthenticationFilter(FirebaseAuth firebaseAuth, ObjectMapper objectMapper) {
+        this.firebaseAuth = firebaseAuth;
+        this.objectMapper = objectMapper;
     }
 
     @Override
-    protected void doFilterInternal(
-            @NotNull HttpServletRequest request,
-            @NotNull HttpServletResponse response,
-            @NotNull FilterChain filterChain
-    ) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+        String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
 
-        // Handle preflight requests
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            filterChain.doFilter(request, response);
-            return;
-        }
+        if (authorizationHeader != null && authorizationHeader.startsWith(BEARER_PREFIX)) {
+            String token = authorizationHeader.replace(BEARER_PREFIX, "");
+            Optional<String> userId = extractUserIdFromToken(token);
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            try {
-                String idToken = authHeader.substring(7);
-
-                // 1. Verify Firebase token
-                FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-
-                // 2. Check if user exists in your DB
-                User user = userService.getUserBySub(decodedToken.getUid());
-                if (user == null) {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    response.getWriter().write("User not registered");
-                    return;
-                }
-
-                // 3. Convert roles to authorities
-                List<GrantedAuthority> authorities = user.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
-                        .collect(Collectors.toList());
-
-                // 4. Create authentication with FirebaseToken as principal
-                PreAuthenticatedAuthenticationToken authentication =
-                        new PreAuthenticatedAuthenticationToken(
-                                decodedToken, // Principal is now the token
-                                null,
-                                authorities // Actual permissions
-                        );
-
+            if (userId.isPresent()) {
+                var authentication = new FirebaseAuthenticationToken(userId.get(), null, null);
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            } catch (FirebaseAuthException e) {
-                // Handle token-specific errors
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid token: " + e.getMessage());
-                return;
-            } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            } else {
+                setAuthErrorDetails(response);
                 return;
             }
         }
-
         filterChain.doFilter(request, response);
     }
+
+    private Optional<String> extractUserIdFromToken(String token) {
+        try {
+            FirebaseToken firebaseToken = firebaseAuth.verifyIdToken(token, true);
+            String userId = String.valueOf(firebaseToken.getClaims().get(USER_ID_CLAIM));
+            return Optional.of(userId);
+        } catch (FirebaseAuthException exception) {
+            return Optional.empty();
+        }
+    }
+
+    private void setAuthErrorDetails(HttpServletResponse response) throws IOException {
+        HttpStatus unauthorized = HttpStatus.UNAUTHORIZED;
+        response.setStatus(unauthorized.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(unauthorized,
+                "Authentication failure: Token missing, invalid or expired");
+        response.getWriter().write(objectMapper.writeValueAsString(problemDetail));
+    }
+
 }
