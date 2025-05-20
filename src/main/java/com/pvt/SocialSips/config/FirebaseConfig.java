@@ -29,8 +29,8 @@ public class FirebaseConfig {
     }
 
     @Bean
-    public FirebaseAuth firebaseAuth(FirebaseApp firebaseApp) {
-        return FirebaseAuth.getInstance(firebaseApp);
+    public FirebaseAuth firebaseAuth() {
+        return FirebaseAuth.getInstance(FirebaseApp.getInstance());
     }
 
 }
