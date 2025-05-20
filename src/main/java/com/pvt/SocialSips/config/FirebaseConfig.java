@@ -17,7 +17,6 @@ public class FirebaseConfig {
     @Value("${firebase.admin.sdk.path}")
     private File file;
 
-    @PostConstruct
     @Bean
     public FirebaseApp firebaseApp() {
         try (InputStream inputStream = new DataInputStream(new FileInputStream(file))) {
