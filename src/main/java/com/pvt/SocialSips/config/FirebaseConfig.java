@@ -7,20 +7,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 
 import java.io.*;
 
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${firebase.admin.sdk.path}")
-    private Resource resource;
+    @Value("${FIREBASE_ADMIN_SDK}")
+    private File file;
 
     @Bean
     public FirebaseApp firebaseApp() {
-        try {
-            FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(resource.getInputStream())).build();
+        try (InputStream inputStream = new DataInputStream(new FileInputStream(file))) {
+            FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(inputStream)).build();
 
             return FirebaseApp.initializeApp(options);
         } catch (IOException e) {
