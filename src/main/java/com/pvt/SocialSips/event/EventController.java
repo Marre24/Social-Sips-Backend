@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.event;
 
+import com.google.firebase.auth.FirebaseToken;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -21,9 +22,9 @@ public class EventController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> getEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+    public ResponseEntity<?> getEvent(@AuthenticationPrincipal FirebaseToken firebaseToken) {
         try {
-            Event e = eventService.getEvent(defaultOidcUser.getSubject());
+            Event e = eventService.getEvent(firebaseToken.getUid());
             return new ResponseEntity<>(e, HttpStatus.OK);
 
         } catch (EntityNotFoundException exception) {
@@ -32,9 +33,9 @@ public class EventController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> createEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser, @RequestBody Event event) {
+    public ResponseEntity<String> createEvent(@AuthenticationPrincipal FirebaseToken firebaseToken, @RequestBody Event event) {
         try {
-            eventService.createEvent(event, defaultOidcUser.getSubject());
+            eventService.createEvent(event, firebaseToken.getUid());
             return new ResponseEntity<>("Event created", HttpStatus.OK);
 
         } catch (DuplicateKeyException exception) {
@@ -42,7 +43,7 @@ public class EventController {
         }
     }
 
-    @PostMapping("/test/")
+    @PostMapping("/test")
     public ResponseEntity<String> createEvent(@RequestBody Event event) {
         try {
             eventService.createEvent(event);
@@ -54,10 +55,10 @@ public class EventController {
     }
 
 
-            @PatchMapping("/start/")
-    public ResponseEntity<String> startEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+    @PatchMapping("/start")
+    public ResponseEntity<String> startEvent(@AuthenticationPrincipal FirebaseToken firebaseToken) {
         try {
-            eventService.startEvent(defaultOidcUser.getSubject());
+            eventService.startEvent(firebaseToken.getUid());
             return new ResponseEntity<>("Event Started", HttpStatus.OK);
 
         } catch (IllegalStateException exception) {
@@ -68,9 +69,9 @@ public class EventController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<String> deleteEvent(@AuthenticationPrincipal DefaultOidcUser defaultOidcUser) {
+    public ResponseEntity<String> deleteEvent(@AuthenticationPrincipal FirebaseToken firebaseToken) {
         try {
-            eventService.deleteEvent(defaultOidcUser.getSubject());
+            eventService.deleteEvent(firebaseToken.getUid());
             return new ResponseEntity<>("Event deleted", HttpStatus.OK);
 
         } catch (EntityNotFoundException exception) {
