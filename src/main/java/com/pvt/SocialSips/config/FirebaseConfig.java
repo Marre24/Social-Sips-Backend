@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 
 @Configuration
@@ -16,6 +17,7 @@ public class FirebaseConfig {
     @Value("${firebase.admin.sdk.path}")
     private File file;
 
+    @PostConstruct
     @Bean
     public FirebaseApp firebaseApp() {
         try (InputStream inputStream = new DataInputStream(new FileInputStream(file))) {
