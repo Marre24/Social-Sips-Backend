@@ -3,11 +3,10 @@ package com.pvt.SocialSips.user;
 import com.google.firebase.auth.FirebaseToken;
 import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.role.Role;
-import com.pvt.SocialSips.token.FirebaseAuthenticationToken;
+import com.pvt.SocialSips.authentication.FirebaseAuthenticationToken;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,20 +16,10 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-
     private final UserRepository userRepository;
-
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-    }
-
-    public User login(OidcUserRequest request) {
-        System.out.println("\tAccessToken Scopes = ");
-        request.getAccessToken().getScopes().forEach(System.out::println);
-        System.out.println("OidcUserRequest");
-        request.getIdToken();
-        return null;
     }
 
     @Transactional

@@ -1,7 +1,7 @@
 package com.pvt.SocialSips.user;
 
 import com.google.firebase.auth.FirebaseToken;
-import com.pvt.SocialSips.firebase.FirebaseService;
+import com.pvt.SocialSips.authentication.FirebaseAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +18,10 @@ import java.security.Principal;
 public class UserController {
 
     private final UserService userService;
-    private final FirebaseService firebaseService;
+    private final FirebaseAuthenticationService firebaseService;
 
     @Autowired
-    public UserController(UserService userService, FirebaseService firebaseService) {
+    public UserController(UserService userService, FirebaseAuthenticationService firebaseService) {
         this.userService = userService;
         this.firebaseService = firebaseService;
     }
