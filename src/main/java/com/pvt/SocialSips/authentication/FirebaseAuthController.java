@@ -24,19 +24,17 @@ import java.util.stream.Collectors;
 @CrossOrigin
 public class FirebaseAuthController {
 
-    private final FirebaseAuth firebaseAuth;
     private final UserService userService;
 
     @Autowired
-    public FirebaseAuthController(FirebaseAuth firebaseAuth, UserService userService) {
-        this.firebaseAuth = firebaseAuth;
+    public FirebaseAuthController(UserService userService) {
         this.userService = userService;
     }
 
     @PreAuthorize("hasAuthority('USER')")
     @GetMapping(path = "/test-auth")
-    public String getPrincipalName(Principal principal) {
-        return principal.getName();
+    public ResponseEntity<String> getPrincipalName(Principal principal) {
+        return ResponseEntity.ok("Detta fungerar och du är autentiserad xd !!!");
     }
 
     @PreAuthorize("hasAuthority('USER')")
@@ -44,7 +42,7 @@ public class FirebaseAuthController {
     public void addAuthority(@PathVariable String uid, @RequestBody String authorityToAdd)
             throws FirebaseAuthException {
 
-        Map<String, Object> currentClaims = firebaseAuth.getUser(uid).getCustomClaims();
+        Map<String, Object> currentClaims = FirebaseAuth.getInstance().getUser(uid).getCustomClaims();
 
         ArrayList<String> rolesOld =
                 (ArrayList<String>) currentClaims.getOrDefault("authorities", List.of());
@@ -53,18 +51,19 @@ public class FirebaseAuthController {
 
         HashMap<String, Object> newClaims = new HashMap<>(currentClaims);
         newClaims.put("authorities", rolesNew);
-        firebaseAuth.setCustomUserClaims(uid, newClaims);
+        FirebaseAuth.getInstance().setCustomUserClaims(uid, newClaims);
     }
 
     @PostMapping("/token")
-    public ResponseEntity<?> authenticateFirebaseToken(@RequestHeader String token)  throws FirebaseAuthException {
+    public ResponseEntity<String> authenticateFirebaseToken(@RequestHeader String token)  throws FirebaseAuthException {
         FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token.replace("Token ", ""));
         List<Role> roles = List.of(new Role("HOST"), new Role("OIDC_USER"));
 
-                PreAuthenticatedAuthenticationToken authentication = new PreAuthenticatedAuthenticationToken(
+        PreAuthenticatedAuthenticationToken authentication = new PreAuthenticatedAuthenticationToken(
                 decodedToken.getEmail(),
                         null,
                         roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList()));
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         if(userService.getUserBySub(decodedToken.getUid()) == null){
             User user = new User(decodedToken.getName(),decodedToken.getUid(), roles);

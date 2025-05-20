@@ -25,11 +25,9 @@ import static com.pvt.SocialSips.constants.WebConstants.*;
 @Component
 public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
 
-    private final FirebaseAuth firebaseAuth;
     private final ObjectMapper objectMapper;
 
-    public FirebaseAuthenticationFilter(FirebaseAuth firebaseAuth, ObjectMapper objectMapper) {
-        this.firebaseAuth = firebaseAuth;
+    public FirebaseAuthenticationFilter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
@@ -56,7 +54,7 @@ public class FirebaseAuthenticationFilter extends OncePerRequestFilter {
 
     private Optional<String> extractUserIdFromToken(String token) {
         try {
-            FirebaseToken firebaseToken = firebaseAuth.verifyIdToken(token, true);
+            FirebaseToken firebaseToken = FirebaseAuth.getInstance().verifyIdToken(token, true);
             String userId = String.valueOf(firebaseToken.getClaims().get(USER_ID_CLAIM));
             return Optional.of(userId);
         } catch (FirebaseAuthException exception) {
