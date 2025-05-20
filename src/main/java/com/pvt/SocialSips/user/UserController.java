@@ -27,12 +27,10 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<String> profile(Principal principal) {
-        if (principal instanceof OAuth2AuthenticationToken oauth2) {
-            String sub = oauth2.getPrincipal().getAttribute("sub");
-            User user = userService.getUserBySub(sub);
-            return new ResponseEntity<>(user.getFirstName(), HttpStatus.OK);
-        }
+    public ResponseEntity<String> profile(@AuthenticationPrincipal FirebaseToken token) {
+            User user = userService.getUserBySub(token.getUid());
+            if(user != null)
+                return new ResponseEntity<>(user.getFirstName(), HttpStatus.OK);
         return new ResponseEntity<>("Unauthorized user request!", HttpStatus.FORBIDDEN);
     }
 
