@@ -1,4 +1,4 @@
-package com.pvt.SocialSips.firebase;
+package com.pvt.SocialSips.authentication;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;

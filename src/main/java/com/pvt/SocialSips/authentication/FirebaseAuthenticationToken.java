@@ -1,4 +1,4 @@
-package com.pvt.SocialSips.token;
+package com.pvt.SocialSips.authentication;
 
 import com.google.firebase.auth.FirebaseToken;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
