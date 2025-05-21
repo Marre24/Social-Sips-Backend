@@ -8,7 +8,7 @@ public final class WebConstants {
 
         public static final String[] PERMITTED_ENDPOINTS = {"/", "/home", "/css/**", "/error", "/__/hosting/**",
                                                             "/event/join/**", "/user/login", "/.well-known/**",
-                                                            "/h2-console/**"};
+                                                            "/h2-console/**","/questpool/standard/"};
 
         public static final String[] ALLOWED_ORIGINS = {"https://social-sips-ec954.web.app",
                                                             "https://social-sips-ec954.firebaseapp.com",
