@@ -1,4 +1,3 @@
-/*
 package com.pvt.SocialSips.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -89,13 +88,8 @@ public class EventIT {
 
     @Test
     public void getEvent_HostWithEvent_EventReturned() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/event/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", USER_SUB_WITH_EVENT)
-                                .claim("scope", "read:events")
-                        ))
-                )
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/" + USER_SUB_WITH_EVENT).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json(EVENT_IN_JSON_EXPECTED));
@@ -103,25 +97,16 @@ public class EventIT {
 
     @Test
     public void getEvent_WithoutEvent_HTTPStatusNotFound() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/event/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", USER_SUB_WITHOUT_EVENT)
-                                .claim("scope", "read:events")
-                        ))
-                )
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/" + USER_SUB_WITHOUT_EVENT).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
     public void createEvent_HostWithoutEvent_HTTPCodeOk() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/event/").secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.post("/event/" + USER_SUB_WITHOUT_EVENT).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", USER_SUB_WITHOUT_EVENT)
-                                .claim("scope", "read:events")
-                        ))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(EVENT_IN_JSON_EXPECTED))
                 .andDo(MockMvcResultHandlers.print())
@@ -132,12 +117,8 @@ public class EventIT {
     public void createEvent_HostWithoutEvent_EventCreated() throws Exception {
         postEventToHostWithoutEvent();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/event/").secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/" + USER_SUB_WITHOUT_EVENT).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", USER_SUB_WITHOUT_EVENT)
-                                .claim("scope", "read:events")
-                        ))
                 )
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -146,12 +127,8 @@ public class EventIT {
 
     @Test
     public void createEvent_HostWithEvent_HTTPStatusIsConflict() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/event/").secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.post("/event/" + USER_SUB_WITH_EVENT).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", USER_SUB_WITH_EVENT)
-                                .claim("scope", "read:events")
-                        ))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(EVENT_IN_JSON_EXPECTED))
                 .andDo(MockMvcResultHandlers.print())
@@ -162,12 +139,8 @@ public class EventIT {
     public void startEvent_HostWithEvent_EventStarted() throws Exception {
         postEventToHostWithoutEvent();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim(JwtClaimNames.SUB, USER_SUB_WITHOUT_EVENT)
-                                .claim("scope", "read:events")
-                        )))
+        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/" + USER_SUB_WITHOUT_EVENT).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
@@ -178,20 +151,12 @@ public class EventIT {
     public void startEvent_HostWithStartedEvent_HTTPCodeIsConflict() throws Exception {
         postEventToHostWithoutEvent();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", USER_SUB_WITHOUT_EVENT)
-                                .claim("scope", "read:events")
-                        )))
+        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/" + USER_SUB_WITHOUT_EVENT).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print());
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", USER_SUB_WITHOUT_EVENT)
-                                .claim("scope", "read:events")
-                        )))
+        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/" + USER_SUB_WITHOUT_EVENT).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isConflict());
     }
@@ -200,12 +165,8 @@ public class EventIT {
     public void deleteEvent_HostWithEvent_EventDeleted() throws Exception {
         postEventToHostWithoutEvent();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/event/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", USER_SUB_WITHOUT_EVENT)
-                                .claim("scope", "read:events")
-                        )))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/event/" + USER_SUB_WITHOUT_EVENT).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
@@ -215,13 +176,8 @@ public class EventIT {
     @Test
     public void deleteEvent_HostWithoutEvent_HTTPStatusIsNotFound() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/event/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", USER_SUB_WITHOUT_EVENT)
-                                .claim("scope", "read:events")
-                        ))
-                )
+        mockMvc.perform(MockMvcRequestBuilders.delete("/event/" + USER_SUB_WITHOUT_EVENT).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -239,13 +195,8 @@ public class EventIT {
     public void canJoinEvent_StartedEvent_HTTPStatusIsConflict() throws Exception {
         postEventToHostWithoutEvent();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", USER_SUB_WITHOUT_EVENT)
-                                .claim("scope", "read:events")
-                        ))
-                )
+        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/" + USER_SUB_WITHOUT_EVENT).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT_WITHOUT.getJoinCode()).secure(true)
@@ -256,13 +207,10 @@ public class EventIT {
 
 
     private void postEventToHostWithoutEvent() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/event/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf()).with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", USER_SUB_WITHOUT_EVENT)
-                                .claim("scope", "read:events")
-                        ))
+        mockMvc.perform(MockMvcRequestBuilders.post("/event/" + USER_SUB_WITHOUT_EVENT).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(EVENT_WITHOUT_IN_JSON_EXPECTED))
                 .andDo(MockMvcResultHandlers.print());
     }
-}*/
+}

@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.pvt.SocialSips.util.JwtParser.extractSub;
 
 @RestController
 @RequestMapping("/event")
@@ -20,10 +19,10 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @GetMapping("/")
-    public ResponseEntity<?> getEvent() {
+    @GetMapping("/{sub}")
+    public ResponseEntity<?> getEvent(@PathVariable String sub) {
         try {
-            Event e = eventService.getEvent(extractSub());
+            Event e = eventService.getEvent(sub);
             return new ResponseEntity<>(e, HttpStatus.OK);
 
         } catch (EntityNotFoundException exception) {
@@ -31,10 +30,10 @@ public class EventController {
         }
     }
 
-    @PostMapping("/")
-    public ResponseEntity<String> createEvent(@RequestBody Event event) {
+    @PostMapping("/{sub}")
+    public ResponseEntity<String> createEvent(@RequestBody Event event, @PathVariable String sub) {
         try {
-            eventService.createEvent(event, extractSub());
+            eventService.createEvent(event, sub);
             return new ResponseEntity<>("Event created", HttpStatus.OK);
 
         } catch (DuplicateKeyException exception) {
@@ -42,10 +41,10 @@ public class EventController {
         }
     }
 
-    @PatchMapping("/start")
-    public ResponseEntity<String> startEvent() {
+    @PatchMapping("/start/{sub}")
+    public ResponseEntity<String> startEvent(@PathVariable String sub) {
         try {
-            eventService.startEvent(extractSub());
+            eventService.startEvent(sub);
             return new ResponseEntity<>("Event Started", HttpStatus.OK);
 
         } catch (IllegalStateException exception) {
@@ -55,10 +54,10 @@ public class EventController {
         }
     }
 
-    @DeleteMapping("/")
-    public ResponseEntity<String> deleteEvent() {
+    @DeleteMapping("/{sub}")
+    public ResponseEntity<String> deleteEvent(@PathVariable String sub) {
         try {
-            eventService.deleteEvent(extractSub());
+            eventService.deleteEvent(sub);
             return new ResponseEntity<>("Event deleted", HttpStatus.OK);
 
         } catch (EntityNotFoundException exception) {

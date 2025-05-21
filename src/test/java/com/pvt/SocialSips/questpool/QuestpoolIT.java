@@ -1,4 +1,3 @@
-/*
 package com.pvt.SocialSips.questpool;
 
 
@@ -18,10 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,7 +29,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -98,12 +92,8 @@ public class QuestpoolIT {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(QUESTPOOL_TO_BE_ADDED);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/questpool/").secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.post("/questpool/" + TEST_USER_SUB).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", TEST_USER_SUB)
-                                .claim("scope", "read:events")
-                        ))
                         .contentType(APPLICATION_JSON)
                         .content(requestJson))
                 .andDo(MockMvcResultHandlers.print())
@@ -119,11 +109,8 @@ public class QuestpoolIT {
 
         int expectedAmount = userService.getUserBySub(TEST_USER_SUB).getQuestpools().size() + 1;
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/questpool/").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", TEST_USER_SUB)
-                                .claim("scope", "read:events")
-                        )).with(SecurityMockMvcRequestPostProcessors.csrf())
+        mockMvc.perform(MockMvcRequestBuilders.post("/questpool/" + TEST_USER_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(APPLICATION_JSON)
                         .content(requestJson))
                 .andDo(MockMvcResultHandlers.print())
@@ -142,11 +129,7 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId()).secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", TEST_USER_SUB)
-                                .claim("scope", "read:events")
-                        ))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -162,11 +145,7 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId()).secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", TEST_USER_SUB)
-                                .claim("scope", "read:events")
-                        ))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -178,13 +157,8 @@ public class QuestpoolIT {
     @Test
     public void deleteQuestpool_NonExistingQuestpool_HTTPStatusIsNotFound() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/-1").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", TEST_USER_SUB)
-                                .claim("scope", "read:events")
-                        ))
-                )
+        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/-1" + "/" + TEST_USER_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -198,13 +172,8 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId()).secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", TEST_USER_SUB)
-                                .claim("scope", "read:events")
-                        ))
-                )
+        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
@@ -219,12 +188,8 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId()).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", TEST_USER_SUB)
-                                .claim("scope", "read:events")
-                        ))
                         .contentType(APPLICATION_JSON)
                         .content(OLD_QUESTS))
                 .andDo(MockMvcResultHandlers.print())
@@ -241,12 +206,8 @@ public class QuestpoolIT {
         var questpool = it.next();
         var expectedNotToBe = questpool.getQuests();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId()).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", TEST_USER_SUB)
-                                .claim("scope", "read:events")
-                        ))
                         .contentType(APPLICATION_JSON)
                         .content(NEW_QUESTS))
                 .andDo(MockMvcResultHandlers.print())
@@ -272,12 +233,8 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId()).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.jwt().jwt(jwt -> jwt
-                                .claim("sub", TEST_USER_SUB)
-                                .claim("scope", "read:events")
-                        ))
                         .contentType(APPLICATION_JSON)
                         .content(NEW_QUESTS))
                 .andDo(MockMvcResultHandlers.print())
@@ -291,4 +248,4 @@ public class QuestpoolIT {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
-}*/
+}
