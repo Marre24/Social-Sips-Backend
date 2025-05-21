@@ -1,8 +1,5 @@
 package com.pvt.SocialSips.config;
 
-import com.pvt.SocialSips.user.OidcUserDetailsService;
-import com.pvt.SocialSips.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +10,6 @@ import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.OAuth2ResourceServerDsl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,7 +17,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
@@ -33,14 +28,6 @@ import static com.pvt.SocialSips.constants.WebConstants.*;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig implements WebMvcConfigurer {
-
-    private final OidcUserDetailsService oidcUserDetailsService;
-    private final FirebaseAuthenticationFilter firebaseAuthenticationFilter;
-    @Autowired
-    public SecurityConfig(OidcUserDetailsService oidcUserDetailsService, AuthenticationSuccessHandlerConfig successHandlerConfig, UserService userService, FirebaseAuthenticationFilter firebaseAuthenticationFilter) {
-        this.oidcUserDetailsService = oidcUserDetailsService;
-        this.firebaseAuthenticationFilter = firebaseAuthenticationFilter;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -54,15 +41,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers(HttpMethod.GET, PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(PROTECTED_ENDPOINTS).authenticated()
                 )
-                .oauth2Login(oauth -> oauth
-                        .userInfoEndpoint(userEndpoint ->
-                                userEndpoint
-                                        .oidcUserService(oidcUserDetailsService)))
-
-                .headers(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(firebaseAuthenticationFilter, BasicAuthenticationFilter.class)
                 .build();
     }
 
