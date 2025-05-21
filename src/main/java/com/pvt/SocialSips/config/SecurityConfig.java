@@ -24,7 +24,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import static com.pvt.SocialSips.constants.WebConstants.*;
 
 @Configuration
 @EnableWebSecurity
@@ -35,34 +34,26 @@ public class SecurityConfig implements WebMvcConfigurer {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
-                .securityMatcher("/**")
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, PERMITTED_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.POST, PERMITTED_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET, PERMITTED_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, PROTECTED_ENDPOINTS).authenticated()
-                        .requestMatchers(PROTECTED_ENDPOINTS).authenticated()
+                        .anyRequest().permitAll()
                 )
-                .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))
-                .headers(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 
     @Bean
-    public WebMvcConfigurer corsConfigurer(){
+    public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins(ALLOWED_ORIGINS)
+                        .allowedOriginPatterns("*")
                         .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true);
-                WebMvcConfigurer.super.addCorsMappings(registry);
             }
         };
     }
@@ -78,18 +69,5 @@ public class SecurityConfig implements WebMvcConfigurer {
         filterRegistrationBean.setFilter(new ForwardedHeaderFilter());
         filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return filterRegistrationBean;
-    }
-
-    @Bean
-    public RoleHierarchy roleHierarchy() {
-        return RoleHierarchyImpl.fromHierarchy("ADMIN > HOST > OIDC_USER > GUEST");
-    }
-
-    @Bean
-    public SecurityExpressionHandler<FilterInvocation> webExpressionHandler() {
-        DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
-        expressionHandler.setDefaultRolePrefix("ROLE_");
-        expressionHandler.setRoleHierarchy(roleHierarchy());
-        return expressionHandler;
     }
 }

@@ -56,12 +56,11 @@ public class UserService {
         user.removeQuestpool(qp);
     }
 
-    public User getOrCreateUser(Jwt jwt) {
-        String sub = (String) jwt.getClaims().get("sub");
-        String name = (String) jwt.getClaims().get("name");
+    public User getOrCreateUser(String sub) {
         Optional<User> u = userRepository.findById(sub);
-        if(u.isPresent()) return u.get();
-        return userRepository.save(new User(name, sub,
+        if(u.isPresent())
+            return u.get();
+        return userRepository.save(new User("username", sub,
                 List.of(new Role("ROLE_HOST"),
                 new Role("ROLE_GUEST"))));
     }
