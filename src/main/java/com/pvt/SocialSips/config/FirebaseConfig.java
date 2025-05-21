@@ -3,9 +3,7 @@ package com.pvt.SocialSips.config;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -17,22 +15,25 @@ public class FirebaseConfig {
     @Value("${firebase.admin.sdk.path}")
     private File file;
 
-    @Bean
-    public FirebaseApp firebaseApp() {
-        try (InputStream inputStream = new DataInputStream(new FileInputStream(file))) {
-            FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(inputStream)).build();
-
-            return FirebaseApp.initializeApp(options);
-        } catch (IOException e) {
-            System.out.println(e.getCause() + e.getMessage());
+    @PostConstruct
+    public void onStart() {
+        try {
+            this.initialize();
+        } catch (Exception e) {
+            System.out.println("Error initializing FirebaseApp\n" + e);
         }
-        return null;
     }
 
-    @Bean
-    public FirebaseAuth firebaseAuth(FirebaseApp firebaseApp) {
-        return FirebaseAuth.getInstance(firebaseApp);
-    }
+    private void initialize() {
+        if (FirebaseApp.getApps().isEmpty() || FirebaseApp.getApps() == null) {
+            try (InputStream inputStream = new DataInputStream(new FileInputStream(file))) {
+                FirebaseOptions options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(inputStream)).build();
 
+                FirebaseApp.initializeApp(options);
+            } catch (IOException e) {
+                System.out.println(e.getCause() + e.getMessage());
+            }
+        }
+    }
 }
 
