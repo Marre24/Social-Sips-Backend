@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.config;
 
+import com.google.api.Http;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,8 +39,10 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.POST, PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PERMITTED_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, PROTECTED_ENDPOINTS).authenticated()
                         .requestMatchers(PROTECTED_ENDPOINTS).authenticated()
                 )
                 .oauth2ResourceServer(oauth -> oauth.jwt(Customizer.withDefaults()))
@@ -54,11 +57,11 @@ public class SecurityConfig implements WebMvcConfigurer {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
-                    registry.addMapping("/**")
-                            .allowedOrigins(ALLOWED_ORIGINS)
-                            .allowedMethods("*")
-                            .allowedHeaders("*")
-                            .allowCredentials(true);
+                registry.addMapping("/**")
+                        .allowedOrigins(ALLOWED_ORIGINS)
+                        .allowedMethods("*")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
                 WebMvcConfigurer.super.addCorsMappings(registry);
             }
         };
