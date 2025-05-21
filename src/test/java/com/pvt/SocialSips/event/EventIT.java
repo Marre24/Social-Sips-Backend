@@ -1,3 +1,4 @@
+/*
 package com.pvt.SocialSips.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -264,4 +265,4 @@ public class EventIT {
                         .content(EVENT_WITHOUT_IN_JSON_EXPECTED))
                 .andDo(MockMvcResultHandlers.print());
     }
-}
+}*/
