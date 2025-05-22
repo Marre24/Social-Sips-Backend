@@ -33,11 +33,13 @@ public class EventController {
     @PostMapping("/{sub}")
     public ResponseEntity<String> createEvent(@RequestBody Event event, @PathVariable String sub) {
         try {
-            eventService.createEvent(event, sub);
-            return new ResponseEntity<>("Event created", HttpStatus.OK);
+            Event newEvent = eventService.createEvent(event, sub);
+            return new ResponseEntity<>(newEvent.getJoinCode(), HttpStatus.OK);
 
         } catch (DuplicateKeyException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+        }catch (EntityNotFoundException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -69,7 +71,7 @@ public class EventController {
     public ResponseEntity<String> canJoinEvent(@PathVariable String joinCode) {
         try {
             if (eventService.canJoinEvent(joinCode))
-                return new ResponseEntity<>(joinCode, HttpStatus.OK);
+                return new ResponseEntity<>("Event with join code: " + joinCode + " is able to be joined!", HttpStatus.OK);
             return new ResponseEntity<>("Event with join code: " + joinCode + " has already started!", HttpStatus.CONFLICT);
 
         } catch (EntityNotFoundException exception) {
