@@ -36,6 +36,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
