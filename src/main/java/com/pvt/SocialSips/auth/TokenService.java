@@ -1,0 +1,40 @@
+package com.pvt.SocialSips.auth;
+
+import com.pvt.SocialSips.user.User;
+import com.pvt.SocialSips.user.UserService;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
+@Service
+public class TokenService {
+    private final JwtEncoder encoder;
+    private final JwtDecoder decoder;
+
+    private final UserService userService;
+
+    public TokenService(JwtEncoder encoder, JwtDecoder decoder, UserService userService){
+        this.encoder = encoder;
+        this.decoder = decoder;
+        this.userService = userService;
+    }
+
+    public String generateToken(User user){
+        User userInDatabase = userService.getOrCreateUser(user);
+
+        Instant now = Instant.now();
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuer("self")
+                .issuedAt(now)
+                .expiresAt(now.plus(1, ChronoUnit.HOURS))
+                .subject(userInDatabase.getSub())
+                .build();
+
+        return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+}
