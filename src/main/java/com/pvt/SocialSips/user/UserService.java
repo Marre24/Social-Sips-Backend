@@ -1,7 +1,7 @@
 package com.pvt.SocialSips.user;
 
 import com.pvt.SocialSips.questpool.Questpool;
-import com.pvt.SocialSips.role.Role;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -30,7 +30,7 @@ public class UserService {
     public User getUserBySub(String sub) {
         Optional<User> user = userRepository.findById(sub);
         if (user.isEmpty())
-            return null;
+            throw new EntityNotFoundException("User with sub: " + sub + " does not exist!");
         int size = user.get().getQuestpools().size();
         return user.get();
     }
@@ -56,12 +56,13 @@ public class UserService {
         user.removeQuestpool(qp);
     }
 
-    public User getOrCreateUser(String sub) {
+    public User getOrCreateUser(User user) {
+        String sub = user.getSub();
+        String name = user.getFirstName();
+
         Optional<User> u = userRepository.findById(sub);
-        if(u.isPresent())
-            return u.get();
-        return userRepository.save(new User("username", sub,
-                List.of(new Role("ROLE_HOST"),
-                new Role("ROLE_GUEST"))));
+        if(u.isPresent()) return u.get();
+
+        return userRepository.save(new User(name, sub));
     }
 }
