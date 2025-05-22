@@ -4,7 +4,7 @@ package com.pvt.SocialSips.questpool;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.pvt.SocialSips.auth.TokenService;
+import com.pvt.SocialSips.token.TokenService;
 import com.pvt.SocialSips.quest.Icebreaker;
 import com.pvt.SocialSips.quest.Trivia;
 import com.pvt.SocialSips.user.User;
@@ -30,7 +30,6 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -59,6 +58,7 @@ public class QuestpoolIT {
             "{ \"id\" : null, \"prompt\" : \"A prompt\", \"type\" : \"ICEBREAKER\" }" +
             " ]";
 
+    private static final String QUESTPOOL_NAME = "THIS GOT UPDATED IN A TEST";
     private static final String NEW_NAME = "THIS IS MY NEW NAME";
 
     private static String TEST_USER_TOKEN;
@@ -204,7 +204,7 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId()).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + QUESTPOOL_NAME).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .header("Authorization", "Bearer " + TEST_USER_TOKEN)
                         .contentType(APPLICATION_JSON)
@@ -223,7 +223,7 @@ public class QuestpoolIT {
         var questpool = it.next();
         var expectedNotToBe = questpool.getQuests();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId()).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId()  + "/" + QUESTPOOL_NAME).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .header("Authorization", "Bearer " + TEST_USER_TOKEN)
                         .contentType(APPLICATION_JSON)
@@ -251,7 +251,7 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId()).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + QUESTPOOL_NAME).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .header("Authorization", "Bearer " + TEST_USER_TOKEN)
                         .contentType(APPLICATION_JSON)
@@ -271,8 +271,9 @@ public class QuestpoolIT {
         var oldName = questpool.getName();
         var id = questpool.getId();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + NEW_NAME + "/" + TEST_USER_SUB).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + NEW_NAME).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN)
                         .contentType(APPLICATION_JSON)
                         .content(NEW_QUESTS))
                 .andDo(MockMvcResultHandlers.print())
