@@ -20,7 +20,7 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> getEvent() {
         try {
             Event e = eventService.getEvent(extractSub());
@@ -31,7 +31,7 @@ public class EventController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<String> createEvent(@RequestBody Event event) {
         try {
             eventService.createEvent(event, extractSub());
@@ -55,7 +55,7 @@ public class EventController {
         }
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public ResponseEntity<String> deleteEvent() {
         try {
             eventService.deleteEvent(extractSub());

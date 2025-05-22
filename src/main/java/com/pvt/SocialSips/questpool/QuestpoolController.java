@@ -36,7 +36,7 @@ public class QuestpoolController {
 
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Questpool> addQuestpool(@RequestBody Questpool questpool) {
         questpoolService.createQuestpoolWithHost(questpool, extractSub());
         return new ResponseEntity<>(questpool, HttpStatus.OK);
@@ -55,7 +55,7 @@ public class QuestpoolController {
         }
     }
 
-    @GetMapping("/standard/")
+    @GetMapping("/standard")
     public ResponseEntity<?> getAllStandardQuestpools(){
         try {
             Set<Questpool> questpools = questpoolService.getAllStandardQuestpools();
