@@ -1,4 +1,4 @@
-package com.pvt.SocialSips.auth;
+package com.pvt.SocialSips.token;
 
 import com.pvt.SocialSips.user.User;
 import com.pvt.SocialSips.user.UserService;
@@ -29,7 +29,7 @@ public class TokenService {
 
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
+                .issuer("social-sips")
                 .issuedAt(now)
                 .expiresAt(now.plus(1, ChronoUnit.DAYS))
                 .subject(userInDatabase.getSub())
