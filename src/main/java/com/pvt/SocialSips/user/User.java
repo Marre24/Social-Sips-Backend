@@ -2,7 +2,6 @@ package com.pvt.SocialSips.user;
 
 import com.pvt.SocialSips.event.Event;
 import com.pvt.SocialSips.questpool.Questpool;
-import com.pvt.SocialSips.role.Role;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -17,10 +16,6 @@ public class User {
     @Id
     private String sub;
     private String firstName;
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "USER_ROLES", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(name = "ROLE_ID"))
-    private List<Role> roles = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "sub", referencedColumnName = "host_sub")
@@ -38,26 +33,12 @@ public class User {
         this.firstName = firstName;
     }
 
-    public User(String firstName, String sub, List<Role> roles) {
-        this.sub = sub;
-        this.firstName = firstName;
-        this.roles = roles;
-    }
-
     public String getFirstName() {
         return firstName;
     }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
     }
 
     public String getSub() {
