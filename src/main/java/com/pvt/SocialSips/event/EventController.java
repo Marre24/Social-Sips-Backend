@@ -69,7 +69,7 @@ public class EventController {
     public ResponseEntity<String> canJoinEvent(@PathVariable String joinCode) {
         try {
             if (eventService.canJoinEvent(joinCode))
-                return new ResponseEntity<>("Event with join code: " + joinCode + " can be joined!", HttpStatus.OK);
+                return new ResponseEntity<>(joinCode, HttpStatus.OK);
             return new ResponseEntity<>("Event with join code: " + joinCode + " has already started!", HttpStatus.CONFLICT);
 
         } catch (EntityNotFoundException exception) {
