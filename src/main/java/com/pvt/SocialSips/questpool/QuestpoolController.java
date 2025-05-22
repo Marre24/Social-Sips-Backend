@@ -42,10 +42,10 @@ public class QuestpoolController {
         return new ResponseEntity<>(questpool, HttpStatus.OK);
     }
 
-    @PatchMapping("/{qpId}")
-    public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable Long qpId) {
+    @PatchMapping("/{qpId}/{name}")
+    public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable Long qpId, @PathVariable String name) {
         try {
-            questpoolService.updateQuestpool(quests, qpId, extractSub());
+            questpoolService.updateQuestpool(quests, name, qpId, extractSub());
             return new ResponseEntity<>("Questpool has been updated!", HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {
@@ -56,11 +56,11 @@ public class QuestpoolController {
     }
 
     @GetMapping("/standard")
-    public ResponseEntity<?> getAllStandardQuestpools(){
+    public ResponseEntity<?> getAllStandardQuestpools() {
         try {
             Set<Questpool> questpools = questpoolService.getAllStandardQuestpools();
             return new ResponseEntity<>(questpools, HttpStatus.OK);
-        } catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

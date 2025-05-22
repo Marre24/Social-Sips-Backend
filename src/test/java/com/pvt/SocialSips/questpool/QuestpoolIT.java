@@ -17,10 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.oauth2.core.oidc.OidcIdToken;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -61,6 +58,8 @@ public class QuestpoolIT {
             "{ \"id\" : null, \"prompt\" : \"A prompt\", \"type\" : \"ICEBREAKER\" }," +
             "{ \"id\" : null, \"prompt\" : \"A prompt\", \"type\" : \"ICEBREAKER\" }" +
             " ]";
+
+    private static final String NEW_NAME = "THIS IS MY NEW NAME";
 
     private static String TEST_USER_TOKEN;
 
@@ -259,6 +258,46 @@ public class QuestpoolIT {
                         .content(NEW_QUESTS))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
+    }
+
+    @Test
+    public void updateQuestpool_NewName_NameUpdated() throws Exception {
+        var set = userService.getUserBySub(TEST_USER_SUB).getQuestpools();
+
+        assertFalse(set.isEmpty());
+
+        var it = set.iterator();
+        var questpool = it.next();
+        var oldName = questpool.getName();
+        var id = questpool.getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + NEW_NAME + "/" + TEST_USER_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(APPLICATION_JSON)
+                        .content(NEW_QUESTS))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        var newSet = userService.getUserBySub(TEST_USER_SUB).getQuestpools();
+
+        assertFalse(set.isEmpty());
+
+        var newIt = newSet.iterator();
+        Questpool qp = null;
+        while (newIt.hasNext()) {
+            var temp = newIt.next();
+            if (Objects.equals(temp.getId(), id)) {
+                qp = temp;
+                break;
+            }
+        }
+
+        if (qp == null)
+            fail();
+
+        var actual = qp.getName();
+        assertNotEquals(oldName, actual);
+        assertEquals(NEW_NAME, actual);
     }
 
     @Test

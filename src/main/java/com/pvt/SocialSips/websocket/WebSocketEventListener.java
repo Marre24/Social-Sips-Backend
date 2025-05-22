@@ -12,6 +12,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
@@ -39,7 +40,7 @@ public class WebSocketEventListener {
         String sessionId = event.getSessionId();
         String deviceId = sessionRegistry.get(sessionId).getDeviceId();
 
-        if (!deviceId.equals("HOST")) {
+        if (deviceId != null) {
             String eventId = sessionRegistry.get(sessionId).getEventId();
             String colorId = groupRegistry.getGuestsGroup(eventId, deviceId);
             this.template.convertAndSend("/topic/public/event/" + eventId, new EventMessage(MessageType.LEAVE_EVENT));
@@ -63,14 +64,23 @@ public class WebSocketEventListener {
 
         if (destination != null && pathMatcher.match(eventPattern, destination)) {
             String eventId = destination.substring(destination.lastIndexOf("/") + 1);
-            this.template.convertAndSend(destination, new EventMessage(MessageType.JOIN_EVENT));
 
             if (deviceIdHeader != null && !deviceIdHeader.isEmpty()) {
                 String deviceId = deviceIdHeader.get(0);
                 if (!deviceId.equals("HOST")) {
+                    this.template.convertAndSend(destination, new EventMessage(MessageType.JOIN_EVENT));
+
                     sessionRegistry.put(sessionId, new Guest(deviceId, eventId));
                 }
             }
         }
+    }
+
+    @EventListener
+    public void handleWebSocketConnect(SessionConnectedEvent event) {
+
+
+
+
     }
 }

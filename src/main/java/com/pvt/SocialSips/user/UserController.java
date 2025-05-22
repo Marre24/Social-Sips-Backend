@@ -28,7 +28,7 @@ public class UserController {
             User user = userService.getUserBySub(extractSub());
             return new ResponseEntity<>(user.getFirstName(), HttpStatus.OK);
         } catch(EntityNotFoundException e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Could not find user with sub: " + extractSub(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -37,7 +37,7 @@ public class UserController {
         try {
             var questpools = userService.getAllQuestpoolsBySub(extractSub());
             return new ResponseEntity<>(questpools, HttpStatus.OK);
-        } catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

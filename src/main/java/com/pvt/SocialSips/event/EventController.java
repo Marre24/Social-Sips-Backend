@@ -34,11 +34,13 @@ public class EventController {
     @PostMapping
     public ResponseEntity<String> createEvent(@RequestBody Event event) {
         try {
-            eventService.createEvent(event, extractSub());
-            return new ResponseEntity<>("Event created", HttpStatus.OK);
+            Event newEvent = eventService.createEvent(event, extractSub());
+            return new ResponseEntity<>(newEvent.getJoinCode(), HttpStatus.OK);
 
         } catch (DuplicateKeyException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
+        }catch (EntityNotFoundException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -70,9 +72,20 @@ public class EventController {
     public ResponseEntity<String> canJoinEvent(@PathVariable String joinCode) {
         try {
             if (eventService.canJoinEvent(joinCode))
-                return new ResponseEntity<>("Event with join code: " + joinCode + " can be joined!", HttpStatus.OK);
+                return new ResponseEntity<>("Event with join code: " + joinCode + " is able to be joined!", HttpStatus.OK);
             return new ResponseEntity<>("Event with join code: " + joinCode + " has already started!", HttpStatus.CONFLICT);
 
+        } catch (EntityNotFoundException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/questpools/{joinCode}")
+    public ResponseEntity<?> getQuestpools(@PathVariable String joinCode) {
+        try {
+            var questpools = eventService.getQuestpoolsFor(joinCode);
+
+            return ResponseEntity.ok(questpools);
         } catch (EntityNotFoundException exception) {
             return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
         }

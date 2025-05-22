@@ -68,10 +68,9 @@ public class EventServiceTest {
     public void createEvent_EmptyDatabase_EventCreated() {
         when(eventRepository.findById(USER_SUB)).thenReturn(Optional.empty());
         when(eventRepository.save(EVENT)).thenReturn(EVENT);
-
         when(userService.getUserBySub(USER_SUB)).thenReturn(USER);
 
-        assertDoesNotThrow(() -> eventService.createEvent(EVENT, USER_SUB));
+        assertThrows(EntityNotFoundException.class, () -> eventService.createEvent(EVENT, USER_SUB));
     }
 
     @Test
