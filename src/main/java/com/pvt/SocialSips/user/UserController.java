@@ -1,14 +1,15 @@
 package com.pvt.SocialSips.user;
 
+import com.pvt.SocialSips.auth.TokenService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import static com.pvt.SocialSips.util.JwtParser.extractSub;
 
 @RestController
 @RequestMapping("/user")
@@ -21,31 +22,23 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/profile")
+    @GetMapping
     public ResponseEntity<String> profile() {
-        String name = ((Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getClaim("name");
-        return new ResponseEntity<>(name, HttpStatus.OK);
-    }
-
-    @GetMapping("/")
-    public ResponseEntity<?> getAllQuestpools() {
         try {
-            String id = ((Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
-            var questpools = userService.getAllQuestpoolsBySub(id);
-            return new ResponseEntity<>(questpools, HttpStatus.OK);
-        } catch (Exception e){
-
+            User user = userService.getUserBySub(extractSub());
+            return new ResponseEntity<>(user.getFirstName(), HttpStatus.OK);
+        } catch(EntityNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(){
-        Object o  = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(o instanceof Jwt jwt){
-            userService.getOrCreateUser(jwt);
-            return ResponseEntity.ok("User found or created.");
+    @GetMapping("/questpools")
+    public ResponseEntity<?> getAllQuestpools() {
+        try {
+            var questpools = userService.getAllQuestpoolsBySub(extractSub());
+            return new ResponseEntity<>(questpools, HttpStatus.OK);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized request.");
     }
 }
