@@ -7,7 +7,7 @@ public final class WebConstants {
         public static final String[] PROTECTED_ENDPOINTS = {"/user/questpools", "/event", "/event/start", "/questpool/**", "/user"};
 
         public static final String[] PERMITTED_ENDPOINTS = {"/", "/home", "/css/**", "/error", "/__/hosting/**",
-                                                            "/event/join/**", "/token", "/.well-known/**",
+                                                            "/ws/**", "/event/join/**", "/token", "/.well-known/**",
                                                             "/h2-console/**","/questpool/standard"};
 
         public static final String[] ALLOWED_ORIGINS = {"https://social-sips-ec954.web.app",
