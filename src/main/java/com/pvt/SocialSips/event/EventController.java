@@ -77,4 +77,15 @@ public class EventController {
         }
     }
 
+    @GetMapping("/questpools/{joinCode}")
+    public ResponseEntity<?> getQuestpools(@PathVariable String joinCode) {
+        try {
+            var questpools = eventService.getQuestpoolsFor(joinCode);
+
+            return ResponseEntity.ok(questpools);
+        } catch (EntityNotFoundException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
