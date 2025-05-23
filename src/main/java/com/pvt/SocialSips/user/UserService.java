@@ -4,6 +4,7 @@ import com.pvt.SocialSips.questpool.Questpool;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,13 @@ import java.util.Set;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final GuestRepository guestRepository;
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, GuestRepository guestRepository) {
         this.userRepository = userRepository;
+        this.guestRepository = guestRepository;
     }
 
     @Transactional

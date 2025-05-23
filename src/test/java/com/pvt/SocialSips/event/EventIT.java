@@ -20,9 +20,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.HashSet;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @SpringBootTest
@@ -195,16 +195,16 @@ public class EventIT {
     }
 
     @Test
-    public void canJoinEvent_NonStartedEvent_HTTPStatusIsOk() throws Exception {
+    public void joinEvent_NonStartedEvent_HTTPStatusIsOk() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT.getJoinCode()).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT.getJoinCode() + "/" + UUID.randomUUID()).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    public void canJoinEvent_StartedEvent_HTTPStatusIsConflict() throws Exception {
+    public void joinEvent_StartedEvent_HTTPStatusIsConflict() throws Exception {
         postEventToHostWithoutEvent();
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/event/start").secure(true)
@@ -212,13 +212,32 @@ public class EventIT {
                         .header("Authorization", "Bearer " + USER_WITHOUT_EVENT_TOKEN))
                 .andDo(MockMvcResultHandlers.print());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT_WITHOUT.getJoinCode()).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT_WITHOUT.getJoinCode() + "/" + UUID.randomUUID()).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isConflict());
     }
 
+    @Test
+    public void joinEvent_NonStartedEvent_EventsGuestsIncrementedByOne() throws Exception {
+        postEventToHostWithoutEvent();
 
+        Event e = eventService.getEvent(USER_SUB_WITHOUT_EVENT);
+        int expected = e.getGuests().size() + 1;
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT_WITHOUT.getJoinCode() + "/" + UUID.randomUUID()).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        Event newEvent = eventService.getEvent(USER_SUB_WITHOUT_EVENT);
+        int actual = newEvent.getGuests().size();
+
+        assertEquals(expected, actual);
+    }
+
+
+    //Help method
     private void postEventToHostWithoutEvent() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/event").secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())

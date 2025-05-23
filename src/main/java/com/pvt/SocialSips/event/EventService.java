@@ -1,6 +1,7 @@
 package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.questpool.Questpool;
+import com.pvt.SocialSips.user.Guest;
 import com.pvt.SocialSips.user.User;
 import com.pvt.SocialSips.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -102,5 +103,21 @@ public class EventService {
             throw new EntityNotFoundException("Could not find event with join code: " + joinCode);
 
         return event.get().getQuestpools();
+    }
+
+    @Transactional
+    public void joinEvent(String joinCode, String uuid) {
+        var event = eventRepository.findByJoinCode(joinCode);
+
+        if (event.isEmpty())
+            throw new EntityNotFoundException("Could not find event with join code: " + joinCode);
+
+        Guest g = userService.registerGuest(uuid);
+
+        if (event.get().containsGuest(g))
+            throw new DuplicateKeyException("Guest with uuid: " + uuid + " is already joined in this event");
+
+
+        event.get().addGuest(g);
     }
 }
