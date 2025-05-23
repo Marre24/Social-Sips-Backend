@@ -1,5 +1,7 @@
 package com.pvt.SocialSips.token;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.pvt.SocialSips.user.User;
 import com.pvt.SocialSips.user.UserService;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -13,14 +15,18 @@ import java.time.temporal.ChronoUnit;
 
 @Service
 public class TokenService {
+
     private final JwtEncoder encoder;
     private final JwtDecoder decoder;
 
+    private final GoogleIdTokenVerifier verifier;
+
     private final UserService userService;
 
-    public TokenService(JwtEncoder encoder, JwtDecoder decoder, UserService userService){
+    public TokenService(JwtEncoder encoder, JwtDecoder decoder, GoogleIdTokenVerifier verifier, UserService userService){
         this.encoder = encoder;
         this.decoder = decoder;
+        this.verifier = verifier;
         this.userService = userService;
     }
 
@@ -36,5 +42,14 @@ public class TokenService {
                 .build();
 
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+
+    public GoogleIdToken.Payload verifyGoogleIdToken(String googleIdToken){
+        try{
+            GoogleIdToken verifiedToken = verifier.verify(googleIdToken);
+            return verifiedToken != null ? verifiedToken.getPayload() : null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
