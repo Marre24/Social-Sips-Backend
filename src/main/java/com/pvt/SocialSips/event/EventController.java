@@ -5,9 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
-import static com.pvt.SocialSips.util.JwtParser.extractSub;
 
 @RestController
 @RequestMapping("/event")
@@ -21,9 +22,9 @@ public class EventController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getEvent() {
+    public ResponseEntity<?> getEvent(@AuthenticationPrincipal Jwt jwt) {
         try {
-            Event e = eventService.getEvent(extractSub());
+            Event e = eventService.getEvent(jwt.getSubject());
             return new ResponseEntity<>(e, HttpStatus.OK);
 
         } catch (EntityNotFoundException exception) {
@@ -32,9 +33,9 @@ public class EventController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> createEvent(@RequestBody Event event) {
+    public ResponseEntity<String> createEvent(@RequestBody Event event, @AuthenticationPrincipal Jwt jwt) {
         try {
-            eventService.createEvent(event, extractSub());
+            eventService.createEvent(event, jwt.getSubject());
             return new ResponseEntity<>("Event created", HttpStatus.OK);
 
         } catch (DuplicateKeyException exception) {
@@ -43,9 +44,9 @@ public class EventController {
     }
 
     @PatchMapping("/start")
-    public ResponseEntity<String> startEvent() {
+    public ResponseEntity<String> startEvent(@AuthenticationPrincipal Jwt jwt) {
         try {
-            eventService.startEvent(extractSub());
+            eventService.startEvent(jwt.getSubject());
             return new ResponseEntity<>("Event Started", HttpStatus.OK);
 
         } catch (IllegalStateException exception) {
@@ -56,9 +57,9 @@ public class EventController {
     }
 
     @DeleteMapping("/")
-    public ResponseEntity<String> deleteEvent() {
+    public ResponseEntity<String> deleteEvent(@AuthenticationPrincipal Jwt jwt) {
         try {
-            eventService.deleteEvent(extractSub());
+            eventService.deleteEvent(jwt.getSubject());
             return new ResponseEntity<>("Event deleted", HttpStatus.OK);
 
         } catch (EntityNotFoundException exception) {

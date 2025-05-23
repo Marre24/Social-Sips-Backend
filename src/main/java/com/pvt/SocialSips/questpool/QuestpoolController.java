@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
-import static com.pvt.SocialSips.util.JwtParser.extractSub;
+
 
 @RestController
 @RequestMapping("/questpool")
