@@ -6,8 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.pvt.SocialSips.util.JwtParser.extractSub;
-
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -19,20 +17,20 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
-    public ResponseEntity<String> profile() {
+    @GetMapping("/{sub}")
+    public ResponseEntity<String> profile(@PathVariable String sub) {
         try {
-            User user = userService.getUserBySub(extractSub());
+            User user = userService.getUserBySub(sub);
             return new ResponseEntity<>(user.getFirstName(), HttpStatus.OK);
         } catch(EntityNotFoundException e){
-            return new ResponseEntity<>("Could not find user with sub: " + extractSub(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Could not find user with sub: " + sub, HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping("/questpools")
-    public ResponseEntity<?> getAllQuestpools() {
+    @GetMapping("/questpools/{sub}")
+    public ResponseEntity<?> getAllQuestpools(@PathVariable String sub) {
         try {
-            var questpools = userService.getAllQuestpoolsBySub(extractSub());
+            var questpools = userService.getAllQuestpoolsBySub(sub);
             return new ResponseEntity<>(questpools, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

@@ -53,7 +53,7 @@ public class QuestpoolController {
         }
     }
 
-    @GetMapping("/standard/")
+    @GetMapping("/standard")
     public ResponseEntity<?> getAllStandardQuestpools(){
         try {
             Set<Questpool> questpools = questpoolService.getAllStandardQuestpools();
