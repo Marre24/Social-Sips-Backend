@@ -74,7 +74,7 @@ public class EventController {
             if (eventService.canJoinEvent(joinCode)) {
                 eventService.joinEvent(joinCode, uuid);
 
-                return new ResponseEntity<>("Event with join code: " + joinCode + " is able to be joined!", HttpStatus.OK);
+                return new ResponseEntity<>("Guest with uuid: " + uuid + " joined Event with join code: " + joinCode, HttpStatus.OK);
             }
 
             return new ResponseEntity<>("Event with join code: " + joinCode + " has already started!", HttpStatus.CONFLICT);

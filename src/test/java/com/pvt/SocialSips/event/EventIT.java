@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pvt.SocialSips.token.TokenService;
+import com.pvt.SocialSips.user.Guest;
 import com.pvt.SocialSips.user.User;
 import com.pvt.SocialSips.user.UserService;
 import org.junit.jupiter.api.*;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,6 +41,9 @@ public class EventIT {
 
     private static final Event EVENT = new Event("THIS IS AN EVENT", 2, new HashSet<>(), USER_SUB_WITH_EVENT);
     private static final Event EVENT_WITHOUT = new Event("THIS IS AN EVENT", 2, new HashSet<>(), USER_SUB_WITHOUT_EVENT);
+
+    private final static Set<String> GUESTS = new HashSet<>();
+    private final static Set<String> OTHER_GUESTS = new HashSet<>();
 
     private static String EVENT_WITHOUT_IN_JSON_EXPECTED;
     private static String EVENT_IN_JSON_EXPECTED;
@@ -65,20 +70,27 @@ public class EventIT {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 
-        userService.register(USER_WITH_EVENT);
-        eventService.createEvent(EVENT, USER_SUB_WITH_EVENT);
+        for (int i = 0; i < 11; i++)
+            EVENT_WITHOUT.addGuest(new Guest(Integer.toString(i)));
 
+        userService.register(USER_WITH_EVENT);
         userService.register(USER_WITHOUT_EVENT);
+
+        eventService.createEvent(EVENT, USER_SUB_WITH_EVENT);
 
         EVENT_IN_JSON_EXPECTED = ow.writeValueAsString(EVENT);
         EVENT_WITHOUT_IN_JSON_EXPECTED = ow.writeValueAsString(EVENT_WITHOUT);
 
         USER_WITH_EVENT_TOKEN = tokenService.generateToken(USER_WITH_EVENT);
         USER_WITHOUT_EVENT_TOKEN = tokenService.generateToken(USER_WITHOUT_EVENT);
+
     }
+
 
     @BeforeEach
     public void beforeEach() {
+
+
         userService.deleteUser(USER_WITHOUT_EVENT);
         userService.register(USER_WITHOUT_EVENT);
     }
@@ -172,6 +184,29 @@ public class EventIT {
     }
 
     @Test
+    public void startEvent_HostWithEventWithGuests_GuestGetDividedIntoGroups() throws Exception {
+        postEventToHostWithoutEvent();
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + USER_WITHOUT_EVENT_TOKEN))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        var guests = userService.getUserBySub(USER_SUB_WITHOUT_EVENT).getEvent().getGuests();
+
+        boolean isOk = true;
+        for (Guest g : guests) {
+            System.out.println("Guest: " + g.getUuid() + " is in group: " + g.getGroupNumber());
+            if(g.getGroupNumber() == -1) {
+                isOk = false;
+                break;
+            }
+        }
+        assertTrue(isOk);
+    }
+
+    @Test
     public void deleteEvent_HostWithEvent_EventDeleted() throws Exception {
         postEventToHostWithoutEvent();
 
@@ -245,5 +280,18 @@ public class EventIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(EVENT_WITHOUT_IN_JSON_EXPECTED))
                 .andDo(MockMvcResultHandlers.print());
+
+        for (int i = 0; i < 11; i++)
+            joinEvent(EVENT_WITHOUT.getJoinCode(), Integer.toString(i));
+    }
+
+
+    private void joinEvent(String joinCode, String uuid) throws Exception {
+        var result = mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + joinCode + "/" + uuid).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+
+        System.out.println(result.getResponse().getContentAsString());
     }
 }

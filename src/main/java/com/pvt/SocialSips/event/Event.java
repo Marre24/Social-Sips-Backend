@@ -23,7 +23,7 @@ public class Event {
     @OneToMany
     private Set<Questpool> questpools;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Guest> guests = new HashSet<>();
 
     public Event() {
