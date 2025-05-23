@@ -120,4 +120,13 @@ public class EventService {
 
         event.get().addGuest(g);
     }
+
+    public boolean isStarted(String joinCode) {
+        var event = eventRepository.findByJoinCode(joinCode);
+
+        if (event.isEmpty())
+            throw new EntityNotFoundException("Could not find event with join code: " + joinCode);
+
+        return event.get().getStarted();
+    }
 }

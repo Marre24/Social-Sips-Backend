@@ -87,6 +87,18 @@ public class EventController {
     }
 
 
+    @GetMapping("/started/{joinCode}")
+    public ResponseEntity<String> isStarted(@PathVariable String joinCode) {
+        try {
+            if (eventService.isStarted(joinCode))
+                return new ResponseEntity<>("The event has started!", HttpStatus.OK);
+
+            return new ResponseEntity<>("The event is not started!", HttpStatus.CONFLICT);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 
     @GetMapping("/questpools/{joinCode}")
     public ResponseEntity<?> getQuestpools(@PathVariable String joinCode) {
