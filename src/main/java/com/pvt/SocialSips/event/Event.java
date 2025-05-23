@@ -2,11 +2,9 @@ package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.user.Guest;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -25,8 +23,8 @@ public class Event {
     @OneToMany
     private Set<Questpool> questpools;
 
-    @OneToMany
-    private Set<Guest> guests;
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<Guest> guests = new HashSet<>();
 
     public Event() {
     }
@@ -86,5 +84,21 @@ public class Event {
 
     public void setQuestpools(Set<Questpool> questpools) {
         this.questpools = questpools;
+    }
+
+    public void addGuest(Guest g) {
+        guests.add(g);
+    }
+
+    public void setGuests(Set<Guest> guests) {
+        this.guests = guests;
+    }
+
+    public boolean containsGuest(Guest g) {
+        return guests.contains(g);
+    }
+
+    public Set<Guest> getGuests() {
+        return guests;
     }
 }
