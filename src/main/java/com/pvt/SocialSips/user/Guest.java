@@ -11,6 +11,8 @@ public class Guest {
     @Id
     private String uuid;
 
+    private int groupNumber = -1;
+
     public Guest() {
 
     }
@@ -30,7 +32,7 @@ public class Guest {
     @Override
     public boolean equals(Object obj) {
 
-        if(obj instanceof Guest guest) {
+        if (obj instanceof Guest guest) {
             return guest.getUuid().equals(this.uuid);
         }
 
@@ -41,4 +43,13 @@ public class Guest {
     public int hashCode() {
         return Objects.hash(uuid);
     }
+
+    public int getGroupNumber() {
+        return groupNumber;
+    }
+
+    public void setGroupNumber(int groupNumber) {
+        this.groupNumber = groupNumber;
+    }
+
 }
