@@ -36,4 +36,10 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
+
+    //TODO only temporary while JWTs are being fixed
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User user){
+        return new ResponseEntity<>(userService.getOrCreateUser(user), HttpStatus.OK);
+    }
 }
