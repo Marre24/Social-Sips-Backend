@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -57,7 +58,7 @@ public class QuestpoolService {
     }
 
     @Transactional
-    public void updateQuestpool(Set<Quest> quests, String name, Long qpId, String sub) {
+    public void updateQuestpool(Set<Quest> quests, Long qpId, String sub) {
         User user = userService.getUserBySub(sub);
         Questpool qp = getByQuestpoolId(qpId);
 
