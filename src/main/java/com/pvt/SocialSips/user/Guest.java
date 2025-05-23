@@ -3,6 +3,8 @@ package com.pvt.SocialSips.user;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+import java.util.Objects;
+
 @Entity
 public class Guest {
 
@@ -25,4 +27,18 @@ public class Guest {
         this.uuid = uuid;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+
+        if(obj instanceof Guest guest) {
+            return guest.getUuid().equals(this.uuid);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid);
+    }
 }
