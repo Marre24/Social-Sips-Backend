@@ -40,7 +40,6 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .headers(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.POST, PERMITTED_ENDPOINTS).permitAll()

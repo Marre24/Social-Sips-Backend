@@ -15,7 +15,9 @@ public final class WebConstants {
         public static final String[] ALLOWED_ORIGINS = {        "https://social-sips-ec954.web.app",
                                                                 "https://social-sips-ec954.firebaseapp.com",
                                                                 "ws://127.0.0.1:**/**",
-                                                                "http://127.0.0.1:**/**"};
+                                                                "http://127.0.0.1:**/**",
+                                                                "http://130.237.161.241**"
+                                                                        };
 
         @Value("${WEB_API_KEY}")
         public static String WEB_API_KEY;
