@@ -61,9 +61,10 @@ public class QuestpoolService {
         User user = userService.getUserBySub(sub);
         Questpool qp = getByQuestpoolId(qpId);
 
-        qp.setName(name);
         if (!user.getQuestpools().contains(qp))
             throw new IllegalCallerException("Tried to update a questpool that is not owned by: " + user.getFirstName());
+        
+        qp.setName(name);
 
         questRepository.deleteAll(qp.getQuests());
         qp.getQuests().clear();

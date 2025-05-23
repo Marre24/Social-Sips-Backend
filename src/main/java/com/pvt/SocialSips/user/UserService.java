@@ -3,7 +3,9 @@ package com.pvt.SocialSips.user;
 import com.pvt.SocialSips.questpool.Questpool;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.apache.catalina.realm.AuthenticatedUserRealm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +17,13 @@ import java.util.Set;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final GuestRepository guestRepository;
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, GuestRepository guestRepository) {
         this.userRepository = userRepository;
+        this.guestRepository = guestRepository;
     }
 
     @Transactional
@@ -64,5 +70,18 @@ public class UserService {
         if(u.isPresent()) return u.get();
 
         return userRepository.save(new User(name, sub));
+    }
+
+    public Guest registerGuest(String uuid) {
+        Guest g = new Guest(uuid);
+
+        try {
+            g = guestRepository.save(g);
+
+        }catch(Exception e) {
+            throw new DuplicateKeyException("Could not save guest with uuid: " + uuid);
+        }
+
+        return g;
     }
 }
