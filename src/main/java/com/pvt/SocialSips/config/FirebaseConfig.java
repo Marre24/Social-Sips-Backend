@@ -13,7 +13,7 @@ import java.io.IOException;
 @Component
 public class FirebaseConfig {
 
-    @Value("classpath:${firebase.admin.sdk.path}")
+    @Value("classpath:${social-sips-ec954-firebase-adminsdk-fbsvc-950d178d12.json}")
     private Resource resource;
 
     @PostConstruct
