@@ -1,12 +1,9 @@
 package com.pvt.SocialSips.user;
 
-import com.pvt.SocialSips.auth.TokenService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import static com.pvt.SocialSips.util.JwtParser.extractSub;

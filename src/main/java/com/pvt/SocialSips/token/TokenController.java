@@ -1,5 +1,6 @@
-package com.pvt.SocialSips.auth;
+package com.pvt.SocialSips.token;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.pvt.SocialSips.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,15 +20,16 @@ public class TokenController {
     }
 
     @PostMapping
-    public ResponseEntity<String> token(@RequestBody TokenRequestBody tokenRequestBody) {
+    public ResponseEntity<String> token(@RequestBody String googleIdToken) {
 
-        String accessToken = tokenRequestBody.accessToken();
-        //TODO verify access token
+        GoogleIdToken.Payload payload = tokenService.verifyGoogleIdToken(googleIdToken);
+        if (payload == null) {
+            return new ResponseEntity<>("Invalid Google access token", HttpStatus.UNAUTHORIZED);
+        }
 
-        User user = tokenRequestBody.user();
-        LOG.debug("Token requested for user: '{}'", user.getSub());
-        String token = tokenService.generateToken(user);
-        LOG.debug("Token granted {}", token);
+        String token = tokenService.generateToken(new User(payload.getSubject(), payload.getSubject()));
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
+
+
 }

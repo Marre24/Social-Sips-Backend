@@ -1,4 +1,4 @@
-package com.pvt.SocialSips.auth;
+package com.pvt.SocialSips.token;
 
 import com.pvt.SocialSips.user.User;
 
