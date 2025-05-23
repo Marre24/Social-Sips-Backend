@@ -37,6 +37,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher("/**")
+                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .headers(AbstractHttpConfigurer::disable)
