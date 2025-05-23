@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.pvt.SocialSips.token.TokenService;
 import com.pvt.SocialSips.quest.Icebreaker;
 import com.pvt.SocialSips.quest.Trivia;
 import com.pvt.SocialSips.questpool.Questpool;
@@ -18,6 +17,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,6 +31,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oidcLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @SpringBootTest
@@ -35,14 +39,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserIT {
-
     private static final String TEST_USER_SUB = "TEST USER SUB";
     private static final String TEST_USER_WITHOUT_SUB = "TEST USER WITHOUT SUB";
-    private static final String TEST_USER_FIRST_NAME = "THIS IS A FIRST NAME";
 
-    private static final User USER = new User(TEST_USER_FIRST_NAME, TEST_USER_SUB);
-    private static final User USER_WITHOUT = new User(TEST_USER_FIRST_NAME, TEST_USER_WITHOUT_SUB);
-
+    private static final User USER = new User("username", TEST_USER_SUB);
     private static final Questpool QUESTPOOL_ONE = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
     private static final Questpool QUESTPOOL_TWO = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
     private static final Questpool QUESTPOOL_THREE = new Questpool(
@@ -50,20 +50,17 @@ public class UserIT {
             QuestpoolType.TRIVIA,
             new HashSet<>(List.of(new Trivia("Question two", "correct;opp2;opp3;opp4"))));
 
+    private static final User USER_WITHOUT = new User("username", TEST_USER_WITHOUT_SUB);
+
     private static String QUESTPOOLS_IN_JSON_EXPECTED;
 
-    private static String USER_TOKEN;
-    private static String USER_WITHOUT_TOKEN;
-
     private final UserService userService;
-    private final TokenService tokenService;
 
     private final MockMvc mockMvc;
 
     @Autowired
-    public UserIT(UserService userService, TokenService tokenService, MockMvc mockMvc) {
+    public UserIT(UserService userService, MockMvc mockMvc) {
         this.userService = userService;
-        this.tokenService = tokenService;
         this.mockMvc = mockMvc;
     }
 
@@ -82,9 +79,6 @@ public class UserIT {
         userService.register(USER_WITHOUT);
 
         QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(userService.getUserBySub(user.getSub()).getQuestpools());
-
-        USER_TOKEN = tokenService.generateToken(USER);
-        USER_WITHOUT_TOKEN = tokenService.generateToken(USER_WITHOUT);
     }
 
     @AfterAll
@@ -96,18 +90,16 @@ public class UserIT {
 
     @Test
     public void getAllQuestpools_HostExists_HTTPCodeIsOk() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .header("Authorization", "Bearer " + USER_TOKEN))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools/" + TEST_USER_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     public void getAllQuestpools_HostWithQuestpools_QuestpoolsReturned() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .header("Authorization", "Bearer " + USER_TOKEN))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools/" + TEST_USER_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json(QUESTPOOLS_IN_JSON_EXPECTED));
@@ -115,9 +107,8 @@ public class UserIT {
 
     @Test
     public void getAllQuestpools_HostWithoutQuestpools_EmptySetReturned() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .header("Authorization", "Bearer " + USER_WITHOUT_TOKEN))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools/" + TEST_USER_WITHOUT_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json("[]"));
@@ -125,9 +116,8 @@ public class UserIT {
 
     @Test
     public void profile_HostExists_HostNameReturned() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .header("Authorization", "Bearer " + USER_TOKEN))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + TEST_USER_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(USER.getFirstName()));

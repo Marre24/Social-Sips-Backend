@@ -58,13 +58,12 @@ public class QuestpoolService {
     }
 
     @Transactional
-    public void updateQuestpool(Set<Quest> quests, Long qpId, String sub) {
+    public void updateQuestpool(Set<Quest> quests, String name, Long qpId, String sub) {
         User user = userService.getUserBySub(sub);
         Questpool qp = getByQuestpoolId(qpId);
 
         if (!user.getQuestpools().contains(qp))
             throw new IllegalCallerException("Tried to update a questpool that is not owned by: " + user.getFirstName());
-        
         qp.setName(name);
 
         questRepository.deleteAll(qp.getQuests());

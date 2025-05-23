@@ -61,14 +61,18 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, PERMITTED_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, PROTECTED_ENDPOINTS).permitAll()
+                        //.requestMatchers(HttpMethod.OPTIONS, PROTECTED_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.POST, PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PERMITTED_ENDPOINTS).permitAll()
-                        .requestMatchers(PROTECTED_ENDPOINTS).authenticated()
+                        //.requestMatchers(PROTECTED_ENDPOINTS).authenticated()
+
+                        //TODO these should be deleted when auth works!!!
+                        .requestMatchers(HttpMethod.PATCH, PERMITTED_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.DELETE, PERMITTED_ENDPOINTS).permitAll()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(Customizer.withDefaults())
-                )
+//                .oauth2ResourceServer(oauth2 -> oauth2
+//                        .jwt(Customizer.withDefaults())
+//                )
                 .headers(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

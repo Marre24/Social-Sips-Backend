@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pvt.SocialSips.quest.Icebreaker;
 import com.pvt.SocialSips.quest.Trivia;
-import com.pvt.SocialSips.role.Role;
 import com.pvt.SocialSips.user.User;
 import com.pvt.SocialSips.user.UserService;
 import org.junit.jupiter.api.AfterAll;
@@ -26,6 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -39,8 +39,8 @@ public class QuestpoolIT {
     private static final String TEST_USER_SUB = "TEST USER SUB";
     private static final String OTHER_TEST_USER_SUB = "OTHER TEST USER SUB";
 
-    private static final User TEST_USER = new User(TEST_USER_SUB, TEST_USER_SUB, List.of(new Role("ROLE_OIDC_USER")));
-    private static final User OTHER_TEST_USER = new User(OTHER_TEST_USER_SUB, OTHER_TEST_USER_SUB, List.of(new Role("ROLE_OIDC_USER")));
+    private static final User TEST_USER = new User(TEST_USER_SUB, TEST_USER_SUB);
+    private static final User OTHER_TEST_USER = new User(OTHER_TEST_USER_SUB, OTHER_TEST_USER_SUB);
 
     private static final Questpool QUESTPOOL_TO_BE_ADDED = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
     private static final Questpool QUESTPOOL_ONE = new Questpool("A quest pool", QuestpoolType.ICEBREAKER, new HashSet<>(List.of(new Icebreaker("prompt"))));
@@ -56,6 +56,8 @@ public class QuestpoolIT {
             "{ \"id\" : null, \"prompt\" : \"A prompt\", \"type\" : \"ICEBREAKER\" }," +
             "{ \"id\" : null, \"prompt\" : \"A prompt\", \"type\" : \"ICEBREAKER\" }" +
             " ]";
+    private static final String NEW_NAME = "THIS IS MY NEW NAME";
+
 
     private final UserService userService;
 
@@ -188,7 +190,7 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + questpool.getName() + "/" + TEST_USER_SUB).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(APPLICATION_JSON)
                         .content(OLD_QUESTS))
@@ -206,7 +208,7 @@ public class QuestpoolIT {
         var questpool = it.next();
         var expectedNotToBe = questpool.getQuests();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + questpool.getName() + "/" + TEST_USER_SUB).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(APPLICATION_JSON)
                         .content(NEW_QUESTS))
@@ -233,7 +235,7 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + questpool.getName() + "/" + TEST_USER_SUB).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
                         .contentType(APPLICATION_JSON)
                         .content(NEW_QUESTS))
@@ -242,8 +244,48 @@ public class QuestpoolIT {
     }
 
     @Test
+    public void updateQuestpool_NewName_NameUpdated() throws Exception {
+        var set = userService.getUserBySub(TEST_USER_SUB).getQuestpools();
+
+        assertFalse(set.isEmpty());
+
+        var it = set.iterator();
+        var questpool = it.next();
+        var oldName = questpool.getName();
+        var id = questpool.getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + NEW_NAME + "/" + TEST_USER_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .contentType(APPLICATION_JSON)
+                        .content(NEW_QUESTS))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        var newSet = userService.getUserBySub(TEST_USER_SUB).getQuestpools();
+
+        assertFalse(set.isEmpty());
+
+        var newIt = newSet.iterator();
+        Questpool qp = null;
+        while (newIt.hasNext()) {
+            var temp = newIt.next();
+            if (Objects.equals(temp.getId(), id)) {
+                qp = temp;
+                break;
+            }
+        }
+
+        if (qp == null)
+            fail();
+
+        var actual = qp.getName();
+        assertNotEquals(oldName, actual);
+        assertEquals(NEW_NAME, actual);
+    }
+
+    @Test
     public void getStandardQuestpools_StandardHostExists_HTTPCodeIsOk() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/questpool/standard/").secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.get("/questpool/standard").secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());

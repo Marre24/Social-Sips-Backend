@@ -10,7 +10,7 @@ public final class WebConstants {
                 "/", "/home", "/css/**", "/error", "/__/hosting/**",
                 "/ws/**", "/event/join/**", "/token", "/.well-known/**",
                 "/h2-console/**","/questpool/standard",
-                "/user/questpools", "/event", "/event/start", "/questpool/**", "/user"
+                "/user/questpools/**", "/event/**", "/event/start/**", "/questpool/**", "/user/**"
         };
 
         public static final String[] ALLOWED_ORIGINS = {"https://social-sips-ec954.web.app",
