@@ -80,4 +80,13 @@ public class UserService {
 
         return g;
     }
+
+    public Guest getGuest(String uuid) {
+        var guest = guestRepository.findById(uuid);
+
+        if (guest.isEmpty())
+            throw new EntityNotFoundException("Guest with uuid: " + uuid + " does not exist!");
+
+        return guest.get();
+    }
 }

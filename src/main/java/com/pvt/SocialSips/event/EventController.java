@@ -1,5 +1,8 @@
 package com.pvt.SocialSips.event;
 
+import com.pvt.SocialSips.user.Guest;
+import com.pvt.SocialSips.user.UserService;
+import com.pvt.SocialSips.util.ColorHasher;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -14,10 +17,12 @@ import static com.pvt.SocialSips.util.JwtParser.extractSub;
 public class EventController {
 
     private final EventService eventService;
+    private final UserService userService;
 
     @Autowired
-    public EventController(EventService eventService) {
+    public EventController(EventService eventService, UserService userService) {
         this.eventService = eventService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -87,11 +92,20 @@ public class EventController {
     }
 
 
-    @GetMapping("/started/{joinCode}")
-    public ResponseEntity<String> isStarted(@PathVariable String joinCode) {
+    @GetMapping("/started/{joinCode}/{uuid}")
+    public ResponseEntity<String> isStarted(@PathVariable String joinCode, @PathVariable String uuid) {
         try {
-            if (eventService.isStarted(joinCode))
-                return new ResponseEntity<>("The event has started!", HttpStatus.OK);
+            if (eventService.isStarted(joinCode)){
+                Guest g = userService.getGuest(uuid);
+
+                Event e = eventService.getByJoinCode(uuid);
+
+                if (!e.getGuests().contains(g))
+                    return new ResponseEntity<>("Guest: " + uuid + " is not in event with join code: " + joinCode, HttpStatus.NOT_FOUND);
+
+
+                return new ResponseEntity<>(ColorHasher.intToColorHex(g.getGroupNumber()), HttpStatus.OK);
+            }
 
             return new ResponseEntity<>("The event is not started!", HttpStatus.CONFLICT);
         } catch (Exception e){
