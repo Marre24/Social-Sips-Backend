@@ -1,18 +1,18 @@
 package com.pvt.SocialSips.questpool;
 
 
-import com.google.firebase.auth.FirebaseToken;
 import com.pvt.SocialSips.quest.Quest;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
+
+import static com.pvt.SocialSips.util.JwtParser.extractSub;
 
 @RestController
 @RequestMapping("/questpool")
@@ -26,9 +26,9 @@ public class QuestpoolController {
     }
 
     @DeleteMapping("/{qpId}")
-    public ResponseEntity<String> deleteByQuestpoolId(@PathVariable Long qpId, @AuthenticationPrincipal FirebaseToken firebaseToken) {
+    public ResponseEntity<String> deleteByQuestpoolId(@PathVariable Long qpId, @AuthenticationPrincipal Jwt jwt) {
         try {
-            questpoolService.deleteQuestpoolById(qpId, firebaseToken.getUid());
+            questpoolService.deleteQuestpoolById(qpId, jwt.getSubject());
             return new ResponseEntity<>("Questpool was deleted!", HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -38,17 +38,16 @@ public class QuestpoolController {
 
     }
 
-    @PostMapping("/")
-    public ResponseEntity<Questpool> addQuestpool(@RequestBody Questpool questpool,
-                                                  @AuthenticationPrincipal FirebaseToken firebaseToken) {
-        questpoolService.createQuestpoolWithHost(questpool, firebaseToken.getUid());
+    @PostMapping
+    public ResponseEntity<Questpool> addQuestpool(@RequestBody Questpool questpool, @AuthenticationPrincipal Jwt jwt) {
+        questpoolService.createQuestpoolWithHost(questpool, jwt.getSubject());
         return new ResponseEntity<>(questpool, HttpStatus.OK);
     }
 
     @PatchMapping("/{qpId}")
-    public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable Long qpId, @AuthenticationPrincipal FirebaseToken firebaseToken) {
+    public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable Long qpId, @AuthenticationPrincipal Jwt jwt) {
         try {
-            questpoolService.updateQuestpool(quests, qpId, firebaseToken.getUid());
+            questpoolService.updateQuestpool(quests, qpId, jwt.getSubject());
             return new ResponseEntity<>("Questpool has been updated!", HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {
@@ -58,8 +57,8 @@ public class QuestpoolController {
         }
     }
 
-    @GetMapping("/standard/")
-    public ResponseEntity<?> getAllStandardQuestpools(@AuthenticationPrincipal FirebaseToken firebaseToken){
+    @GetMapping("/standard")
+    public ResponseEntity<?> getAllStandardQuestpools(){
         try {
             Set<Questpool> questpools = questpoolService.getAllStandardQuestpools();
             return new ResponseEntity<>(questpools, HttpStatus.OK);

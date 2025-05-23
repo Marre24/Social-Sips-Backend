@@ -4,6 +4,7 @@ import com.pvt.SocialSips.event.Event;
 import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.role.Role;
 import jakarta.persistence.*;
+import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,6 +32,14 @@ public class User {
     private final Set<Questpool> questpools = new HashSet<>();
 
     public User() {
+    }
+
+    public User(@NonNull User user){
+        this.sub = user.sub;
+        this.firstName = user.firstName;
+        this.roles = user.roles;
+        this.event = user.event;
+        this.questpools.addAll(user.questpools);
     }
 
     public User(String firstName, String sub) {

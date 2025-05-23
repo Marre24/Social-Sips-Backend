@@ -1,20 +1,22 @@
 package com.pvt.SocialSips.user;
 
-import com.google.firebase.auth.FirebaseToken;
 import com.pvt.SocialSips.questpool.Questpool;
 import com.pvt.SocialSips.role.Role;
-import com.pvt.SocialSips.authentication.FirebaseAuthenticationToken;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Service
-public class UserService {
+public class UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
     @Autowired
@@ -27,7 +29,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-
     @Transactional
     //this method uses transactional and an unused call to getQuestpools to fetch the questpools to solve the standard lazy fetch
     public User getUserBySub(String sub) {
@@ -36,6 +37,18 @@ public class UserService {
             return null;
         int size = user.get().getQuestpools().size();
         return user.get();
+    }
+
+    @Override
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) {
+        OAuth2User oAuth2User = super.loadUser(userRequest);
+        String email = oAuth2User.getAttribute("email");
+
+        if (email != null) {
+            User newUser = new User(oAuth2User.getName(), oAuth2User.getName());
+            userRepository.save(newUser);
+        }
+        return oAuth2User;
     }
 
     public Set<Questpool> getAllQuestpoolsBySub(String sub) {
@@ -59,23 +72,11 @@ public class UserService {
         user.removeQuestpool(qp);
     }
 
-    public User getOrCreateUser(String userUid) {
-        User u = userRepository.findById(userUid).orElse(null);
+    public User getOrCreateUser(User user) {
+        User u = userRepository.findById(user.getSub()).orElse(null);
         if(u == null){
-            Object o = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if(o instanceof FirebaseAuthenticationToken token){
-                FirebaseToken firebaseToken = token.getFirebaseToken();
-                u = new User(firebaseToken.getName(),
-                        firebaseToken.getUid(),
-                        token.getAuthorities().stream()
-                                .map(auth -> new Role(auth
-                                        .getAuthority()))
-                                .collect(Collectors.toList()));
-                userRepository.save(u);
-            }
-            else System.out.println(o);
+            return null;
         }
-        return u;
-
+        return userRepository.save(new User(user));
     }
 }
