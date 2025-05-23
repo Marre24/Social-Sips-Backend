@@ -1,6 +1,7 @@
 package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.questpool.Questpool;
+import com.pvt.SocialSips.user.Guest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -23,6 +24,9 @@ public class Event {
 
     @OneToMany
     private Set<Questpool> questpools;
+
+    @OneToMany
+    private Set<Guest> guests;
 
     public Event() {
     }
