@@ -20,7 +20,7 @@ public class Event {
     private String name;
     private Integer groupSize;
 
-    @OneToMany
+    @ManyToMany
     private Set<Questpool> questpools;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
