@@ -21,7 +21,7 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<?> getEvent(@AuthenticationPrincipal Jwt jwt) {
         try {
             Event e = eventService.getEvent(jwt.getSubject());
@@ -32,7 +32,7 @@ public class EventController {
         }
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<String> createEvent(@RequestBody Event event, @AuthenticationPrincipal Jwt jwt) {
         try {
             eventService.createEvent(event, jwt.getSubject());
@@ -56,7 +56,7 @@ public class EventController {
         }
     }
 
-    @DeleteMapping("/")
+    @DeleteMapping
     public ResponseEntity<String> deleteEvent(@AuthenticationPrincipal Jwt jwt) {
         try {
             eventService.deleteEvent(jwt.getSubject());

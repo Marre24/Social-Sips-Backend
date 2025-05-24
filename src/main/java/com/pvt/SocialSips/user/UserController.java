@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
@@ -27,7 +30,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<User> login(@AuthenticationPrincipal Jwt jwt) {
         User u = userService.getUserBySub(jwt.getSubject());
-        if(u == null){
+        if (u == null) {
             u = new User(jwt.getClaim("name"), jwt.getSubject());
             userService.register(u);
         }

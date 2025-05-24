@@ -9,17 +9,20 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.CorsConfigurationSource;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.Instant;
@@ -30,34 +33,38 @@ import java.util.Map;
 
 import static com.pvt.SocialSips.constants.WebConstants.*;
 
+@EnableWebSecurity
+@EnableMethodSecurity
 @Configuration
 public class SecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("/**")
                 .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.POST, PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PERMITTED_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.POST,PROTECTED_ENDPOINTS).hasRole("USER")
-                        .requestMatchers(HttpMethod.GET, PROTECTED_ENDPOINTS).hasRole("USER")
-                        .requestMatchers(HttpMethod.OPTIONS, PROTECTED_ENDPOINTS).hasRole("USER"))
+                        .anyRequest().hasRole("USER"))
+                .securityMatcher(PROTECTED_ENDPOINTS)
+                .oauth2Login(AbstractHttpConfigurer::disable)
+
                 .oauth2ResourceServer(resourceServer -> resourceServer
                         .jwt(jwt -> jwt
                                 .decoder(jwtDecoder())
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())))
+
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 
     @Bean
-    public  Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
+    public Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 
         converter.setJwtGrantedAuthoritiesConverter(jwt -> Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
@@ -68,8 +75,8 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(ALLOWED_ORIGINS));
         configuration.setAllowedMethods(List.of(ALLOWED_METHODS));
+        configuration.setAllowedOriginPatterns(List.of(ALLOWED_ORIGINS));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -89,7 +96,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
                 return Jwt.withTokenValue(token)
                         .header("alg", "RS256")
-                        .issuer("https://securetoken.google.com/social-sips-ec954")
+                        .issuer(JWT_ISSUER_URI)
                         .subject(decodedToken.getUid())
                         .claim("name", decodedToken.getName())
                         .claim("authorities", List.of("ROLE_USER"))
@@ -105,7 +112,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter(){
+    public JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter() {
         return new JwtGrantedAuthoritiesConverter();
     }
 
