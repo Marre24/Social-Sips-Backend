@@ -8,13 +8,15 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 @Component
 public class FirebaseConfig {
 
     @Value("classpath:${firebase.admin.sdk.path}")
-    private Resource resource;
+    private Resource file;
 
     @PostConstruct
     public void onStart() {
@@ -28,7 +30,7 @@ public class FirebaseConfig {
     private void initialize() {
         FirebaseOptions options = null;
         try {
-            options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(resource.getInputStream())).build();
+            options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(new DataInputStream(new FileInputStream(file.getFile())))).build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
