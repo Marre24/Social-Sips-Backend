@@ -97,7 +97,7 @@ public class EventController {
             if (eventService.isStarted(joinCode)){
                 Guest g = userService.getGuest(uuid);
 
-                Event e = eventService.getByJoinCode(uuid);
+                Event e = eventService.getByJoinCode(joinCode);
 
                 if (!e.getGuests().contains(g))
                     return new ResponseEntity<>("Guest: " + uuid + " is not in event with join code: " + joinCode, HttpStatus.NOT_FOUND);
