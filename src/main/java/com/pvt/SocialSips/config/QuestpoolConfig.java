@@ -8,6 +8,7 @@ import com.pvt.SocialSips.questpool.QuestpoolService;
 import com.pvt.SocialSips.questpool.QuestpoolType;
 import com.pvt.SocialSips.user.User;
 import com.pvt.SocialSips.user.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,13 +22,15 @@ public class QuestpoolConfig {
     @Bean
     CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService, UserService userService) {
         return args -> {
+            try {
+                User oldStandard = userService.getUserBySub("STANDARD");
+                userService.deleteUser(oldStandard);
+            } catch (EntityNotFoundException e){}
+
             User standard = new User("STANDARD", "STANDARD");
-
             var questpools = QuestpoolParser.getAllStandardQuestpools();
-
-            userService.deleteUser(standard);
             userService.register(standard);
-
+            
             for (var questpool : questpools)
                 questpoolService.createQuestpoolWithHost(questpool, standard.getSub());
         };
