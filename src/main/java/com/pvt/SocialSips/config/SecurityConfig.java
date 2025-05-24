@@ -52,7 +52,7 @@ import java.util.Collections;
 @EnableMethodSecurity
 public class SecurityConfig implements WebMvcConfigurer {
 
-    @Value("${GOOGLE_CLIENT_ID}")
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String googleClientId;
 
     private final RsaKeyProperties rsaKeys;
