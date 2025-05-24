@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.pvt.SocialSips.token.TokenService;
 import com.pvt.SocialSips.quest.Icebreaker;
 import com.pvt.SocialSips.quest.Trivia;
 import com.pvt.SocialSips.questpool.Questpool;
@@ -52,18 +51,13 @@ public class UserIT {
 
     private static String QUESTPOOLS_IN_JSON_EXPECTED;
 
-    private static String USER_TOKEN;
-    private static String USER_WITHOUT_TOKEN;
-
     private final UserService userService;
-    private final TokenService tokenService;
 
     private final MockMvc mockMvc;
 
     @Autowired
-    public UserIT(UserService userService, TokenService tokenService, MockMvc mockMvc) {
+    public UserIT(UserService userService, MockMvc mockMvc) {
         this.userService = userService;
-        this.tokenService = tokenService;
         this.mockMvc = mockMvc;
     }
 
@@ -83,8 +77,6 @@ public class UserIT {
 
         QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(userService.getUserBySub(user.getSub()).getQuestpools());
 
-        USER_TOKEN = tokenService.generateToken(USER);
-        USER_WITHOUT_TOKEN = tokenService.generateToken(USER_WITHOUT);
     }
 
     @AfterAll
@@ -96,18 +88,16 @@ public class UserIT {
 
     @Test
     public void getAllQuestpools_HostExists_HTTPCodeIsOk() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .header("Authorization", "Bearer " + USER_TOKEN))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools/" + TEST_USER_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
     public void getAllQuestpools_HostWithQuestpools_QuestpoolsReturned() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .header("Authorization", "Bearer " + USER_TOKEN))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools/" + TEST_USER_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json(QUESTPOOLS_IN_JSON_EXPECTED));
@@ -115,9 +105,8 @@ public class UserIT {
 
     @Test
     public void getAllQuestpools_HostWithoutQuestpools_EmptySetReturned() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .header("Authorization", "Bearer " + USER_WITHOUT_TOKEN))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/questpools/" + TEST_USER_WITHOUT_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json("[]"));
@@ -125,9 +114,8 @@ public class UserIT {
 
     @Test
     public void profile_HostExists_HostNameReturned() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/user").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                        .header("Authorization", "Bearer " + USER_TOKEN))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + TEST_USER_SUB).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(USER.getFirstName()));
