@@ -27,7 +27,7 @@ public class TokenController {
             return new ResponseEntity<>("Invalid Google access token", HttpStatus.UNAUTHORIZED);
         }
 
-        String token = tokenService.generateToken(new User(payload.getSubject(), payload.getSubject()));
+        String token = tokenService.generateToken(new User((String) payload.get("given_name"), payload.getSubject()));
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
