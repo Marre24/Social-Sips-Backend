@@ -101,4 +101,13 @@ public class Event {
     public Set<Guest> getGuests() {
         return guests;
     }
+
+    public int getAmountOfGroups() {
+        int amountOfGroups = guests.size() / groupSize;
+
+        if (amountOfGroups == 0)
+            return 1;
+
+        return amountOfGroups;
+    }
 }
