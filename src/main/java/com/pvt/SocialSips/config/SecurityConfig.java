@@ -52,8 +52,8 @@ import java.util.Collections;
 @EnableMethodSecurity
 public class SecurityConfig implements WebMvcConfigurer {
 
-    @Value("@{GOOGLE_CLIENT_ID}")
-    private static String GOOGLE_CLIENT_ID;
+    @Value("${GOOGLE_CLIENT_ID}")
+    private String googleClientId;
 
     private final RsaKeyProperties rsaKeys;
 
@@ -108,7 +108,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
 
         return new GoogleIdTokenVerifier.Builder(transport, jsonFactory)
-                .setAudience(Collections.singletonList(GOOGLE_CLIENT_ID))
+                .setAudience(Collections.singletonList(googleClientId))
                 .build();
     }
 
