@@ -22,7 +22,7 @@ public class UserController {
         try {
             User user = userService.getUserBySub(sub);
             return new ResponseEntity<>(user.getFirstName(), HttpStatus.OK);
-        } catch(EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return new ResponseEntity<>("Could not find user with sub: " + sub, HttpStatus.NOT_FOUND);
         }
     }
@@ -37,9 +37,11 @@ public class UserController {
         }
     }
 
-    //TODO only temporary while JWTs are being fixed
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user){
-        return new ResponseEntity<>(userService.getOrCreateUser(user), HttpStatus.OK);
+    @PostMapping("/login/{sub}")
+    public ResponseEntity<String> login(@PathVariable String sub) {
+        User user = userService.getOrCreateUser(new User("username", sub));
+
+        return ResponseEntity.ok("User: " + user + " found or created.");
+
     }
 }
