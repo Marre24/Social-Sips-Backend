@@ -103,7 +103,7 @@ public class EventController {
                     return new ResponseEntity<>("Guest: " + uuid + " is not in event with join code: " + joinCode, HttpStatus.NOT_FOUND);
 
 
-                return new ResponseEntity<>(ColorHasher.intToColorHex(g.getGroupNumber()), HttpStatus.OK);
+                return new ResponseEntity<>(ColorHasher.intToColorHex(g.getGroupNumber(), e.getGuests().size() % e.getGroupSize()), HttpStatus.OK);
             }
 
             return new ResponseEntity<>("The event is not started!", HttpStatus.CONFLICT);
