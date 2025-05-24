@@ -147,4 +147,12 @@ public class EventService {
 
         return event.get();
     }
+
+    @Transactional
+    public void removeFromEvent(String joinCode, String uuid) {
+        var event = getByJoinCode(joinCode);
+        var guest = userService.getGuest(uuid);
+
+        event.removeGuest(guest);
+    }
 }

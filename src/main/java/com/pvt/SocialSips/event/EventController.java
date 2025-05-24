@@ -135,4 +135,15 @@ public class EventController {
         }
     }
 
+    @PatchMapping("/guests/{joinCode}/{uuid}")
+    public ResponseEntity<?> leaveEvent(@PathVariable String joinCode, @PathVariable String uuid) {
+        try {
+            eventService.removeFromEvent(joinCode, uuid);
+
+            return ResponseEntity.ok(uuid + " was able to leave event with join code: " + joinCode);
+        } catch (EntityNotFoundException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

@@ -110,4 +110,8 @@ public class Event {
 
         return amountOfGroups;
     }
+
+    public void removeGuest(Guest guest) {
+        guests.remove(guest);
+    }
 }
