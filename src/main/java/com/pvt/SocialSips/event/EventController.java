@@ -124,4 +124,15 @@ public class EventController {
         }
     }
 
+    @GetMapping("/guests/{sub}")
+    public ResponseEntity<?> getAmountOfGuests(@PathVariable String sub) {
+        try {
+            var questpools = eventService.getEvent(sub);
+
+            return ResponseEntity.ok(questpools.getGuests().size());
+        } catch (EntityNotFoundException exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
