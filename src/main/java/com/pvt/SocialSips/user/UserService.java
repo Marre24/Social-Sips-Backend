@@ -3,13 +3,9 @@ package com.pvt.SocialSips.user;
 import com.pvt.SocialSips.questpool.Questpool;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.apache.catalina.realm.AuthenticatedUserRealm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -67,7 +63,7 @@ public class UserService {
         String name = user.getFirstName();
 
         Optional<User> u = userRepository.findById(sub);
-        if(u.isPresent()) return u.get();
+        if (u.isPresent()) return u.get();
 
         return userRepository.save(new User(name, sub));
     }
@@ -78,10 +74,19 @@ public class UserService {
         try {
             g = guestRepository.save(g);
 
-        }catch(Exception e) {
-            throw new DuplicateKeyException("Could not save guest with uuid: " + uuid);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return g;
+    }
+
+    public Guest getGuest(String uuid) {
+        var guest = guestRepository.findById(uuid);
+
+        if (guest.isEmpty())
+            throw new EntityNotFoundException("Guest with uuid: " + uuid + " does not exist!");
+
+        return guest.get();
     }
 }

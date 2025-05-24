@@ -1,9 +1,11 @@
 package com.pvt.SocialSips.event;
 
+import com.pvt.SocialSips.user.Guest;
 import com.pvt.SocialSips.user.User;
 import com.pvt.SocialSips.user.UserRepository;
 import com.pvt.SocialSips.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -11,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -46,8 +47,18 @@ public class EventServiceTest {
     private final static User STARTED_USER = new User("firstName", STARTED_USER_SUB);
 
     private final static Event EVENT = new Event("name", 2, new HashSet<>(), USER_SUB);
-    private final static Set<String> GUESTS = new HashSet<>(List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"));
-    private final static Set<String> ELEVEN_GUESTS = new HashSet<>(List.of("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"));
+    private static Set<Guest> GUESTS = new HashSet<>();
+    private static Set<Guest> ELEVEN_GUESTS = new HashSet<>();
+
+    @BeforeAll
+    public static void initializeGuests() {
+        for (int i = 0; i < 10; i++)
+            GUESTS.add(new Guest(Integer.toString(i)));
+
+        for (int i = 0; i < 11; i++)
+            ELEVEN_GUESTS.add(new Guest(Integer.toString(i)));
+    }
+
 
     @Test
     public void getEvent_EventExists_EventReturned() {
@@ -136,9 +147,7 @@ public class EventServiceTest {
     @Test
     public void matchUsers_EvenlyDividedGroups_CorrectGroupAmount() {
 
-        assertEquals(
-                GUESTS.size() / TWO_GROUP_SIZE,
-                EventService.matchUsers(GUESTS, TWO_GROUP_SIZE).size());
+        assertEquals(GUESTS.size() / TWO_GROUP_SIZE, EventService.matchUsers(GUESTS, TWO_GROUP_SIZE).size());
     }
 
     @Test

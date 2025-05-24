@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -22,7 +23,7 @@ public class UserController {
         try {
             User user = userService.getUserBySub(sub);
             return new ResponseEntity<>(user.getFirstName(), HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
+        } catch(EntityNotFoundException e){
             return new ResponseEntity<>("Could not find user with sub: " + sub, HttpStatus.NOT_FOUND);
         }
     }

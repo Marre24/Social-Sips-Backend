@@ -57,9 +57,12 @@ public class EventService {
         if (event.getStarted())
             throw new IllegalStateException("Event has already started");
 
+        var groups = matchUsers(event.getGuests(), event.getGroupSize());
+        for (int i = 1; i <= groups.size(); i++)
+            for (Guest g : groups.get(i - 1))
+                g.setGroupNumber(i);
+
         event.setStarted(true);
-
-
     }
 
     public void deleteEvent(String hostSub) {
@@ -78,18 +81,24 @@ public class EventService {
         return !event.get().getStarted();
     }
 
-    public static ArrayList<ArrayList<String>> matchUsers(Set<String> guests, int groupSize) {
-        ArrayList<String> toBeMatched = new ArrayList<>(guests);
+    public static ArrayList<ArrayList<Guest>> matchUsers(Set<Guest> guests, int groupSize) {
+        if (guests.isEmpty())
+            return new ArrayList<>();
+
+        ArrayList<Guest> toBeMatched = new ArrayList<>(guests);
         Collections.shuffle(toBeMatched);
-        ArrayList<ArrayList<String>> groups = new ArrayList<>();
+        ArrayList<ArrayList<Guest>> groups = new ArrayList<>();
 
         int amountOfGroups = toBeMatched.size() / groupSize;
+
+        if (amountOfGroups == 0)
+            amountOfGroups = 1;
 
         for (int i = 0; i < amountOfGroups; i++)
             groups.add(new ArrayList<>());
 
         for (int amountMatched = 0; amountMatched < toBeMatched.size(); amountMatched++) {
-            String u = toBeMatched.get(amountMatched);
+            Guest u = toBeMatched.get(amountMatched);
             groups.get(amountMatched % amountOfGroups).add(u);
         }
 
@@ -119,5 +128,23 @@ public class EventService {
 
 
         event.get().addGuest(g);
+    }
+
+    public boolean isStarted(String joinCode) {
+        var event = eventRepository.findByJoinCode(joinCode);
+
+        if (event.isEmpty())
+            throw new EntityNotFoundException("Could not find event with join code: " + joinCode);
+
+        return event.get().getStarted();
+    }
+
+    public Event getByJoinCode(String joinCode) {
+        var event = eventRepository.findByJoinCode(joinCode);
+
+        if (event.isEmpty())
+            throw new EntityNotFoundException("Could not find event with join code: " + joinCode);
+
+        return event.get();
     }
 }

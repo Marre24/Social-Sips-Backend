@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.pvt.SocialSips.user.Guest;
 import com.pvt.SocialSips.user.User;
 import com.pvt.SocialSips.user.UserService;
 import org.junit.jupiter.api.*;
@@ -21,7 +22,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -62,18 +64,23 @@ public class EventIT {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 
-        userService.register(USER_WITH_EVENT);
-        eventService.createEvent(EVENT, USER_SUB_WITH_EVENT);
+        for (int i = 0; i < 11; i++)
+            EVENT_WITHOUT.addGuest(new Guest(Integer.toString(i)));
 
+        userService.register(USER_WITH_EVENT);
         userService.register(USER_WITHOUT_EVENT);
+
+        eventService.createEvent(EVENT, USER_SUB_WITH_EVENT);
 
         EVENT_IN_JSON_EXPECTED = ow.writeValueAsString(EVENT);
         EVENT_WITHOUT_IN_JSON_EXPECTED = ow.writeValueAsString(EVENT_WITHOUT);
+
     }
 
 
     @BeforeEach
     public void beforeEach() {
+
 
         userService.deleteUser(USER_WITHOUT_EVENT);
         userService.register(USER_WITHOUT_EVENT);
@@ -117,8 +124,7 @@ public class EventIT {
         postEventToHostWithoutEvent();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/event/" + USER_SUB_WITHOUT_EVENT).secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
-                )
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().json(EVENT_WITHOUT_IN_JSON_EXPECTED));
@@ -161,6 +167,28 @@ public class EventIT {
     }
 
     @Test
+    public void startEvent_HostWithEventWithGuests_GuestGetDividedIntoGroups() throws Exception {
+        postEventToHostWithoutEvent();
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/" + USER_SUB_WITHOUT_EVENT).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        var guests = userService.getUserBySub(USER_SUB_WITHOUT_EVENT).getEvent().getGuests();
+
+        boolean isOk = true;
+        for (Guest g : guests) {
+            System.out.println("Guest: " + g.getUuid() + " is in group: " + g.getGroupNumber());
+            if(g.getGroupNumber() == -1) {
+                isOk = false;
+                break;
+            }
+        }
+        assertTrue(isOk);
+    }
+
+    @Test
     public void deleteEvent_HostWithEvent_EventDeleted() throws Exception {
         postEventToHostWithoutEvent();
 
@@ -181,28 +209,46 @@ public class EventIT {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
-//    @Test
-//    public void canJoinEvent_NonStartedEvent_HTTPStatusIsOk() throws Exception {
-//
-//        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT.getJoinCode()).secure(true)
-//                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
-//                .andDo(MockMvcResultHandlers.print())
-//                .andExpect(MockMvcResultMatchers.status().isOk());
-//    }
-//
-//    @Test
-//    public void canJoinEvent_StartedEvent_HTTPStatusIsConflict() throws Exception {
-//        postEventToHostWithoutEvent();
-//
-//        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/" + USER_SUB_WITHOUT_EVENT).secure(true)
-//                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
-//                .andDo(MockMvcResultHandlers.print());
-//
-//        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT_WITHOUT.getJoinCode()).secure(true)
-//                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
-//                .andDo(MockMvcResultHandlers.print())
-//                .andExpect(MockMvcResultMatchers.status().isConflict());
-//    }
+    @Test
+    public void joinEvent_NonStartedEvent_HTTPStatusIsOk() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT.getJoinCode() + "/" + UUID.randomUUID()).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void joinEvent_StartedEvent_HTTPStatusIsConflict() throws Exception {
+        postEventToHostWithoutEvent();
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/event/start/" + USER_SUB_WITHOUT_EVENT).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT_WITHOUT.getJoinCode() + "/" + UUID.randomUUID()).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isConflict());
+    }
+
+    @Test
+    public void joinEvent_NonStartedEvent_EventsGuestsIncrementedByOne() throws Exception {
+        postEventToHostWithoutEvent();
+
+        Event e = eventService.getEvent(USER_SUB_WITHOUT_EVENT);
+        int expected = e.getGuests().size() + 1;
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + EVENT_WITHOUT.getJoinCode() + "/" + UUID.randomUUID()).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        Event newEvent = eventService.getEvent(USER_SUB_WITHOUT_EVENT);
+        int actual = newEvent.getGuests().size();
+
+        assertEquals(expected, actual);
+    }
 
 
     private void postEventToHostWithoutEvent() throws Exception {
@@ -211,5 +257,18 @@ public class EventIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(EVENT_WITHOUT_IN_JSON_EXPECTED))
                 .andDo(MockMvcResultHandlers.print());
+
+        for (int i = 0; i < 11; i++)
+            joinEvent(EVENT_WITHOUT.getJoinCode(), Integer.toString(i));
+    }
+
+
+    private void joinEvent(String joinCode, String uuid) throws Exception {
+        var result = mockMvc.perform(MockMvcRequestBuilders.get("/event/join/" + joinCode + "/" + uuid).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+
+        System.out.println(result.getResponse().getContentAsString());
     }
 }

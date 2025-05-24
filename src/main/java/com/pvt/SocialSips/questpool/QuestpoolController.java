@@ -41,7 +41,7 @@ public class QuestpoolController {
     }
 
     @PatchMapping("/{qpId}/{name}/{sub}")
-    public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable String name, @PathVariable Long qpId, @PathVariable String sub) {
+    public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable Long qpId, @PathVariable String name, @PathVariable String sub) {
         try {
             questpoolService.updateQuestpool(quests, name, qpId, sub);
             return new ResponseEntity<>("Questpool has been updated!", HttpStatus.OK);
@@ -54,11 +54,11 @@ public class QuestpoolController {
     }
 
     @GetMapping("/standard")
-    public ResponseEntity<?> getAllStandardQuestpools(){
+    public ResponseEntity<?> getAllStandardQuestpools() {
         try {
             Set<Questpool> questpools = questpoolService.getAllStandardQuestpools();
             return new ResponseEntity<>(questpools, HttpStatus.OK);
-        } catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

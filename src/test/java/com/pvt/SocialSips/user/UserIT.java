@@ -79,6 +79,7 @@ public class UserIT {
         userService.register(USER_WITHOUT);
 
         QUESTPOOLS_IN_JSON_EXPECTED = ow.writeValueAsString(userService.getUserBySub(user.getSub()).getQuestpools());
+
     }
 
     @AfterAll
