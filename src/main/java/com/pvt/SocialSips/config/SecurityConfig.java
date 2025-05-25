@@ -49,7 +49,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers(HttpMethod.OPTIONS, PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.POST, PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, PERMITTED_ENDPOINTS).permitAll()
-                        .anyRequest().hasRole("USER"))
+                        .anyRequest().hasAnyRole("USER", "HOST"))
                 .securityMatcher(PROTECTED_ENDPOINTS)
                 .oauth2Login(AbstractHttpConfigurer::disable)
 
@@ -105,6 +105,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .issuedAt(now)
                         .expiresAt(expiresAt)
                         .build();
+
             } catch (FirebaseAuthException e) {
                 throw new BadCredentialsException("Invalid token", e);
             }

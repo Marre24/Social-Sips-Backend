@@ -12,7 +12,8 @@ public final class WebConstants {
                     "ws://127.0.0.1:**/**",
                     "http://127.0.0.1:**/**",
                     "http://130.237.161.241**",
-                    "http://localhost:50717",
+                    "http://localhost**",
+                    "https://localhost**"
             };
 
     public static final String[] PROTECTED_ENDPOINTS = {
