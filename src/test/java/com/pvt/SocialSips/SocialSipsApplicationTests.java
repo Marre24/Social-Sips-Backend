@@ -4,21 +4,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.context.annotation.PropertySource;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@SpringBootTest(classes = {SocialSipsApplication.class})
-@SpringJUnitConfig(classes = ContextConfiguration.class)
+@PropertySource("classpath:application-test.properties")
+@SpringBootTest(properties =
+        {
+                "spring.datasource.password=password",
+                "spring.datasource.username=test", "spring.datasource.url=jdbc:h2:mem:testdb",
+                "spring.datasource.driver-class-name=org.h2.Driver"
+        })
 class SocialSipsApplicationTests {
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Test
-    @BeforeTestClass
     void contextLoads() {
         assertThat(applicationContext.getBean(SocialSipsApplication.class)).isNotNull();
     }
