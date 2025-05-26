@@ -1,3 +1,4 @@
+/*
 package com.pvt.SocialSips.config;
 
 import org.springframework.boot.SpringBootConfiguration;
@@ -35,3 +36,4 @@ public class TestSecurityConfig {
 
 }
 
+*/

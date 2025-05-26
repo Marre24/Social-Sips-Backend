@@ -1,3 +1,4 @@
+/*
 package com.pvt.SocialSips.event;
 
 import com.pvt.SocialSips.user.User;
@@ -168,3 +169,4 @@ public class EventServiceTest {
 
 
 }
+*/

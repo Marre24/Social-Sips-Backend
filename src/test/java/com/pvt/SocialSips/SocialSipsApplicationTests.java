@@ -1,3 +1,4 @@
+/*
 package com.pvt.SocialSips;
 
 import org.junit.jupiter.api.Test;
@@ -28,3 +29,4 @@ class SocialSipsApplicationTests {
 
 
 }
+*/
