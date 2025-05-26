@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.pvt</groupId>
-	<artifactId>apiv2</artifactId>
+	<artifactId>api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>apiv2</name>
+	<name>api</name>
 	<description>PVT project</description>
 	<url/>
 	<licenses>
