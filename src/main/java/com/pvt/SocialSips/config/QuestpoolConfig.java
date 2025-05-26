@@ -18,20 +18,20 @@ import java.util.List;
 @Configuration
 public class QuestpoolConfig {
 
-    @Bean
-    CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService, UserService userService) {
-        return args -> {
-            User standard = new User("STANDARD", "STANDARD");
-
-            var questpools = QuestpoolParser.getAllStandardQuestpools();
-
-            userService.deleteUser(standard);
-            userService.register(standard);
-
-            for (var questpool : questpools)
-                questpoolService.createQuestpoolWithHost(questpool, standard.getSub());
-        };
-    }
+//    @Bean
+//    CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService, UserService userService) {
+//        return args -> {
+//            User standard = new User("STANDARD", "STANDARD");
+//
+//            var questpools = QuestpoolParser.getAllStandardQuestpools();
+//
+//            userService.deleteUser(standard);
+//            userService.register(standard);
+//
+//            for (var questpool : questpools)
+//                questpoolService.createQuestpoolWithHost(questpool, standard.getSub());
+//        };
+//    }
 
 
 }
