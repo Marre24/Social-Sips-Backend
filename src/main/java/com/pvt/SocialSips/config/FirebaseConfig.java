@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -14,8 +15,8 @@ import java.io.IOException;
 @Component
 public class FirebaseConfig {
 
-    @Value("${firebase.admin.sdk.path}")
-    private File file;
+    @Value("classpath:${firebase.admin.sdk.path}")
+    private Resource file;
 
     @PostConstruct
     public void onStart() {
@@ -29,7 +30,7 @@ public class FirebaseConfig {
     private void initialize() {
         FirebaseOptions options = null;
         try {
-            options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(new FileInputStream(file))).build();
+            options = FirebaseOptions.builder().setCredentials(GoogleCredentials.fromStream(new FileInputStream(file.getFile()))).build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
