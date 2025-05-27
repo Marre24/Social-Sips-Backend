@@ -4,14 +4,14 @@ public class GroupInfo {
 
     private String color;
 
-    private int groupSize;
+    private int groupNumber;
 
     public GroupInfo() {
     }
 
-    public GroupInfo(String color, int groupSize) {
+    public GroupInfo(String color, int groupNumber) {
         this.color = color;
-        this.groupSize = groupSize;
+        this.groupNumber = groupNumber;
     }
 
     public String getColor() {
@@ -22,11 +22,12 @@ public class GroupInfo {
         this.color = color;
     }
 
-    public int getGroupSize() {
-        return groupSize;
+
+    public int getGroupNumber() {
+        return groupNumber;
     }
 
-    public void setGroupSize(int groupSize) {
-        this.groupSize = groupSize;
+    public void setGroupNumber(int groupNumber) {
+        this.groupNumber = groupNumber;
     }
 }
