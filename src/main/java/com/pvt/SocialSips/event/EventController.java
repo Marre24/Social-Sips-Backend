@@ -1,5 +1,6 @@
 package com.pvt.SocialSips.event;
 
+import com.pvt.SocialSips.user.GroupInfo;
 import com.pvt.SocialSips.user.Guest;
 import com.pvt.SocialSips.user.UserService;
 import com.pvt.SocialSips.util.ColorHasher;
@@ -92,7 +93,7 @@ public class EventController {
 
 
     @GetMapping("/started/{joinCode}/{uuid}")
-    public ResponseEntity<String> isStarted(@PathVariable String joinCode, @PathVariable String uuid) {
+    public ResponseEntity<?> isStarted(@PathVariable String joinCode, @PathVariable String uuid) {
         try {
             if (eventService.isStarted(joinCode)){
                 Guest g = userService.getGuest(uuid);
@@ -103,7 +104,7 @@ public class EventController {
                     return new ResponseEntity<>("Guest: " + uuid + " is not in event with join code: " + joinCode, HttpStatus.NOT_FOUND);
 
 
-                return new ResponseEntity<>(ColorHasher.intToColorHex(g.getGroupNumber(), e.getAmountOfGroups()), HttpStatus.OK);
+                return new ResponseEntity<>(new GroupInfo(ColorHasher.intToColorHex(g.getGroupNumber(), e.getAmountOfGroups()), g.getGroupNumber()), HttpStatus.OK);
             }
 
             return new ResponseEntity<>("The event is not started!", HttpStatus.CONFLICT);
