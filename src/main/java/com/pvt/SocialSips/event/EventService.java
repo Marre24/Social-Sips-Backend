@@ -43,7 +43,7 @@ public class EventService {
         if (eventRepository.findById(sub).isPresent())
             throw new DuplicateKeyException("Host with id: " + sub + " already has an event!");
 
-        user.setEvent(event.getName(), event.getGroupSize(), event.getQuestpools());
+        user.setEvent(event.getGroupSize(), event.getQuestpools());
         userService.register(user);
 
         return getEvent(user.getSub());

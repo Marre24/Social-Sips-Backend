@@ -38,8 +38,8 @@ public class EventIT {
     private static final User USER_WITH_EVENT = new User("THIS IS A FIRST NAME", USER_SUB_WITH_EVENT);
     private static final User USER_WITHOUT_EVENT = new User("THIS IS A FIRST NAME", USER_SUB_WITHOUT_EVENT);
 
-    private static final Event EVENT = new Event("THIS IS AN EVENT", 2, new HashSet<>(), USER_SUB_WITH_EVENT);
-    private static final Event EVENT_WITHOUT = new Event("THIS IS AN EVENT", 2, new HashSet<>(), USER_SUB_WITHOUT_EVENT);
+    private static final Event EVENT = new Event(2, new HashSet<>(), USER_SUB_WITH_EVENT);
+    private static final Event EVENT_WITHOUT = new Event(2, new HashSet<>(), USER_SUB_WITHOUT_EVENT);
 
     private static String EVENT_WITHOUT_IN_JSON_EXPECTED;
     private static String EVENT_IN_JSON_EXPECTED;

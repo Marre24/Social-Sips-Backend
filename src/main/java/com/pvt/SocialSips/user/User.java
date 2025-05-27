@@ -57,8 +57,8 @@ public class User {
         return questpools;
     }
 
-    public void setEvent(String name, Integer groupSize, Set<Questpool> questpools) {
-        this.event = new Event(name, groupSize, questpools, getSub());
+    public void setEvent(Integer groupSize, Set<Questpool> questpools) {
+        this.event = new Event(groupSize, questpools, getSub());
     }
 
     public Event getEvent() {

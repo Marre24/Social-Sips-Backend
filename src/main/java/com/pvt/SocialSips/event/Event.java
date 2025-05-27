@@ -17,7 +17,6 @@ public class Event {
     private Boolean started = false;
     private String joinCode;
 
-    private String name;
     private Integer groupSize;
 
     @ManyToMany
@@ -29,10 +28,9 @@ public class Event {
     public Event() {
     }
 
-    public Event(String name, Integer groupSize, Set<Questpool> questpools, String hostSub) {
+    public Event(Integer groupSize, Set<Questpool> questpools, String hostSub) {
         joinCode = JoinCodeGenerator.generateLetterCode(hostSub);
         this.hostSub = hostSub;
-        this.name = name;
         this.groupSize = groupSize;
         this.questpools = questpools;
     }
@@ -60,14 +58,6 @@ public class Event {
 
     public void setJoinCode(String joinCode) {
         this.joinCode = joinCode;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Integer getGroupSize() {
