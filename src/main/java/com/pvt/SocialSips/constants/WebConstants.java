@@ -21,12 +21,13 @@ public final class WebConstants {
             "/event/", "/event/start/",
             "/event", "/questpool",
             "/user/profile", "/questpool/",
+            "/user/login"
     };
 
     public static final String[] PERMITTED_ENDPOINTS = {
             "/", "/home", "/css/**",
             "/error", "/__/hosting/**",
-            "/event/join/**", "/user/login",
+            "/event/join/**",
             "/.well-known/**", "/h2-console/**",
             "/questpool/standard"
     };
