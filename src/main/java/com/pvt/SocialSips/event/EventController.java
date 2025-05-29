@@ -126,10 +126,10 @@ public class EventController {
         }
     }
 
-    @GetMapping("/guests/{sub}")
-    public ResponseEntity<?> getAmountOfGuests(@PathVariable String sub) {
+    @GetMapping("/guests")
+    public ResponseEntity<?> getAmountOfGuests() {
         try {
-            var questpools = eventService.getEvent(sub);
+            var questpools = eventService.getEvent(extractSub());
 
             return ResponseEntity.ok(questpools.getGuests().size());
         } catch (EntityNotFoundException exception) {
