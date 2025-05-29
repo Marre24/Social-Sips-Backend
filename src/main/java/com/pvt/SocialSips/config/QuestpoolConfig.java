@@ -1,11 +1,9 @@
 package com.pvt.SocialSips.config;
 
-import com.pvt.SocialSips.quest.Icebreaker;
-import com.pvt.SocialSips.quest.Trivia;
-import com.pvt.SocialSips.questpool.Questpool;
+import com.pvt.SocialSips.event.EventRepository;
+import com.pvt.SocialSips.event.EventService;
 import com.pvt.SocialSips.questpool.QuestpoolParser;
 import com.pvt.SocialSips.questpool.QuestpoolService;
-import com.pvt.SocialSips.questpool.QuestpoolType;
 import com.pvt.SocialSips.user.User;
 import com.pvt.SocialSips.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,14 +11,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashSet;
-import java.util.List;
-
 @Configuration
 public class QuestpoolConfig {
 
     @Bean
-    CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService, UserService userService) {
+    CommandLineRunner questpoolCommandLineRunner(QuestpoolService questpoolService, UserService userService, EventRepository eventRepository) {
+        eventRepository.deleteAll();
+
         return args -> {
             try {
                 User oldStandard = userService.getUserBySub("STANDARD");
