@@ -67,8 +67,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, PROTECTED_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.POST, PERMITTED_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET, PERMITTED_ENDPOINTS).permitAll()
+                        .requestMatchers(PERMITTED_ENDPOINTS).permitAll()
                         .requestMatchers(PROTECTED_ENDPOINTS).authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

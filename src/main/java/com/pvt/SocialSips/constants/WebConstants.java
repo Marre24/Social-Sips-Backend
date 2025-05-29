@@ -7,7 +7,7 @@ public final class WebConstants {
     public static final String[] PROTECTED_ENDPOINTS = {"/user", "/user/questpools", "/event", "/event/start", "/event/guests", "/questpool/**"};
 
     public static final String[] PERMITTED_ENDPOINTS = {"/", "/home", "/css/**", "/error", "/__/hosting/**", "/h2-console/**",  "/.well-known/**",
-            "/event/join/**", "/event/questpools/**", "/event/started/**", "/event/guests/**",
+            "/event/join/**", "/event/questpools/**", "/event/started/**", "/event/guests/*/*",
             "/questpool/standard", "/token"
     };
 
