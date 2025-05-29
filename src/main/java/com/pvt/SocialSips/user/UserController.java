@@ -38,12 +38,4 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-
-    @PostMapping("/login/{sub}")
-    public ResponseEntity<String> login(@PathVariable String sub) {
-        User user = userService.getOrCreateUser(new User("username", sub));
-
-        return ResponseEntity.ok("User: " + user + " found or created.");
-
-    }
 }
