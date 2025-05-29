@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+import static com.pvt.SocialSips.util.JwtParser.extractSub;
+
 @RestController
 @RequestMapping("/questpool")
 public class QuestpoolController {
@@ -21,10 +23,10 @@ public class QuestpoolController {
         this.questpoolService = questpoolService;
     }
 
-    @DeleteMapping("/{qpId}/{sub}")
-    public ResponseEntity<String> deleteByQuestpoolId(@PathVariable Long qpId, @PathVariable String sub) {
+    @DeleteMapping("/{qpId}")
+    public ResponseEntity<String> deleteByQuestpoolId(@PathVariable Long qpId) {
         try {
-            questpoolService.deleteQuestpoolById(qpId, sub);
+            questpoolService.deleteQuestpoolById(qpId, extractSub());
             return new ResponseEntity<>("Questpool was deleted!", HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -34,16 +36,16 @@ public class QuestpoolController {
 
     }
 
-    @PostMapping("/{sub}")
-    public ResponseEntity<Questpool> addQuestpool(@RequestBody Questpool questpool, @PathVariable String sub) {
-        questpoolService.createQuestpoolWithHost(questpool, sub);
+    @PostMapping
+    public ResponseEntity<Questpool> addQuestpool(@RequestBody Questpool questpool) {
+        questpoolService.createQuestpoolWithHost(questpool, extractSub());
         return new ResponseEntity<>(questpool, HttpStatus.OK);
     }
 
-    @PatchMapping("/{qpId}/{name}/{sub}")
-    public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable Long qpId, @PathVariable String name, @PathVariable String sub) {
+    @PatchMapping("/{qpId}/{name}")
+    public ResponseEntity<String> updateQuestpool(@RequestBody Set<Quest> quests, @PathVariable Long qpId, @PathVariable String name) {
         try {
-            questpoolService.updateQuestpool(quests, name, qpId, sub);
+            questpoolService.updateQuestpool(quests, name, qpId, extractSub());
             return new ResponseEntity<>("Questpool has been updated!", HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {
