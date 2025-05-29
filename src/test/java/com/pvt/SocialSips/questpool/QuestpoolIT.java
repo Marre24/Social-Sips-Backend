@@ -4,6 +4,7 @@ package com.pvt.SocialSips.questpool;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.pvt.SocialSips.token.TokenService;
 import com.pvt.SocialSips.quest.Icebreaker;
 import com.pvt.SocialSips.quest.Trivia;
 import com.pvt.SocialSips.user.User;
@@ -63,12 +64,14 @@ public class QuestpoolIT {
     private static String TEST_USER_TOKEN;
 
     private final UserService userService;
+    private final TokenService tokenService;
 
     private final MockMvc mockMvc;
 
     @Autowired
-    public QuestpoolIT(UserService userService, MockMvc mockMvc) {
+    public QuestpoolIT(UserService userService, TokenService tokenService, MockMvc mockMvc) {
         this.userService = userService;
+        this.tokenService = tokenService;
         this.mockMvc = mockMvc;
     }
 
@@ -83,6 +86,7 @@ public class QuestpoolIT {
         userService.register(TEST_USER);
         userService.register(OTHER_TEST_USER);
 
+        TEST_USER_TOKEN = tokenService.generateToken(TEST_USER);
     }
 
     @AfterAll
@@ -98,8 +102,9 @@ public class QuestpoolIT {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(QUESTPOOL_TO_BE_ADDED);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/questpool/" + TEST_USER_SUB).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.post("/questpool").secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN)
                         .contentType(APPLICATION_JSON)
                         .content(requestJson))
                 .andDo(MockMvcResultHandlers.print())
@@ -115,8 +120,9 @@ public class QuestpoolIT {
 
         int expectedAmount = userService.getUserBySub(TEST_USER_SUB).getQuestpools().size() + 1;
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/questpool/" + TEST_USER_SUB).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.post("/questpool").secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN)
                         .contentType(APPLICATION_JSON)
                         .content(requestJson))
                 .andDo(MockMvcResultHandlers.print())
@@ -135,8 +141,9 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId()).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -151,8 +158,9 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId()).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
@@ -163,8 +171,9 @@ public class QuestpoolIT {
     @Test
     public void deleteQuestpool_NonExistingQuestpool_HTTPStatusIsNotFound() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/-1" + "/" + TEST_USER_SUB).secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/-1").secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -178,8 +187,9 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId() + "/" + TEST_USER_SUB).secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/questpool/" + questpool.getId()).secure(true)
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isForbidden());
     }
@@ -194,8 +204,9 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + QUESTPOOL_NAME + "/" + TEST_USER_SUB).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + QUESTPOOL_NAME).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN)
                         .contentType(APPLICATION_JSON)
                         .content(OLD_QUESTS))
                 .andDo(MockMvcResultHandlers.print())
@@ -212,8 +223,9 @@ public class QuestpoolIT {
         var questpool = it.next();
         var expectedNotToBe = questpool.getQuests();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId()  + "/" + QUESTPOOL_NAME + "/" + TEST_USER_SUB).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId()  + "/" + QUESTPOOL_NAME).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN)
                         .contentType(APPLICATION_JSON)
                         .content(NEW_QUESTS))
                 .andDo(MockMvcResultHandlers.print())
@@ -239,8 +251,9 @@ public class QuestpoolIT {
         var it = set.iterator();
         var questpool = it.next();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + QUESTPOOL_NAME + "/" + TEST_USER_SUB).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + QUESTPOOL_NAME).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN)
                         .contentType(APPLICATION_JSON)
                         .content(NEW_QUESTS))
                 .andDo(MockMvcResultHandlers.print())
@@ -258,8 +271,9 @@ public class QuestpoolIT {
         var oldName = questpool.getName();
         var id = questpool.getId();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + NEW_NAME + "/" + TEST_USER_SUB).secure(true)
+        mockMvc.perform(MockMvcRequestBuilders.patch("/questpool/" + questpool.getId() + "/" + NEW_NAME).secure(true)
                         .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN)
                         .contentType(APPLICATION_JSON)
                         .content(NEW_QUESTS))
                 .andDo(MockMvcResultHandlers.print())
@@ -290,7 +304,8 @@ public class QuestpoolIT {
     @Test
     public void getStandardQuestpools_StandardHostExists_HTTPCodeIsOk() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/questpool/standard").secure(true)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .header("Authorization", "Bearer " + TEST_USER_TOKEN))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
